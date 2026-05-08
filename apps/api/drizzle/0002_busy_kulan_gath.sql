@@ -1,0 +1,1 @@
+ALTER TABLE "telegram_settings" ADD COLUMN "notify_on_dry_run" boolean DEFAULT true NOT NULL;

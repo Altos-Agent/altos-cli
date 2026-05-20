@@ -94,10 +94,14 @@ export const registerApprovalRoutes = async (
   server.post<{ Params: IdParams; Body: ApprovalRequestInput }>(
     "/api/wallets/:id/approve",
     async (request, reply) => {
+      const params = parseIdParams(request.params);
       try {
-        await requireRole(_context, request, reply, "admin");
-        await requireReauth(_context, request, reply);
-        await requireConfirmation(_context, request, reply, "APPROVE LIVE");
+        const roleOk = await requireRole(_context, request, reply, "admin");
+        if (!roleOk) return;
+        const reauthOk = await requireReauth(_context, request, reply);
+        if (!reauthOk) return;
+        const confirmOk = requireConfirmation(request, reply, "APPROVE LIVE");
+        if (!confirmOk) return;
         if (_context.rateLimitProvider) {
           await _context.rateLimitProvider.assertLimit(
             `approve:${params.id}:${request.ip}`,
@@ -105,7 +109,6 @@ export const registerApprovalRoutes = async (
             60_000,
           );
         }
-        const params = parseIdParams(request.params);
         await assertLiveWriteAllowed();
         const body = parseRequestBody(approvalRequestSchema, request.body);
         await transactionManager.assertNoPendingLiveTransaction(params.id);
@@ -166,10 +169,14 @@ export const registerApprovalRoutes = async (
   server.post<{ Params: IdParams; Body: ApprovalRequestInput }>(
     "/api/wallets/:id/revoke",
     async (request, reply) => {
+      const params = parseIdParams(request.params);
       try {
-        await requireRole(_context, request, reply, "admin");
-        await requireReauth(_context, request, reply);
-        await requireConfirmation(_context, request, reply, "REVOKE APPROVAL");
+        const roleOk = await requireRole(_context, request, reply, "admin");
+        if (!roleOk) return;
+        const reauthOk = await requireReauth(_context, request, reply);
+        if (!reauthOk) return;
+        const confirmOk = requireConfirmation(request, reply, "REVOKE APPROVAL");
+        if (!confirmOk) return;
         if (_context.rateLimitProvider) {
           await _context.rateLimitProvider.assertLimit(
             `revoke:${params.id}:${request.ip}`,
@@ -177,7 +184,6 @@ export const registerApprovalRoutes = async (
             60_000,
           );
         }
-        const params = parseIdParams(request.params);
         await assertLiveWriteAllowed();
         const body = parseRequestBody(
           approvalRequestSchema.omit({ amount: true }),

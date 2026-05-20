@@ -59,7 +59,7 @@ export const registerMfaRoutes = async (server: FastifyInstance, context: AuthCo
     if (!tempSession) return reply.code(400).send({ error: "Invalid or expired temp session" });
     const mfaState = await context.sessions.getMfaSettings?.(tempSession.username);
     if (!mfaState?.mfaEnabled) return reply.code(400).send({ error: "MFA not enabled" });
-    const secret = decryptTotpSecret(mfaState.totpSecretEncrypted!, context.config.sessionSecret);
+    const secret = decryptTotpSecret(mfaState.totpSecretEncrypted, context.config.sessionSecret);
     const valid = await totpService.validateCode(body.totpCode, secret);
     if (!valid) return reply.code(400).send({ error: "Invalid TOTP code" });
     const session = await context.sessions.createWithRole?.(tempSession.username, (tempSession.role as OperatorRole) ?? "admin");

@@ -23,7 +23,13 @@ export class TOTPService {
     this.secretLength = options.secretLength ?? 20;
   }
 
-  async generateSecret(): Promise<GeneratedSecret> {
+  generateSecret(): GeneratedSecret {
+    const secret = generateSecret({ length: this.secretLength });
+    const otpauthUri = generateURI({ issuer: this.issuer, label: "operator", secret });
+    return { secret, otpauthUri, qrCodeBase64: "" };
+  }
+
+  async generateSecretWithQr(): Promise<GeneratedSecret> {
     const secret = generateSecret({ length: this.secretLength });
     const otpauthUri = generateURI({ issuer: this.issuer, label: "operator", secret });
     const qrCodeBase64 = await QRCode.toDataURL(otpauthUri);

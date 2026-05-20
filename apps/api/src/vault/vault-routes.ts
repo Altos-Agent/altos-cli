@@ -47,6 +47,7 @@ export const registerVaultRoutes = async (
   server.get("/api/vault/status", async () => getVaultStatus());
 
   server.post<{ Body: UnlockBody }>("/api/vault/unlock", async (request, reply) => {
+    if (!_context) return reply.code(500).send({ error: "Server misconfiguration" });
     try {
       await requireRole(_context, request, reply, "admin");
       if (_context?.rateLimitProvider) {
@@ -78,6 +79,7 @@ export const registerVaultRoutes = async (
   });
 
   server.post("/api/vault/lock", async (request, reply) => {
+    if (!_context) return reply.code(500).send({ error: "Server misconfiguration" });
     try {
       await requireRole(_context, request, reply, "admin");
       if (_context?.rateLimitProvider) {

@@ -18,6 +18,12 @@ export interface MfaState {
   mfaEnabledAt: string | null;
 }
 
+export interface MfaPendingSetup {
+  totpSecretEncrypted: string;
+  mfaRecoveryCodesHashed: string[];
+  mfaSetupStartedAt: number;
+}
+
 export interface SessionStore {
   readonly name: "redis" | "memory";
   readonly isDistributed: boolean;
@@ -31,6 +37,8 @@ export interface SessionStore {
   updateLastReauthAt(sessionId: string | undefined): Promise<void>;
   getMfaSettings(username: string): Promise<MfaState | null>;
   setMfaEnabled(sessionId: string, state: MfaState): Promise<void>;
+  updatePendingMfa(sessionId: string, pending: MfaPendingSetup): Promise<void>;
+  getPendingMfa(sessionId: string): Promise<MfaPendingSetup | null>;
 }
 
 const sessionTtlMsDefault = 12 * 60 * 60 * 1000;
@@ -40,6 +48,7 @@ const randomToken = () => randomBytes(32).toString("base64url");
 export const createInMemorySessionStore = (): SessionStore => {
   const sessions = new Map<string, OperatorSession>();
   const mfaStates = new Map<string, MfaState>();
+  const pendingMfa = new Map<string, MfaPendingSetup>();
 
   return {
     name: "memory",
@@ -141,6 +150,14 @@ export const createInMemorySessionStore = (): SessionStore => {
       if (session) {
         mfaStates.set(session.username, state);
       }
+    },
+
+    async updatePendingMfa(sessionId: string, pending: MfaPendingSetup) {
+      pendingMfa.set(sessionId, pending);
+    },
+
+    async getPendingMfa(sessionId: string) {
+      return pendingMfa.get(sessionId) ?? null;
     },
   };
 };
@@ -319,6 +336,18 @@ export const createRedisSessionStore = async (
       const session: OperatorSession = JSON.parse(data);
       const mfaKey = `mfa:user:${session.username}`;
       await client.setex(mfaKey, Math.ceil(ttlMs / 1000), JSON.stringify(state));
+    },
+
+    async updatePendingMfa(sessionId: string, pending: MfaPendingSetup) {
+      const key = `pending-mfa:${sessionId}`;
+      await client.setex(key, 300, JSON.stringify(pending)); // 5 min TTL
+    },
+
+    async getPendingMfa(sessionId: string) {
+      const key = `pending-mfa:${sessionId}`;
+      const data = await client.get(key);
+      if (!data) return null;
+      return JSON.parse(data) as MfaPendingSetup;
     },
   };
 

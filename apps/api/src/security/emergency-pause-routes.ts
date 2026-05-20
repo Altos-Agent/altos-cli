@@ -44,9 +44,12 @@ export const registerEmergencyPauseRoutes = async (
 
   server.post("/api/emergency-pause/disable", async (request, reply) => {
     try {
-      await requireRole(_context, request, reply, "admin");
-      await requireReauth(_context, request, reply);
-      await requireConfirmation(_context, request, reply, "DISABLE EMERGENCY PAUSE");
+      const roleOk = await requireRole(_context, request, reply, "admin");
+      if (!roleOk) return;
+      const reauthOk = await requireReauth(_context, request, reply);
+      if (!reauthOk) return;
+      const confirmOk = requireConfirmation(request, reply, "DISABLE EMERGENCY PAUSE");
+      if (!confirmOk) return;
       if (_context.rateLimitProvider) {
         await _context.rateLimitProvider.assertLimit(
           `emergency-pause:disable:${request.ip}`,

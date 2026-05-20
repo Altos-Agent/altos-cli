@@ -57,16 +57,17 @@ export const registerRiskRoutes = async (
   server.patch<{ Body: z.infer<typeof updateLimitsSchema> }>(
     "/api/risk/aggregate/limits",
     async (request, reply) => {
-      try {
-        await requireRole(_context, request, reply, "admin");
-        await requireReauth(_context, request, reply);
-        if (_context.rateLimitProvider) {
-          await _context.rateLimitProvider.assertLimit(
-            `risk:limits:${request.ip}`,
-            10,
-            60_000,
-          );
-        }
+      const authResult = await requireRole(_context, request, reply, "admin");
+      if (authResult) return;
+      const reauthResult = await requireReauth(_context, request, reply);
+      if (reauthResult) return;
+      if (_context.rateLimitProvider) {
+        await _context.rateLimitProvider.assertLimit(
+          `risk:limits:${request.ip}`,
+          10,
+          60_000,
+        );
+      }
       const parsed = updateLimitsSchema.safeParse(request.body);
       if (!parsed.success) {
         return reply.code(400).send({
@@ -75,30 +76,35 @@ export const registerRiskRoutes = async (
         });
       }
 
-      const existing = await getAggregateLimits(db);
-      const updates = parsed.data;
+      try {
+        const existing = await getAggregateLimits(db);
+        const updates = parsed.data;
 
-      if (existing) {
-        const updated = await db
-          .update(aggregateRiskLimits)
-          .set({ ...updates, updatedAt: new Date() })
-          .where(eq(aggregateRiskLimits.chainId, 8453))
-          .returning();
-        return updated[0] ?? existing;
-      } else {
-        const created = await db
-          .insert(aggregateRiskLimits)
-          .values({
-            chainId: 8453,
-            maxDailyTradeUsd: updates.maxDailyTradeUsd ?? "10000",
-            maxDailyGasUsd: updates.maxDailyGasUsd ?? "500",
-            maxPendingTradeUsd: updates.maxPendingTradeUsd ?? "2000",
-            maxPendingWallets: updates.maxPendingWallets ?? 10,
-            maxFailedTxPerDay: updates.maxFailedTxPerDay ?? 5,
-            enabled: updates.enabled ?? true,
-          })
-          .returning();
-        return reply.code(201).send(created[0]);
+        if (existing) {
+          const updated = await db
+            .update(aggregateRiskLimits)
+            .set({ ...updates, updatedAt: new Date() })
+            .where(eq(aggregateRiskLimits.chainId, 8453))
+            .returning();
+          return updated[0] ?? existing;
+        } else {
+          const created = await db
+            .insert(aggregateRiskLimits)
+            .values({
+              chainId: 8453,
+              maxDailyTradeUsd: updates.maxDailyTradeUsd ?? "10000",
+              maxDailyGasUsd: updates.maxDailyGasUsd ?? "500",
+              maxPendingTradeUsd: updates.maxPendingTradeUsd ?? "2000",
+              maxPendingWallets: updates.maxPendingWallets ?? 10,
+              maxFailedTxPerDay: updates.maxFailedTxPerDay ?? 5,
+              enabled: updates.enabled ?? true,
+            })
+            .returning();
+          return reply.code(201).send(created[0]);
+        }
+      } catch (err) {
+        request.log.error({ err }, "Failed to update aggregate limits");
+        return reply.code(500).send({ error: "Internal server error" });
       }
     }
   );

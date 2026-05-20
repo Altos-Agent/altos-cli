@@ -25,13 +25,14 @@ export const requireRole = async (
   request: FastifyRequest,
   reply: FastifyReply,
   requiredRole: OperatorRole
-): Promise<void> => {
+): Promise<boolean> => {
   const session = await context.sessions.get(getSessionIdFromRequest(request));
   const role = (session?.role as OperatorRole) ?? "viewer";
   if (RoleHierarchy[role] < RoleHierarchy[requiredRole]) {
     reply.code(403).send({ error: "Insufficient role" });
-    return;
+    return false;
   }
+  return true;
 };
 
 export const requireReauth = async (
@@ -58,10 +59,11 @@ export const requireReauth = async (
 };
 
 export const requireConfirmation = (
+  request: FastifyRequest,
   reply: FastifyReply,
-  confirmValue: string | undefined,
   requiredPhrase: string
 ): boolean => {
+  const confirmValue = (request.body as { confirm?: string })?.confirm;
   if (confirmValue !== requiredPhrase) {
     reply.code(400).send({
       error: "CONFIRMATION_REQUIRED",

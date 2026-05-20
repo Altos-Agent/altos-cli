@@ -220,19 +220,22 @@ export const registerTradeRoutes = async (
           });
         }
       };
+      const roleOk = await requireRole(_context, request, reply, "admin");
+      if (!roleOk) return;
+      if (!isDryRunEnabled() && !isDemoMode()) {
+        const reauthOk = await requireReauth(_context, request, reply);
+        if (!reauthOk) return;
+        const confirmOk = requireConfirmation(request, reply, "EXECUTE LIVE TRADE");
+        if (!confirmOk) return;
+      }
+      if (_context.rateLimitProvider) {
+        await _context.rateLimitProvider.assertLimit(
+          `execute-once:${request.ip}`,
+          10,
+          60_000,
+        );
+      }
       try {
-        await requireRole(_context, request, reply, "admin");
-        if (!isDryRunEnabled() && !isDemoMode()) {
-          await requireReauth(_context, request, reply);
-          await requireConfirmation(_context, request, reply, "EXECUTE LIVE TRADE");
-        }
-        if (_context.rateLimitProvider) {
-          await _context.rateLimitProvider.assertLimit(
-            `execute-once:${request.ip}`,
-            10,
-            60_000,
-          );
-        }
         input = parseRequestBody(executeOnceSchema, request.body);
       } catch (error) {
         return handleValidationError(error, reply);

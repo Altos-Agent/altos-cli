@@ -94,51 +94,54 @@ export class NonceReservationService {
     reason: LockReason,
     finalityRequired = false
   ): Promise<NonceReservation> {
-    const canSubmit = await this.canWalletSubmit(walletId);
-    if (!canSubmit.canSubmit) {
-      throw new NonceReservationError(canSubmit.reason ?? "Wallet cannot submit", 409);
-    }
+    return await this.db.transaction(async (tx) => {
+      const [wallet] = await tx
+        .select()
+        .from(wallets)
+        .where(eq(wallets.id, walletId))
+        .limit(1)
+        .for("update");
 
-    const [wallet] = await this.db
-      .select()
-      .from(wallets)
-      .where(eq(wallets.id, walletId))
-      .limit(1);
+      if (!wallet) {
+        throw new NonceReservationError("Wallet not found", 404);
+      }
 
-    if (!wallet) {
-      throw new NonceReservationError("Wallet not found", 404);
-    }
+      const canSubmit = await this.canWalletSubmit(walletId);
+      if (!canSubmit.canSubmit) {
+        throw new NonceReservationError(canSubmit.reason ?? "Wallet cannot submit", 409);
+      }
 
-    const walletAddress = wallet.address as Address;
-    const pendingNonce = await basePublicClient.getTransactionCount({
-      address: walletAddress,
-      blockTag: "pending",
+      const walletAddress = wallet.address as Address;
+      const pendingNonce = await basePublicClient.getTransactionCount({
+        address: walletAddress,
+        blockTag: "pending",
+      });
+      const latestNonce = await basePublicClient.getTransactionCount({
+        address: walletAddress,
+        blockTag: "latest",
+      });
+
+      const reservedNonce = Math.max(Number(pendingNonce), Number(latestNonce));
+
+      const [newLock] = await tx
+        .insert(pendingWalletLocks)
+        .values({
+          walletId,
+          lockedByRequestId: walletId, // FK placeholder; real requestId attached later
+          nonce: reservedNonce,
+          lockReason: reason,
+          status: "ACTIVE",
+          finalityRequired,
+          expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 min default expiry
+        })
+        .returning();
+
+      if (!newLock) {
+        throw new NonceReservationError("Failed to create nonce reservation", 500);
+      }
+
+      return { reservationId: newLock.id, nonce: reservedNonce };
     });
-    const latestNonce = await basePublicClient.getTransactionCount({
-      address: walletAddress,
-      blockTag: "latest",
-    });
-
-    const reservedNonce = Math.max(Number(pendingNonce), Number(latestNonce));
-
-    const [newLock] = await this.db
-      .insert(pendingWalletLocks)
-      .values({
-        walletId,
-        lockedByRequestId: walletId, // FK placeholder; real requestId attached later
-        nonce: reservedNonce,
-        lockReason: reason,
-        status: "ACTIVE",
-        finalityRequired,
-        expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 min default expiry
-      })
-      .returning();
-
-    if (!newLock) {
-      throw new NonceReservationError("Failed to create nonce reservation", 500);
-    }
-
-    return { reservationId: newLock.id, nonce: reservedNonce };
   }
 
   async attachSubmittedTx(
@@ -191,8 +194,8 @@ export class NonceReservationService {
   async forceReleaseWithOperatorApproval(
     walletId: string,
     reservationId: string,
-    operatorId: string,
     reason: string,
+    operatorId?: string,
     operatorNotes?: string
   ): Promise<void> {
     const [lock] = await this.db

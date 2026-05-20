@@ -22,6 +22,8 @@ import {
 } from "../vault/vault-lock.js";
 import { createWalletService, isWalletError } from "./wallet-service.js";
 import type { ImportWalletInput, UpdateWalletInput } from "./types.js";
+import { requireRole } from "../auth/rbac.js";
+import type { AuthContext } from "../auth/auth-middleware.js";
 
 interface IdParams {
   id: string;
@@ -47,7 +49,8 @@ const handleWalletError = (error: unknown) => {
 
 export const registerWalletRoutes = async (
   server: FastifyInstance,
-  db: DbClient
+  db: DbClient,
+  _context: AuthContext
 ) => {
   const walletService = createWalletService(db);
 
@@ -75,6 +78,14 @@ export const registerWalletRoutes = async (
     "/api/wallets/import",
     async (request, reply) => {
       try {
+        await requireRole(_context, request, reply, "operator");
+        if (_context.rateLimitProvider) {
+          await _context.rateLimitProvider.assertLimit(
+            `wallet:import:${request.ip}`,
+            10,
+            60_000,
+          );
+        }
         const body = parseRequestBody(importWalletSchema, request.body);
         const wallet = await walletService.importWallet(body);
         return reply.code(201).send(wallet);
@@ -95,6 +106,14 @@ export const registerWalletRoutes = async (
     };
   }>("/api/wallets/bulk/import-encrypted", async (request, reply) => {
     try {
+      await requireRole(_context, request, reply, "admin");
+      if (_context.rateLimitProvider) {
+        await _context.rateLimitProvider.assertLimit(
+          `wallet:import-encrypted:${request.ip}`,
+          5,
+          60_000,
+        );
+      }
       const body = parseRequestBody(
         importEncryptedWalletBackupSchema,
         request.body
@@ -127,6 +146,14 @@ export const registerWalletRoutes = async (
     "/api/wallets/bulk/export-encrypted",
     async (request, reply) => {
       try {
+        await requireRole(_context, request, reply, "admin");
+        if (_context.rateLimitProvider) {
+          await _context.rateLimitProvider.assertLimit(
+            `wallet:export:${request.ip}`,
+            5,
+            60_000,
+          );
+        }
         assertVaultForSensitiveBackup();
         const body = parseRequestBody(walletIdsSchema, request.body);
         return await walletService.exportEncryptedWalletBackup(body);
@@ -259,6 +286,7 @@ export const registerWalletRoutes = async (
     async (request, reply) => {
       try {
         const params = parseIdParams(request.params);
+        await requireRole(_context, request, reply, "admin");
         assertNoRequestBody(request.body);
         assertVaultForSensitiveBackup();
         return await walletService.rotateWalletKey(params.id);
@@ -276,6 +304,14 @@ export const registerWalletRoutes = async (
     async (request, reply) => {
       try {
         const params = parseIdParams(request.params);
+        await requireRole(_context, request, reply, "operator");
+        if (_context.rateLimitProvider) {
+          await _context.rateLimitProvider.assertLimit(
+            `wallet:delete:${params.id}:${request.ip}`,
+            10,
+            60_000,
+          );
+        }
         assertNoRequestBody(request.body);
         return await walletService.deleteWallet(params.id);
       } catch (error) {

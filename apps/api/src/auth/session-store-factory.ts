@@ -4,20 +4,33 @@ import type { RuntimeConfig } from "../config/env.js";
 export interface OperatorSession {
   id: string;
   username: string;
+  role: "viewer" | "operator" | "admin";
   csrfToken: string;
   expiresAt: number;
   createdAt: number;
+  lastReauthAt: number; // unix ms, 0 if never re-authed
+}
+
+export interface MfaState {
+  mfaEnabled: boolean;
+  totpSecretEncrypted: string | null;
+  mfaRecoveryCodesHashed: string[] | null;
+  mfaEnabledAt: string | null;
 }
 
 export interface SessionStore {
   readonly name: "redis" | "memory";
   readonly isDistributed: boolean;
   create(username: string): Promise<OperatorSession>;
+  createWithRole(username: string, role: "viewer" | "operator" | "admin"): Promise<OperatorSession>;
   get(sessionId: string | undefined): Promise<OperatorSession | null>;
   touch(sessionId: string | undefined): Promise<void>;
   delete(sessionId: string | undefined): Promise<void>;
   deleteAllSessionsForUser(username: string): Promise<void>;
   cleanupExpiredSessions(): Promise<void>;
+  updateLastReauthAt(sessionId: string | undefined): Promise<void>;
+  getMfaSettings(username: string): Promise<MfaState | null>;
+  setMfaEnabled(sessionId: string, state: MfaState): Promise<void>;
 }
 
 const sessionTtlMsDefault = 12 * 60 * 60 * 1000;
@@ -35,9 +48,11 @@ export const createInMemorySessionStore = (): SessionStore => {
       const session: OperatorSession = {
         id: randomToken(),
         username,
+        role: "admin",
         csrfToken: randomToken(),
         createdAt: Date.now(),
         expiresAt: Date.now() + sessionTtlMsDefault,
+        lastReauthAt: 0,
       };
       sessions.set(session.id, session);
       return session;
@@ -55,6 +70,8 @@ export const createInMemorySessionStore = (): SessionStore => {
         sessions.delete(sessionId);
         return null;
       }
+      session.lastReauthAt = Date.now();
+      sessions.set(sessionId, session);
       return session;
     },
 
@@ -63,6 +80,7 @@ export const createInMemorySessionStore = (): SessionStore => {
       const session = sessions.get(sessionId);
       if (session && session.expiresAt > Date.now()) {
         session.expiresAt = Date.now() + sessionTtlMsDefault;
+        session.lastReauthAt = Date.now();
         sessions.set(sessionId, session);
       }
     },
@@ -87,6 +105,15 @@ export const createInMemorySessionStore = (): SessionStore => {
         if (session.expiresAt <= now) {
           sessions.delete(id);
         }
+      }
+    },
+
+    async updateLastReauthAt(sessionId: string | undefined) {
+      if (!sessionId) return;
+      const session = sessions.get(sessionId);
+      if (session && session.expiresAt > Date.now()) {
+        session.lastReauthAt = Date.now();
+        sessions.set(sessionId, session);
       }
     },
   };
@@ -127,9 +154,11 @@ export const createRedisSessionStore = async (
       const session: OperatorSession = {
         id,
         username,
+        role: "admin",
         csrfToken,
         createdAt: now,
         expiresAt: now + ttlMs,
+        lastReauthAt: 0,
       };
       const key = `session:${id}`;
       await client.setex(key, Math.ceil(ttlMs / 1000), JSON.stringify(session));
@@ -160,6 +189,7 @@ export const createRedisSessionStore = async (
         return;
       }
       session.expiresAt = Date.now() + ttlMs;
+      session.lastReauthAt = Date.now();
       await client.setex(key, Math.ceil(ttlMs / 1000), JSON.stringify(session));
     },
 
@@ -215,6 +245,20 @@ export const createRedisSessionStore = async (
 
     async cleanupExpiredSessions() {
       // Redis TTL handles expiration; nothing to do here
+    },
+
+    async updateLastReauthAt(sessionId: string | undefined) {
+      if (!sessionId) return;
+      const key = `session:${sessionId}`;
+      const data = await client.get(key);
+      if (!data) return;
+      const session: OperatorSession = JSON.parse(data);
+      if (session.expiresAt <= Date.now()) {
+        await client.del(key);
+        return;
+      }
+      session.lastReauthAt = Date.now();
+      await client.setex(key, Math.ceil(ttlMs / 1000), JSON.stringify(session));
     },
   };
 

@@ -22,6 +22,7 @@ import {
   handleValidationError,
   parseRequestBody,
 } from "../http/validation.js";
+import { RateLimitExceeded } from "../http/rate-limit-provider.js";
 import { createTelegramService } from "../notifications/telegram.js";
 import { getQuote } from "../quote/quoteEngine.js";
 import { estimateTradeUsd, evaluateTradeRisk } from "../strategy/planner.js";
@@ -55,6 +56,7 @@ import {
   VaultLockedError,
 } from "../vault/vault-lock.js";
 import { evaluateLiveExecutionSafety } from "./live-execution.js";
+import { getCurrentTraceId } from "../http/request-context.js";
 import {
   hashObject,
   hashString,
@@ -64,6 +66,8 @@ import {
   TransactionManager
 } from "../transactions/transaction-manager.js";
 import { NonceReservationService, NonceReservationError } from "../nonce/nonce-reservation.js";
+import { requireRole, requireReauth, requireConfirmation } from "../auth/rbac.js";
+import type { AuthContext } from "../auth/auth-middleware.js";
 
 interface ExecuteOnceInput {
   walletId: string;
@@ -108,6 +112,7 @@ const storeTransaction = async ({
   quoteUsdSource,
   riskCheckedAt,
   aggregateRiskSnapshotJson,
+  traceId,
 }: {
   db: DbClient;
   input: ExecuteOnceInput;
@@ -137,6 +142,7 @@ const storeTransaction = async ({
   quoteUsdSource?: string | null;
   riskCheckedAt?: Date | null;
   aggregateRiskSnapshotJson?: Record<string, unknown> | null;
+  traceId?: string | null;
 }) => {
   const [transaction] = await db
     .insert(transactions)
@@ -173,6 +179,7 @@ const storeTransaction = async ({
       nonce: nonce ?? null,
       quoteHash: quoteHash ?? null,
       simulationHash: simulationHash ?? null,
+      traceId: traceId ?? getCurrentTraceId(),
     })
     .returning();
 
@@ -182,6 +189,7 @@ const storeTransaction = async ({
 export const registerTradeRoutes = async (
   server: FastifyInstance,
   db: DbClient,
+  _context: AuthContext,
 ) => {
   const transactionManager = new TransactionManager(db);
   const nonceReservation = new NonceReservationService(db);
@@ -213,6 +221,18 @@ export const registerTradeRoutes = async (
         }
       };
       try {
+        await requireRole(_context, request, reply, "admin");
+        if (!isDryRunEnabled() && !isDemoMode()) {
+          await requireReauth(_context, request, reply);
+          await requireConfirmation(_context, request, reply, "EXECUTE LIVE TRADE");
+        }
+        if (_context.rateLimitProvider) {
+          await _context.rateLimitProvider.assertLimit(
+            `execute-once:${request.ip}`,
+            10,
+            60_000,
+          );
+        }
         input = parseRequestBody(executeOnceSchema, request.body);
       } catch (error) {
         return handleValidationError(error, reply);

@@ -14,6 +14,7 @@ import {
   unlockVault,
   VaultLockedError,
 } from "./vault-lock.js";
+import { requireRole } from "../auth/rbac.js";
 
 type UnlockBody = z.input<typeof vaultUnlockSchema>;
 
@@ -47,6 +48,7 @@ export const registerVaultRoutes = async (
 
   server.post<{ Body: UnlockBody }>("/api/vault/unlock", async (request, reply) => {
     try {
+      await requireRole(_context, request, reply, "admin");
       if (_context?.rateLimitProvider) {
         try {
           await _context.rateLimitProvider.assertLimit(
@@ -77,6 +79,21 @@ export const registerVaultRoutes = async (
 
   server.post("/api/vault/lock", async (request, reply) => {
     try {
+      await requireRole(_context, request, reply, "admin");
+      if (_context?.rateLimitProvider) {
+        try {
+          await _context.rateLimitProvider.assertLimit(
+            `vault:lock:${request.ip}`,
+            10,
+            60_000,
+          );
+        } catch (error) {
+          if (error instanceof RateLimitExceeded) {
+            return handleRateLimitError(error, reply);
+          }
+          throw error;
+        }
+      }
       assertNoRequestBody(request.body);
       return lockVault();
     } catch (error) {

@@ -83,12 +83,30 @@ export const registerAuthRoutes = async (
       return reply.code(401).send({ error: "Invalid credentials" });
     }
 
+    // Check MFA state
+    const mfaState = await context.sessions.getMfaSettings?.(username);
+    if (mfaState?.mfaEnabled) {
+      const tempSession = await context.sessions.create?.(username);
+      return reply.code(200).send({ requiresMfa: true, tempSessionId: tempSession?.id ?? null });
+    }
+
     const session = await context.sessions.create(username);
     reply.header("set-cookie", sessionCookie(context.config, session.id, 43200));
     return {
       authenticated: true,
       username,
     };
+  });
+
+  server.post("/api/auth/reauth", async (request, reply) => {
+    const session = await context.sessions.get(getSessionIdFromRequest(request));
+    if (!session) return reply.code(401).send({ error: "Authentication required" });
+    const body = request.body as { password: string };
+    const { verifyOperatorPassword } = await import("./password.js");
+    const valid = await verifyOperatorPassword(context.config, session.username, body.password);
+    if (!valid) return reply.code(401).send({ error: "Invalid password" });
+    await context.sessions.updateLastReauthAt(session.id);
+    return { reauthenticated: true, lastReauthAt: Date.now() };
   });
 
   server.post("/api/auth/logout", async (request, reply) => {

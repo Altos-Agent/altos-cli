@@ -39,6 +39,7 @@ const randomToken = () => randomBytes(32).toString("base64url");
 
 export const createInMemorySessionStore = (): SessionStore => {
   const sessions = new Map<string, OperatorSession>();
+  const mfaStates = new Map<string, MfaState>();
 
   return {
     name: "memory",
@@ -49,6 +50,20 @@ export const createInMemorySessionStore = (): SessionStore => {
         id: randomToken(),
         username,
         role: "admin",
+        csrfToken: randomToken(),
+        createdAt: Date.now(),
+        expiresAt: Date.now() + sessionTtlMsDefault,
+        lastReauthAt: 0,
+      };
+      sessions.set(session.id, session);
+      return session;
+    },
+
+    async createWithRole(username: string, role: "viewer" | "operator" | "admin") {
+      const session: OperatorSession = {
+        id: randomToken(),
+        username,
+        role,
         csrfToken: randomToken(),
         createdAt: Date.now(),
         expiresAt: Date.now() + sessionTtlMsDefault,
@@ -114,6 +129,17 @@ export const createInMemorySessionStore = (): SessionStore => {
       if (session && session.expiresAt > Date.now()) {
         session.lastReauthAt = Date.now();
         sessions.set(sessionId, session);
+      }
+    },
+
+    async getMfaSettings(username: string) {
+      return mfaStates.get(username) ?? null;
+    },
+
+    async setMfaEnabled(sessionId: string, state: MfaState) {
+      const session = sessions.get(sessionId);
+      if (session) {
+        mfaStates.set(session.username, state);
       }
     },
   };
@@ -259,6 +285,40 @@ export const createRedisSessionStore = async (
       }
       session.lastReauthAt = Date.now();
       await client.setex(key, Math.ceil(ttlMs / 1000), JSON.stringify(session));
+    },
+
+    async createWithRole(username: string, role: "viewer" | "operator" | "admin") {
+      const id = randomToken();
+      const csrfToken = randomToken();
+      const now = Date.now();
+      const session: OperatorSession = {
+        id,
+        username,
+        role,
+        csrfToken,
+        createdAt: now,
+        expiresAt: now + ttlMs,
+        lastReauthAt: 0,
+      };
+      const key = `session:${id}`;
+      await client.setex(key, Math.ceil(ttlMs / 1000), JSON.stringify(session));
+      return session;
+    },
+
+    async getMfaSettings(username: string) {
+      const key = `mfa:user:${username}`;
+      const data = await client.get(key);
+      if (!data) return null;
+      return JSON.parse(data) as MfaState;
+    },
+
+    async setMfaEnabled(sessionId: string, state: MfaState) {
+      const key = `session:${sessionId}`;
+      const data = await client.get(key);
+      if (!data) return;
+      const session: OperatorSession = JSON.parse(data);
+      const mfaKey = `mfa:user:${session.username}`;
+      await client.setex(mfaKey, Math.ceil(ttlMs / 1000), JSON.stringify(state));
     },
   };
 

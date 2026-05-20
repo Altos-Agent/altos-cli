@@ -18,6 +18,8 @@ import {
   getOccurrencesForSchedule,
   getOccurrencesForWallet,
 } from "./occurrence.service.js";
+import { requireRole } from "../auth/rbac.js";
+import type { AuthContext } from "../auth/auth-middleware.js";
 
 interface IdParams {
   id: string;
@@ -44,7 +46,7 @@ const handleSchedulerError = (error: unknown) => {
   throw error;
 };
 
-export const createSchedulerRoutes = (db: DbClient) => {
+export const createSchedulerRoutes = (db: DbClient, _context: AuthContext) => {
   const scheduler = new SchedulerService(db);
 
   return async (server: FastifyInstance) => {
@@ -52,6 +54,14 @@ export const createSchedulerRoutes = (db: DbClient) => {
 
     server.post("/api/scheduler/start", async (request, reply) => {
       try {
+        await requireRole(_context, request, reply, "admin");
+        if (_context.rateLimitProvider) {
+          await _context.rateLimitProvider.assertLimit(
+            `scheduler:start:${request.ip}`,
+            10,
+            60_000,
+          );
+        }
         assertNoRequestBody(request.body);
         return await scheduler.start();
       } catch (error) {
@@ -82,6 +92,14 @@ export const createSchedulerRoutes = (db: DbClient) => {
 
     server.post("/api/scheduler/purge", async (request, reply) => {
       try {
+        await requireRole(_context, request, reply, "admin");
+        if (_context.rateLimitProvider) {
+          await _context.rateLimitProvider.assertLimit(
+            `scheduler:purge:${request.ip}`,
+            3,
+            60_000,
+          );
+        }
         const body = parseRequestBody(schedulerPurgeSchema, request.body);
         return await scheduler.purgeQueues(body.confirm);
       } catch (error) {

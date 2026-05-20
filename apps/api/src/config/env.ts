@@ -157,6 +157,13 @@ const envSchema = z
           message: "SESSION_SECRET must be set explicitly in production",
         });
       }
+      if (!env.METRICS_TOKEN) {
+        context.addIssue({
+          code: "custom",
+          path: ["METRICS_TOKEN"],
+          message: "METRICS_TOKEN is required in production",
+        });
+      }
     }
   });
 

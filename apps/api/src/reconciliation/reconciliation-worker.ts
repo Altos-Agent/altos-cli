@@ -16,7 +16,7 @@ export interface ReconciliationJob {
 }
 
 export const processReconciliationJob =
-  (db: DbClient, queues: SchedulerQueues) =>
+  (db: DbClient) =>
   async (job: Job<ReconciliationJob>) => {
     const nonceService = new NonceReservationService(db);
 

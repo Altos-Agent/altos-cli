@@ -375,6 +375,7 @@ export class SchedulerService {
       queues.tradeQueue.drain(true),
       queues.confirmationQueue.drain(true),
       queues.notificationQueue.drain(true),
+      queues.reconciliationQueue.drain(true),
     ]);
     if (shouldClose) {
       await this.closeQueues(queues);
@@ -580,7 +581,7 @@ export class SchedulerService {
       new Worker(queueNames.notification, processNotificationJob(this.db), workerOptions),
       new Worker(
         queueNames.reconciliation,
-        processReconciliationJob(this.db, queues),
+        processReconciliationJob(this.db),
         workerOptions,
       ),
     ];

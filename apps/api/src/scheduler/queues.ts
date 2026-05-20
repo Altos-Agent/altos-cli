@@ -1,6 +1,7 @@
 import { Queue, type JobsOptions, type QueueOptions } from "bullmq";
 import { getRuntimeConfig } from "../config/runtime-config.js";
 import { isSafeToRetryJob, isRetryableErrorCode, type ProviderError } from "../errors/provider.errors.js";
+import type { ReconciliationJob } from "../reconciliation/reconciliation-worker.js";
 
 export const queueNames = {
   quote: "quoteQueue",
@@ -49,10 +50,6 @@ export interface NotificationJob {
   walletId?: string | null;
   transactionId?: string | null;
   requestId?: string | null;
-}
-
-export interface ReconciliationJob {
-  walletId: string;
 }
 
 const redisConnection = () => {

@@ -25,6 +25,52 @@ const validEnv = {
   SESSION_SECRET: "0123456789abcdef0123456789abcdef",
 };
 
+describe("OPERATOR_ROLE env", () => {
+  it("accepts valid role values", () => {
+    const result = parseRuntimeEnv({
+      NODE_ENV: "development",
+      OPERATOR_ROLE: "admin",
+      OPERATOR_PASSWORD: "test",
+      SESSION_SECRET: "0123456789abcdef0123456789abcdef",
+    });
+    expect(result.operatorRole).toBe("admin");
+  });
+
+  it("rejects invalid role value", () => {
+    expect(() =>
+      parseRuntimeEnv({
+        NODE_ENV: "development",
+        OPERATOR_ROLE: "superadmin",
+        OPERATOR_PASSWORD: "test",
+        SESSION_SECRET: "0123456789abcdef0123456789abcdef",
+      })
+    ).toThrow();
+  });
+});
+
+describe("SESSION_TTL_SECONDS env", () => {
+  it("accepts valid values", () => {
+    const result = parseRuntimeEnv({
+      NODE_ENV: "development",
+      OPERATOR_PASSWORD: "test",
+      SESSION_SECRET: "0123456789abcdef0123456789abcdef",
+      SESSION_TTL_SECONDS: "3600",
+    });
+    expect(result.sessionTtlSeconds).toBe(3600);
+  });
+
+  it("rejects below minimum", () => {
+    expect(() =>
+      parseRuntimeEnv({
+        NODE_ENV: "development",
+        OPERATOR_PASSWORD: "test",
+        SESSION_SECRET: "0123456789abcdef0123456789abcdef",
+        SESSION_TTL_SECONDS: "100",
+      })
+    ).toThrow();
+  });
+});
+
 describe("runtime env validation", () => {
   it("parses safe local defaults", () => {
     const config = parseRuntimeEnv(validEnv);

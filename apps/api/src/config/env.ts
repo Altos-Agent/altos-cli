@@ -73,6 +73,9 @@ const envSchema = z
     OPERATOR_USERNAME: z.string().min(1).default("operator"),
     OPERATOR_PASSWORD_HASH: operatorPasswordHashEnv,
     OPERATOR_PASSWORD: z.string().optional(),
+    OPERATOR_ROLE: z.enum(["viewer", "operator", "admin"]).default("admin"),
+    SESSION_TTL_SECONDS: z.coerce.number().int().min(300).max(86400).default(43200),
+    TOTP_ISSUER: z.string().default("BaseOrchestrator"),
     SESSION_SECRET: z
       .string()
       .min(32)
@@ -206,6 +209,9 @@ export const parseRuntimeEnv = (env: Record<string, string | undefined>) => {
     operatorPasswordHash: parsed.data.OPERATOR_PASSWORD_HASH ?? null,
     operatorPassword: parsed.data.OPERATOR_PASSWORD ?? null,
     sessionSecret: parsed.data.SESSION_SECRET,
+    operatorRole: parsed.data.OPERATOR_ROLE,
+    sessionTtlSeconds: parsed.data.SESSION_TTL_SECONDS,
+    totpIssuer: parsed.data.TOTP_ISSUER,
     vaultUnlockPassphrase: parsed.data.VAULT_UNLOCK_PASSPHRASE ?? null,
     vaultAutoLockMs: parsed.data.VAULT_AUTO_LOCK_MS,
     walletLockTtlMs: parsed.data.WALLET_LOCK_TTL_MS,

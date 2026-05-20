@@ -24,6 +24,8 @@ import {
   transactionToRouteResult,
   TransactionManager
 } from "../transactions/transaction-manager.js";
+import { requireRole, requireReauth, requireConfirmation } from "../auth/rbac.js";
+import type { AuthContext } from "../auth/auth-middleware.js";
 
 interface IdParams {
   id: string;
@@ -60,7 +62,8 @@ const handleApprovalError = (error: unknown) => {
 
 export const registerApprovalRoutes = async (
   server: FastifyInstance,
-  db: DbClient
+  db: DbClient,
+  _context: AuthContext
 ) => {
   const approvalService = createApprovalService(db);
   const transactionManager = new TransactionManager(db);
@@ -92,6 +95,16 @@ export const registerApprovalRoutes = async (
     "/api/wallets/:id/approve",
     async (request, reply) => {
       try {
+        await requireRole(_context, request, reply, "admin");
+        await requireReauth(_context, request, reply);
+        await requireConfirmation(_context, request, reply, "APPROVE LIVE");
+        if (_context.rateLimitProvider) {
+          await _context.rateLimitProvider.assertLimit(
+            `approve:${params.id}:${request.ip}`,
+            20,
+            60_000,
+          );
+        }
         const params = parseIdParams(request.params);
         await assertLiveWriteAllowed();
         const body = parseRequestBody(approvalRequestSchema, request.body);
@@ -154,6 +167,16 @@ export const registerApprovalRoutes = async (
     "/api/wallets/:id/revoke",
     async (request, reply) => {
       try {
+        await requireRole(_context, request, reply, "admin");
+        await requireReauth(_context, request, reply);
+        await requireConfirmation(_context, request, reply, "REVOKE APPROVAL");
+        if (_context.rateLimitProvider) {
+          await _context.rateLimitProvider.assertLimit(
+            `revoke:${params.id}:${request.ip}`,
+            20,
+            60_000,
+          );
+        }
         const params = parseIdParams(request.params);
         await assertLiveWriteAllowed();
         const body = parseRequestBody(

@@ -1,6 +1,10 @@
 import type { FastifyInstance } from "fastify";
 import { eq } from "drizzle-orm";
 import {
+  createWalletGroupSchema,
+  updateWalletGroupSchema,
+  createStrategyProfileSchema,
+  updateStrategyProfileSchema,
   pairCreateSchema,
   pairUpdateSchema,
   routerUpdateSchema,
@@ -21,6 +25,8 @@ import {
 } from "./management-service.js";
 import { transactions, scheduleOccurrences } from "../db/schema.js";
 import { getOccurrenceById } from "../scheduler/occurrence.service.js";
+import { requireRole } from "../auth/rbac.js";
+import type { AuthContext } from "../auth/auth-middleware.js";
 
 interface IdParams {
   id: string;
@@ -39,7 +45,8 @@ const handleError = (error: unknown) => {
 
 export const registerManagementRoutes = async (
   server: FastifyInstance,
-  db: DbClient
+  db: DbClient,
+  _context: AuthContext
 ) => {
   const service = createManagementService(db);
 
@@ -62,6 +69,14 @@ export const registerManagementRoutes = async (
     "/api/tokens/:id",
     async (request, reply) => {
       try {
+        await requireRole(_context, request, reply, "operator");
+        if (_context.rateLimitProvider) {
+          await _context.rateLimitProvider.assertLimit(
+            `tokens:update:${request.ip}`,
+            20,
+            60_000,
+          );
+        }
         const params = parseIdParams(request.params);
         const body = parseRequestBody(tokenUpdateSchema, request.body);
         return await service.updateToken(
@@ -120,6 +135,14 @@ export const registerManagementRoutes = async (
     "/api/pairs/:id",
     async (request, reply) => {
       try {
+        await requireRole(_context, request, reply, "operator");
+        if (_context.rateLimitProvider) {
+          await _context.rateLimitProvider.assertLimit(
+            `pairs:update:${request.ip}`,
+            20,
+            60_000,
+          );
+        }
         const params = parseIdParams(request.params);
         const body = parseRequestBody(pairUpdateSchema, request.body);
         return await service.updatePair(
@@ -164,6 +187,14 @@ export const registerManagementRoutes = async (
     "/api/routers/:id",
     async (request, reply) => {
       try {
+        await requireRole(_context, request, reply, "operator");
+        if (_context.rateLimitProvider) {
+          await _context.rateLimitProvider.assertLimit(
+            `routers:update:${request.ip}`,
+            20,
+            60_000,
+          );
+        }
         const params = parseIdParams(request.params);
         const body = parseRequestBody(routerUpdateSchema, request.body);
         return await service.updateRouter(
@@ -225,6 +256,108 @@ export const registerManagementRoutes = async (
       const params = parseIdParams(request.params);
       const body = parseRequestBody(walletPairRulesSchema, request.body);
       return await service.putWalletPairRules(params.id, body);
+    } catch (error) {
+      const validation = handleValidationError(error, reply);
+      if (validation) return validation;
+      const handled = handleError(error);
+      return reply.code(handled.statusCode).send(handled.body);
+    }
+  });
+
+  // ── Wallet Groups ────────────────────────────────────────────────────────────
+
+  server.get("/api/wallet-groups", async () => await service.listWalletGroups());
+  server.post<{ Body: Parameters<typeof service.createWalletGroup>[0] }>(
+    "/api/wallet-groups",
+    async (request, reply) => {
+      try {
+        await requireRole(_context, request, reply, "operator");
+        const body = parseRequestBody(createWalletGroupSchema, request.body);
+        return reply.code(201).send(await service.createWalletGroup(body as Parameters<typeof service.createWalletGroup>[0]));
+      } catch (error) {
+        const validation = handleValidationError(error, reply);
+        if (validation) return validation;
+        const handled = handleError(error);
+        return reply.code(handled.statusCode).send(handled.body);
+      }
+    }
+  );
+  server.patch<{
+    Params: IdParams;
+    Body: Parameters<typeof service.updateWalletGroup>[1];
+  }>("/api/wallet-groups/:id", async (request, reply) => {
+    try {
+      await requireRole(_context, request, reply, "operator");
+      const params = parseIdParams(request.params);
+      const body = parseRequestBody(updateWalletGroupSchema, request.body);
+      return await service.updateWalletGroup(
+        params.id,
+        body as Parameters<typeof service.updateWalletGroup>[1]
+      );
+    } catch (error) {
+      const validation = handleValidationError(error, reply);
+      if (validation) return validation;
+      const handled = handleError(error);
+      return reply.code(handled.statusCode).send(handled.body);
+    }
+  });
+  server.delete<{ Params: IdParams }>("/api/wallet-groups/:id", async (request, reply) => {
+    try {
+      await requireRole(_context, request, reply, "operator");
+      const params = parseIdParams(request.params);
+      assertNoRequestBody(request.body);
+      return await service.deleteWalletGroup(params.id);
+    } catch (error) {
+      const validation = handleValidationError(error, reply);
+      if (validation) return validation;
+      const handled = handleError(error);
+      return reply.code(handled.statusCode).send(handled.body);
+    }
+  });
+
+  // ── Strategy Profiles ───────────────────────────────────────────────────────
+
+  server.get("/api/strategy-profiles", async () => await service.listStrategyProfiles());
+  server.post<{ Body: Parameters<typeof service.createStrategyProfile>[0] }>(
+    "/api/strategy-profiles",
+    async (request, reply) => {
+      try {
+        await requireRole(_context, request, reply, "operator");
+        const body = parseRequestBody(createStrategyProfileSchema, request.body);
+        return reply.code(201).send(await service.createStrategyProfile(body as Parameters<typeof service.createStrategyProfile>[0]));
+      } catch (error) {
+        const validation = handleValidationError(error, reply);
+        if (validation) return validation;
+        const handled = handleError(error);
+        return reply.code(handled.statusCode).send(handled.body);
+      }
+    }
+  );
+  server.patch<{
+    Params: IdParams;
+    Body: Parameters<typeof service.updateStrategyProfile>[1];
+  }>("/api/strategy-profiles/:id", async (request, reply) => {
+    try {
+      await requireRole(_context, request, reply, "operator");
+      const params = parseIdParams(request.params);
+      const body = parseRequestBody(updateStrategyProfileSchema, request.body);
+      return await service.updateStrategyProfile(
+        params.id,
+        body as Parameters<typeof service.updateStrategyProfile>[1]
+      );
+    } catch (error) {
+      const validation = handleValidationError(error, reply);
+      if (validation) return validation;
+      const handled = handleError(error);
+      return reply.code(handled.statusCode).send(handled.body);
+    }
+  });
+  server.delete<{ Params: IdParams }>("/api/strategy-profiles/:id", async (request, reply) => {
+    try {
+      await requireRole(_context, request, reply, "operator");
+      const params = parseIdParams(request.params);
+      assertNoRequestBody(request.body);
+      return await service.deleteStrategyProfile(params.id);
     } catch (error) {
       const validation = handleValidationError(error, reply);
       if (validation) return validation;

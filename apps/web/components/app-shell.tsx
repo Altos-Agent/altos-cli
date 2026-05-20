@@ -75,6 +75,7 @@ export const AppShell = async ({ children }: { children: ReactNode }) => {
               {/* Meta row */}
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted">
                 <span className="text-body">{auth.data.username}</span>
+                <RoleBadge role={(auth.data as any).role ?? "viewer"} />
                 <span>{BASE_NATIVE_SYMBOL}</span>
                 <span>{runtimeData?.quoteProvider ?? "mock"}</span>
                 <span>

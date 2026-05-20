@@ -100,6 +100,7 @@ const storeTransaction = async ({
   fromAddress,
   toAddress,
   calldataHash,
+  nonce,
   quoteHash,
   simulationHash,
   usdPriceSource,
@@ -128,6 +129,7 @@ const storeTransaction = async ({
   fromAddress?: string | null;
   toAddress?: string | null;
   calldataHash?: string | null;
+  nonce?: number | null;
   quoteHash?: string | null;
   simulationHash?: string | null;
   usdPriceSource?: string | null;
@@ -168,6 +170,7 @@ const storeTransaction = async ({
       fromAddress: fromAddress ?? null,
       toAddress: toAddress ?? null,
       calldataHash: calldataHash ?? null,
+      nonce: nonce ?? null,
       quoteHash: quoteHash ?? null,
       simulationHash: simulationHash ?? null,
     })
@@ -852,6 +855,7 @@ export const registerTradeRoutes = async (
           fromAddress: context.wallet.address,
           toAddress: txTo,
           calldataHash: quoteCalldataHash,
+          nonce: nonceReservationResult.nonce,
           quoteHash,
           simulationHash,
           sellAmountUsd: proposedTradeUsd.toFixed(2),
@@ -898,6 +902,7 @@ export const registerTradeRoutes = async (
           fromAddress: context.wallet.address,
           toAddress: quote?.txTo ?? null,
           calldataHash: quoteCalldataHash,
+          nonce: null,
           quoteHash,
           simulationHash,
         });

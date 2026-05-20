@@ -61,7 +61,7 @@ import {
   recordTransactionStatus,
   setStuckTransactionCount,
   setDroppedTransactionCount,
-  recordNotificationFailure,
+  recordNotificationDeliveryFailure,
   recordSchedulerJobStatus,
   setQueueDepth,
   recordQuoteProviderFailure,
@@ -118,7 +118,7 @@ describe("metrics registry", () => {
   });
 
   it("records notification failure with channel and error code labels", () => {
-    recordNotificationFailure("telegram", "TELEGRAM_SEND_FAILED");
+    recordNotificationDeliveryFailure("telegram", "TELEGRAM_SEND_FAILED");
     const output = metricsRegistry.format();
     expect(output).toContain("notification_delivery_failures_total");
     expect(output).toContain('channel="telegram"');

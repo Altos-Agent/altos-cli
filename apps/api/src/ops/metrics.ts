@@ -226,6 +226,85 @@ metricsRegistry.registerCounter(
   ["event", "result"],
 );
 
+// ─── Extended operational metrics (Phase 7) ────────────────────────────────
+
+metricsRegistry.registerGauge(
+  "dlq_count",
+  "Current count of unresolved DLQ jobs",
+);
+
+metricsRegistry.registerGauge(
+  "stale_quote_count",
+  "Current count of stale quotes",
+);
+
+metricsRegistry.registerCounter(
+  "simulation_failure_total",
+  "Total simulation failures",
+);
+
+metricsRegistry.registerCounter(
+  "aggregate_risk_reject_total",
+  "Total aggregate risk rejections",
+);
+
+metricsRegistry.registerGauge(
+  "wallet_quarantine_count",
+  "Current count of quarantined wallets",
+);
+
+metricsRegistry.registerCounter(
+  "provider_429_total",
+  "Total provider 429 rate limit hits",
+  ["provider"],
+);
+
+metricsRegistry.registerGauge(
+  "provider_circuit_state",
+  "Provider circuit state (1=closed, 2=half-open, 3=open)",
+  ["provider"],
+);
+
+metricsRegistry.registerCounter(
+  "notification_failure_total",
+  "Total notification failures",
+  ["channel"],
+);
+
+// ─── Instrumented accessors for extended metrics ───────────────────────────
+
+export const setDlqCount = (count: number) => {
+  metricsRegistry.setGauge("dlq_count", count);
+};
+
+export const setStaleQuoteCount = (count: number) => {
+  metricsRegistry.setGauge("stale_quote_count", count);
+};
+
+export const recordSimulationFailure = () => {
+  metricsRegistry.incrementCounter("simulation_failure_total");
+};
+
+export const recordAggregateRiskReject = () => {
+  metricsRegistry.incrementCounter("aggregate_risk_reject_total");
+};
+
+export const setWalletQuarantineCount = (count: number) => {
+  metricsRegistry.setGauge("wallet_quarantine_count", count);
+};
+
+export const recordProvider429 = (provider: string) => {
+  metricsRegistry.incrementCounter("provider_429_total", [provider]);
+};
+
+export const setProviderCircuitState = (provider: string, state: 1 | 2 | 3) => {
+  metricsRegistry.setGauge("provider_circuit_state", state, [provider]);
+};
+
+export const recordNotificationFailure = (channel: string) => {
+  metricsRegistry.incrementCounter("notification_failure_total", [channel]);
+};
+
 // ─── Instrumented accessors for safe label value derivation ───────────────────
 
 export const recordApiRequest = (
@@ -267,7 +346,7 @@ export const setDroppedTransactionCount = (count: number) => {
   metricsRegistry.setGauge("transaction_dropped_total", count);
 };
 
-export const recordNotificationFailure = (channel: string, errorCode: string) => {
+export const recordNotificationDeliveryFailure = (channel: string, errorCode: string) => {
   metricsRegistry.incrementCounter("notification_delivery_failures_total", [
     channel,
     errorCode,

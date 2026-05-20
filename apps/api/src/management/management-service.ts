@@ -1,4 +1,5 @@
 import { and, eq, inArray } from "drizzle-orm";
+import { getAddress, isAddress } from "viem";
 import { BASE_CHAIN_ID } from "@base-orchestrator/shared";
 import type { DbClient } from "../db/client.js";
 import {
@@ -16,8 +17,10 @@ import {
   defaultMaxSlippageBps,
   RiskPolicyError
 } from "./risk-policy.js";
+import { getCurrentRequestId } from "../http/request-context.js";
 
 type RiskLevel = "LOW" | "MEDIUM" | "HIGH";
+type VerificationStatus = "UNVERIFIED" | "VERIFIED" | "PLACEHOLDER" | "BLOCKED";
 
 export class ManagementError extends Error {
   constructor(
@@ -57,6 +60,109 @@ const toOptionalInteger = (value: string | number | null | undefined) => {
   return numericValue;
 };
 
+const checksumOrNull = (value: string | null | undefined) => {
+  if (!value) return null;
+  if (!isAddress(value)) {
+    throw new ManagementError("Address must be a valid EVM address");
+  }
+  return getAddress(value);
+};
+
+const evidenceRequired = (status: VerificationStatus | undefined) =>
+  status === "VERIFIED";
+
+const assertVerificationEvidence = (
+  entityType: string,
+  input: {
+    verificationStatus?: VerificationStatus | undefined;
+    verificationSource?: string | null | undefined;
+    verificationEvidenceUrl?: string | null | undefined;
+    verifiedBy?: string | null | undefined;
+  }
+) => {
+  if (!evidenceRequired(input.verificationStatus)) return;
+  if (!input.verificationSource || !input.verificationEvidenceUrl || !input.verifiedBy) {
+    throw new ManagementError(
+      `${entityType} VERIFIED status requires verificationSource, verificationEvidenceUrl, and verifiedBy`
+    );
+  }
+};
+
+const assertCanEnableVerificationStatus = (
+  entityType: string,
+  enabled: boolean,
+  status: VerificationStatus
+) => {
+  if (enabled && (status === "BLOCKED" || status === "PLACEHOLDER")) {
+    throw new ManagementError(`${entityType} ${status} records cannot be enabled`);
+  }
+};
+
+const resetVerificationOnSensitiveChange = ({
+  existingStatus,
+  requestedStatus,
+  sensitiveChanged,
+}: {
+  existingStatus: VerificationStatus;
+  requestedStatus?: VerificationStatus | undefined;
+  sensitiveChanged: boolean;
+}) => {
+  if (!sensitiveChanged) return requestedStatus ?? existingStatus;
+  return requestedStatus === "VERIFIED" ? "VERIFIED" : "UNVERIFIED";
+};
+
+const evidenceFieldsForStatus = (
+  status: VerificationStatus,
+  input: {
+    verificationSource?: string | null | undefined;
+    verificationEvidenceUrl?: string | null | undefined;
+    verifiedBy?: string | null | undefined;
+    verificationNotes?: string | null | undefined;
+  },
+  existing?: {
+    verificationSource: string | null;
+    verificationEvidenceUrl?: string | null;
+    verifiedAt: Date | null;
+    verifiedBy: string | null;
+    verificationNotes: string | null;
+  }
+) => {
+  if (status === "VERIFIED") {
+    const verificationSource = input.verificationSource ?? existing?.verificationSource ?? null;
+    const verificationEvidenceUrl =
+      input.verificationEvidenceUrl ?? existing?.verificationEvidenceUrl ?? null;
+    const verifiedBy = input.verifiedBy ?? existing?.verifiedBy ?? null;
+    assertVerificationEvidence("Registry record", {
+      verificationStatus: status,
+      verificationSource,
+      verificationEvidenceUrl,
+      verifiedBy,
+    });
+    return {
+      verificationSource,
+      verificationEvidenceUrl,
+      verifiedBy,
+      verifiedAt: existing?.verifiedAt ?? new Date(),
+      verificationNotes:
+        input.verificationNotes !== undefined
+          ? input.verificationNotes
+          : existing?.verificationNotes ?? null,
+    };
+  }
+
+  return {
+    verificationSource: input.verificationSource ?? (status === "UNVERIFIED" ? null : existing?.verificationSource ?? null),
+    verificationEvidenceUrl:
+      input.verificationEvidenceUrl ?? (status === "UNVERIFIED" ? null : existing?.verificationEvidenceUrl ?? null),
+    verifiedBy: input.verifiedBy ?? (status === "UNVERIFIED" ? null : existing?.verifiedBy ?? null),
+    verifiedAt: status === "UNVERIFIED" ? null : existing?.verifiedAt ?? null,
+    verificationNotes:
+      input.verificationNotes !== undefined
+        ? input.verificationNotes
+        : existing?.verificationNotes ?? null,
+  };
+};
+
 const audit = async (
   db: DbClient,
   action: string,
@@ -69,7 +175,10 @@ const audit = async (
     action,
     entityType,
     entityId,
-    metadataJson
+    metadataJson: {
+      ...(metadataJson ?? {}),
+      requestId: getCurrentRequestId()
+    }
   });
 };
 
@@ -144,20 +253,29 @@ export const createManagementService = (db: DbClient) => ({
   },
 
   async createToken(input: {
-    chainId?: number;
+    chainId?: number | undefined;
     symbol: string;
     name: string;
-    address?: string | null;
+    address?: string | null | undefined;
     decimals: number;
-    riskLevel?: RiskLevel;
-    enabled?: boolean;
-    maxTradeUsd?: string | number | null;
+    riskLevel?: RiskLevel | undefined;
+    enabled?: boolean | undefined;
+    maxTradeUsd?: string | number | null | undefined;
+    verificationStatus?: VerificationStatus | undefined;
+    verificationSource?: string | null | undefined;
+    verificationEvidenceUrl?: string | null | undefined;
+    verifiedBy?: string | null | undefined;
+    verificationNotes?: string | null | undefined;
   }) {
     const enabled = input.enabled === true;
     const riskLevel = input.riskLevel ?? "MEDIUM";
     const maxTradeUsd = toNumericString(input.maxTradeUsd);
+    const verificationStatus = input.verificationStatus ?? "UNVERIFIED";
+    const address = input.address ?? null;
+    const verificationFields = evidenceFieldsForStatus(verificationStatus, input);
 
     assertHighRiskTokenPolicy({ enabled, riskLevel, maxTradeUsd });
+    assertCanEnableVerificationStatus("Token", enabled, verificationStatus);
 
     const token = await getOne(
       await db
@@ -166,11 +284,14 @@ export const createManagementService = (db: DbClient) => ({
           chainId: input.chainId ?? BASE_CHAIN_ID,
           symbol: input.symbol.trim(),
           name: input.name.trim(),
-          address: input.address ?? null,
+          address,
+          checksumAddress: checksumOrNull(address),
           decimals: input.decimals,
           riskLevel,
           maxTradeUsd,
-          enabled
+          enabled,
+          verificationStatus,
+          ...verificationFields
         })
         .returning(),
       "Token"
@@ -191,15 +312,35 @@ export const createManagementService = (db: DbClient) => ({
       "maxTradeUsd" in input
         ? toNumericString(input.maxTradeUsd)
         : existing.maxTradeUsd;
+    const address =
+      "address" in input ? input.address ?? null : existing.address;
+    const sensitiveChanged =
+      ("address" in input && input.address !== existing.address) ||
+      ("decimals" in input && input.decimals !== existing.decimals);
+    const verificationStatus = resetVerificationOnSensitiveChange({
+      existingStatus: existing.verificationStatus,
+      requestedStatus: input.verificationStatus as VerificationStatus | undefined,
+      sensitiveChanged,
+    });
+    const verificationFields = evidenceFieldsForStatus(
+      verificationStatus,
+      input as Parameters<typeof evidenceFieldsForStatus>[1],
+      sensitiveChanged ? undefined : existing
+    );
 
     assertHighRiskTokenPolicy({ enabled, riskLevel, maxTradeUsd });
+    assertCanEnableVerificationStatus("Token", enabled, verificationStatus);
 
     const token = await getOne(
       await db
         .update(tokens)
         .set({
           ...input,
+          address,
+          checksumAddress: checksumOrNull(address),
           maxTradeUsd,
+          verificationStatus,
+          ...verificationFields,
           updatedAt: new Date()
         })
         .where(eq(tokens.id, id))
@@ -209,7 +350,8 @@ export const createManagementService = (db: DbClient) => ({
 
     await audit(db, "token.update", "token", token.id, {
       enabled: token.enabled,
-      riskLevel: token.riskLevel
+      riskLevel: token.riskLevel,
+      verificationStatus: token.verificationStatus
     });
     return token;
   },
@@ -229,12 +371,63 @@ export const createManagementService = (db: DbClient) => ({
   },
 
   async updateRouter(id: string, input: Partial<typeof routers.$inferInsert>) {
+    const existing = await getOne(
+      await db.select().from(routers).where(eq(routers.id, id)),
+      "Router"
+    );
+    const enabled = input.enabled ?? existing.enabled;
+    const address =
+      "address" in input ? input.address ?? null : existing.address;
+    const sensitiveChanged =
+      ("address" in input && input.address !== existing.address) ||
+      ("spenderAddress" in input && input.spenderAddress !== existing.spenderAddress) ||
+      ("txTargetAddress" in input && input.txTargetAddress !== existing.txTargetAddress) ||
+      ("allowanceTargetAddress" in input &&
+        input.allowanceTargetAddress !== existing.allowanceTargetAddress) ||
+      ("functionSelectorAllowlist" in input &&
+        JSON.stringify(input.functionSelectorAllowlist ?? null) !==
+          JSON.stringify(existing.functionSelectorAllowlist ?? null));
+    const verificationStatus = resetVerificationOnSensitiveChange({
+      existingStatus: existing.verificationStatus,
+      requestedStatus: input.verificationStatus as VerificationStatus | undefined,
+      sensitiveChanged,
+    });
+    const verificationFields = evidenceFieldsForStatus(
+      verificationStatus,
+      input as Parameters<typeof evidenceFieldsForStatus>[1],
+      sensitiveChanged ? undefined : existing
+    );
+    assertCanEnableVerificationStatus("Router", enabled, verificationStatus);
+
     const router = await getOne(
-      await db.update(routers).set(input).where(eq(routers.id, id)).returning(),
+      await db
+        .update(routers)
+        .set({
+          ...input,
+          address,
+          checksumAddress: checksumOrNull(address),
+          spenderAddress:
+            "spenderAddress" in input
+              ? input.spenderAddress ?? null
+              : existing.spenderAddress,
+          txTargetAddress:
+            "txTargetAddress" in input
+              ? input.txTargetAddress ?? null
+              : existing.txTargetAddress,
+          allowanceTargetAddress:
+            "allowanceTargetAddress" in input
+              ? input.allowanceTargetAddress ?? null
+              : existing.allowanceTargetAddress,
+          verificationStatus,
+          ...verificationFields,
+        })
+        .where(eq(routers.id, id))
+        .returning(),
       "Router"
     );
     await audit(db, "router.update", "router", router.id, {
-      enabled: router.enabled
+      enabled: router.enabled,
+      verificationStatus: router.verificationStatus
     });
     return router;
   },
@@ -258,20 +451,28 @@ export const createManagementService = (db: DbClient) => ({
   },
 
   async createPair(input: {
-    chainId?: number;
+    chainId?: number | undefined;
     tokenInId: string;
     tokenOutId: string;
-    enabled?: boolean;
-    maxTradeUsd?: string | number | null;
-    maxSlippageBps?: string | number | null;
-    maxPriceImpactBps?: string | number | null;
-    preferredRouter?: string | null;
-    fallbackRouter?: string | null;
+    enabled?: boolean | undefined;
+    maxTradeUsd?: string | number | null | undefined;
+    maxSlippageBps?: string | number | null | undefined;
+    maxPriceImpactBps?: string | number | null | undefined;
+    preferredRouter?: string | null | undefined;
+    fallbackRouter?: string | null | undefined;
+    verificationStatus?: VerificationStatus | undefined;
+    verificationSource?: string | null | undefined;
+    verificationEvidenceUrl?: string | null | undefined;
+    verifiedBy?: string | null | undefined;
+    verificationNotes?: string | null | undefined;
   }) {
     const enabled = input.enabled === true;
     const maxTradeUsd = toNumericString(input.maxTradeUsd);
     const maxSlippageBps =
       toOptionalInteger(input.maxSlippageBps) ?? defaultMaxSlippageBps;
+    const verificationStatus = input.verificationStatus ?? "UNVERIFIED";
+    const verificationFields = evidenceFieldsForStatus(verificationStatus, input);
+    assertCanEnableVerificationStatus("Pair", enabled, verificationStatus);
 
     await validatePairIfEnabled(db, {
       enabled,
@@ -294,7 +495,9 @@ export const createManagementService = (db: DbClient) => ({
           maxSlippageBps,
           maxPriceImpactBps: toOptionalInteger(input.maxPriceImpactBps),
           preferredRouter: input.preferredRouter ?? null,
-          fallbackRouter: input.fallbackRouter ?? null
+          fallbackRouter: input.fallbackRouter ?? null,
+          verificationStatus,
+          ...verificationFields
         })
         .returning(),
       "Pair"
@@ -318,6 +521,22 @@ export const createManagementService = (db: DbClient) => ({
     const tokenOutId = input.tokenOutId ?? existing.tokenOutId;
     const preferredRouter = input.preferredRouter ?? existing.preferredRouter;
     const fallbackRouter = input.fallbackRouter ?? existing.fallbackRouter;
+    const sensitiveChanged =
+      ("tokenInId" in input && input.tokenInId !== existing.tokenInId) ||
+      ("tokenOutId" in input && input.tokenOutId !== existing.tokenOutId) ||
+      ("preferredRouter" in input && input.preferredRouter !== existing.preferredRouter) ||
+      ("fallbackRouter" in input && input.fallbackRouter !== existing.fallbackRouter);
+    const verificationStatus = resetVerificationOnSensitiveChange({
+      existingStatus: existing.verificationStatus,
+      requestedStatus: input.verificationStatus as VerificationStatus | undefined,
+      sensitiveChanged,
+    });
+    const verificationFields = evidenceFieldsForStatus(
+      verificationStatus,
+      input as Parameters<typeof evidenceFieldsForStatus>[1],
+      sensitiveChanged ? undefined : existing
+    );
+    assertCanEnableVerificationStatus("Pair", enabled, verificationStatus);
 
     await validatePairIfEnabled(db, {
       enabled,
@@ -342,6 +561,8 @@ export const createManagementService = (db: DbClient) => ({
             "maxPriceImpactBps" in input
               ? toOptionalInteger(input.maxPriceImpactBps)
               : existing.maxPriceImpactBps,
+          verificationStatus,
+          ...verificationFields,
           updatedAt: new Date()
         })
         .where(eq(pairs.id, id))
@@ -349,7 +570,10 @@ export const createManagementService = (db: DbClient) => ({
       "Pair"
     );
 
-    await audit(db, "pair.update", "pair", pair.id, { enabled: pair.enabled });
+    await audit(db, "pair.update", "pair", pair.id, {
+      enabled: pair.enabled,
+      verificationStatus: pair.verificationStatus
+    });
     return pair;
   },
 

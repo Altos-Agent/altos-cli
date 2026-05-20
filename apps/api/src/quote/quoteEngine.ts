@@ -1,11 +1,13 @@
 import type { QuoteProvider, QuoteRequest } from "./types.js";
+import { normalizedQuoteSchema } from "@base-orchestrator/shared";
 import { MockQuoteProvider } from "./providers/mock.js";
 import { ZeroXQuoteProvider } from "./providers/zeroX.js";
+import { getRuntimeConfig } from "../config/runtime-config.js";
 
 export const getConfiguredQuoteProvider = (): QuoteProvider => {
-  const provider = process.env.QUOTE_PROVIDER ?? "mock";
+  const provider = getRuntimeConfig().quoteProvider;
 
-  if (provider === "zeroX") {
+  if (provider === "0x" || provider === "zeroX") {
     return new ZeroXQuoteProvider();
   }
 
@@ -15,4 +17,4 @@ export const getConfiguredQuoteProvider = (): QuoteProvider => {
 export const getQuote = async (
   request: QuoteRequest,
   provider: QuoteProvider = getConfiguredQuoteProvider()
-) => await provider.getQuote(request);
+) => normalizedQuoteSchema.parse(await provider.getQuote(request));

@@ -8,19 +8,23 @@ import type {
   TransactionStatus
 } from "../lib/types";
 import { formatDateTime, shortenAddress } from "../lib/format";
-import { EmptyState, StatusBadge } from "./ui";
+import { StatusBadge } from "./ui";
+import {
+  DemoBasescanBadge,
+  isDemoBasescanUrl
+} from "./demo-basescan-badge";
 
-const statusOptions = [
+const statusFilters = [
   "ALL",
-  "PLANNED",
   "DRY_RUN",
+  "PLANNED",
   "SUBMITTED",
   "CONFIRMED",
   "FAILED",
   "REJECTED"
 ] as const;
 
-const actionOptions = [
+const actionFilters = [
   "ALL",
   "SWAP",
   "APPROVE",
@@ -28,6 +32,9 @@ const actionOptions = [
   "REVOKE",
   "SIMULATION"
 ] as const;
+
+type StatusFilter = (typeof statusFilters)[number];
+type ActionFilter = (typeof actionFilters)[number];
 
 export const TransactionsTable = ({
   transactions,
@@ -37,8 +44,8 @@ export const TransactionsTable = ({
   wallets: { id: string; name: string }[];
 }) => {
   const [walletId, setWalletId] = useState("ALL");
-  const [status, setStatus] = useState<(typeof statusOptions)[number]>("ALL");
-  const [action, setAction] = useState<(typeof actionOptions)[number]>("ALL");
+  const [status, setStatus] = useState<StatusFilter>("ALL");
+  const [action, setAction] = useState<ActionFilter>("ALL");
 
   const filteredTransactions = useMemo(
     () =>
@@ -48,7 +55,6 @@ export const TransactionsTable = ({
           status === "ALL" || tx.status === (status as TransactionStatus);
         const actionMatch =
           action === "ALL" || tx.action === (action as TransactionAction);
-
         return walletMatch && statusMatch && actionMatch;
       }),
     [action, status, transactions, walletId]
@@ -56,9 +62,47 @@ export const TransactionsTable = ({
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-3 md:grid-cols-3">
+      {/* Filter row */}
+      <div className="flex flex-wrap items-center gap-4">
+        {/* Status pill tabs */}
+        <div className="flex items-center gap-1 rounded-md border border-hairline bg-surface p-1">
+          {statusFilters.map((value) => (
+            <button
+              key={value}
+              className={`rounded-xs px-2.5 py-1 text-xs font-medium transition-colors ${
+                status === value
+                  ? "bg-surface-elevated text-ink"
+                  : "text-muted hover:text-body"
+              }`}
+              type="button"
+              onClick={() => setStatus(value)}
+            >
+              {value === "ALL" ? "All" : value.replace("_", " ")}
+            </button>
+          ))}
+        </div>
+
+        {/* Action pill tabs */}
+        <div className="flex items-center gap-1 rounded-md border border-hairline bg-surface p-1">
+          {actionFilters.map((value) => (
+            <button
+              key={value}
+              className={`rounded-xs px-2.5 py-1 text-xs font-medium transition-colors ${
+                action === value
+                  ? "bg-surface-elevated text-ink"
+                  : "text-muted hover:text-body"
+              }`}
+              type="button"
+              onClick={() => setAction(value)}
+            >
+              {value === "ALL" ? "All" : value}
+            </button>
+          ))}
+        </div>
+
+        {/* Wallet filter */}
         <select
-          className="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200"
+          className="h-8 rounded-md border border-hairline bg-surface-elevated px-2 text-xs text-body"
           value={walletId}
           onChange={(event) => setWalletId(event.target.value)}
         >
@@ -69,95 +113,112 @@ export const TransactionsTable = ({
             </option>
           ))}
         </select>
-        <select
-          className="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200"
-          value={status}
-          onChange={(event) =>
-            setStatus(event.target.value as (typeof statusOptions)[number])
-          }
-        >
-          {statusOptions.map((value) => (
-            <option key={value} value={value}>
-              {value === "ALL" ? "All statuses" : value}
-            </option>
-          ))}
-        </select>
-        <select
-          className="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200"
-          value={action}
-          onChange={(event) =>
-            setAction(event.target.value as (typeof actionOptions)[number])
-          }
-        >
-          {actionOptions.map((value) => (
-            <option key={value} value={value}>
-              {value === "ALL" ? "All actions" : value}
-            </option>
-          ))}
-        </select>
+
+        {/* Count */}
+        <span className="text-xs text-stone">
+          {filteredTransactions.length} / {transactions.length}
+        </span>
       </div>
 
-      {filteredTransactions.length === 0 ? (
-        <EmptyState
-          title="No transactions found"
-          description="Transaction rows will appear after planning and dry-run workflows are connected."
-        />
+      {/* Table */}
+      {transactions.length === 0 ? (
+        <div className="rounded-xl border border-hairline bg-surface p-8 text-center">
+          <p className="text-sm text-muted">No transactions recorded</p>
+          <p className="mt-1 text-xs text-stone">Planned, dry-run, submitted, and confirmed transactions appear here.</p>
+        </div>
+      ) : filteredTransactions.length === 0 ? (
+        <div className="rounded-xl border border-hairline bg-surface p-8 text-center">
+          <p className="text-sm text-muted">No transactions match this filter</p>
+          <p className="mt-1 text-xs text-stone">Try selecting a different status or wallet.</p>
+        </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-white/10">
-          <table className="min-w-full divide-y divide-white/10 text-sm">
-            <thead className="bg-slate-950/60 text-left text-xs uppercase text-slate-500">
-              <tr>
-                <th className="px-4 py-3">Wallet</th>
-                <th className="px-4 py-3">Action</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Pair</th>
-                <th className="px-4 py-3">Tx hash</th>
-                <th className="px-4 py-3">Created</th>
-                <th className="px-4 py-3">Detail</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/10">
-              {filteredTransactions.map((tx) => (
-                <tr key={tx.id}>
-                  <td className="px-4 py-3 text-slate-100">
-                    {tx.walletName ?? tx.walletId}
-                  </td>
-                  <td className="px-4 py-3 text-slate-300">{tx.action}</td>
-                  <td className="px-4 py-3">
-                    <StatusBadge status={tx.status} />
-                  </td>
-                  <td className="px-4 py-3 text-slate-400">
-                    {tx.pair ?? "None"}
-                  </td>
-                  <td className="px-4 py-3">
-                    {tx.txHash && tx.basescanUrl ? (
+        <div className="rounded-xl border border-hairline bg-surface">
+          <div className="divide-y divide-hairline">
+            {filteredTransactions.map((tx) => (
+              <div
+                key={tx.id}
+                className="flex items-center gap-3 px-4 py-3 hover:bg-surface-elevated transition-colors"
+              >
+                {/* Status badge */}
+                <StatusBadge status={tx.status} />
+
+                {/* Wallet name */}
+                <div className="min-w-0 w-28">
+                  <p className="text-sm font-medium text-ink truncate">
+                    {tx.walletName ?? shortenAddress(tx.walletId, 4)}
+                  </p>
+                </div>
+
+                {/* Action */}
+                <div className="w-20 shrink-0">
+                  <span className="rounded-xs border border-hairline bg-surface-elevated px-1.5 py-0.5 text-[11px] font-medium text-muted">
+                    {tx.action}
+                  </span>
+                </div>
+
+                {/* Pair */}
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm text-body truncate">{tx.pair ?? "—"}</p>
+                  {(tx.amountIn || tx.amountOut) && (
+                    <p className="mt-0.5 text-xs text-stone truncate">
+                      {tx.amountIn && tx.tokenIn ? `${tx.amountIn} ${tx.tokenIn}` : ""}
+                      {tx.amountIn && tx.amountOut ? " → " : ""}
+                      {tx.amountOut && tx.tokenOut ? `${tx.amountOut} ${tx.tokenOut}` : ""}
+                    </p>
+                  )}
+                </div>
+
+                {/* Tx hash chip */}
+                <div className="shrink-0">
+                  {tx.txHash && tx.basescanUrl ? (
+                    <div className="flex items-center gap-1.5">
+                      <code className="rounded-xs border border-hairline bg-surface-elevated px-1.5 py-0.5 text-[11px] text-stone">
+                        {shortenAddress(tx.txHash, 4)}
+                      </code>
                       <a
-                        className="text-blue-300 hover:text-blue-100"
+                        className="text-xs text-accent-blue hover:text-accent-blue/80"
                         href={tx.basescanUrl}
                         rel="noreferrer"
                         target="_blank"
                       >
-                        {shortenAddress(tx.txHash)}
+                        ↗
                       </a>
-                    ) : (
-                      <span className="text-slate-500">Pending</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-slate-400">
-                    {formatDateTime(tx.createdAt)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <Link
-                      className="text-blue-300 hover:text-blue-100"
-                      href={`/transactions/${tx.id}`}
-                    >
-                      Open
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      {isDemoBasescanUrl(tx.basescanUrl) && (
+                        <DemoBasescanBadge />
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-xs text-stone">Pending</span>
+                  )}
+                </div>
+
+                {/* Created */}
+                <div className="w-20 shrink-0 text-right">
+                  <p className="text-xs text-stone">
+                    {formatDateTime(tx.createdAt).split(" ")[0]}
+                  </p>
+                  <p className="text-xs text-stone">
+                    {formatDateTime(tx.createdAt).split(" ")[1]}
+                  </p>
+                </div>
+
+                {/* Error indicator */}
+                {tx.errorMessage && (
+                  <span className="shrink-0" title={tx.errorMessage}>
+                    <span className="inline-flex size-1.5 rounded-full bg-accent-red" />
+                  </span>
+                )}
+
+                {/* Open link */}
+                <Link
+                  className="shrink-0 text-xs text-muted hover:text-ink"
+                  href={`/transactions/${tx.id}`}
+                >
+                  Open
+                </Link>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

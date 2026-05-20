@@ -2,15 +2,20 @@
 
 ## Current Shortcuts
 
-- Runtime environment values are read directly from `process.env` in many modules rather than through a central typed config object.
-- API route request bodies rely mostly on TypeScript interfaces and service checks, not comprehensive runtime schemas.
-- Some UI flows are functional but still minimal for error recovery and operator confirmations.
+- Some non-critical CLI/test paths still read directly from `process.env`; critical runtime settings now go through central config.
+- Some legacy API route surfaces still rely on service-level invariants for domain-specific checks, but route params, bodies, headers, and no-body mutation contracts now have explicit schema validation coverage.
+- Some UI flows are functional but still minimal for retry guidance after backend failures.
 - Audit logs exist but there is no immutable export, retention policy, or admin review UI.
 - Daily loss accounting is not a real PnL engine.
 - Gas USD estimates are quote/planner fields, not authoritative accounting.
 - Execute-once sends transaction `value=0`, so native-value swaps are unsupported.
-- No nonce manager exists for concurrent live sends.
-- There is no authentication or authorization because the project is local-only.
+- Nonce policy is conservative rather than automatic: same-wallet live writes are blocked while submitted/pending/stuck transactions exist, but there is no replacement/cancel transaction flow.
+- Local auth is single-operator and in-memory-session based. This is acceptable for local-first use, but server deployment still needs persistent sessions or a hardened reverse-proxy/auth boundary.
+- `OPERATOR_PASSWORD` remains supported for local development. Shared machines should use `OPERATOR_PASSWORD_HASH`.
+- Vault lock is process-local. Restarting the API returns the vault to `LOCKED`, but there is no hardware-backed key isolation yet.
+- Global emergency pause does not revoke existing allowances or cancel submitted transactions.
+- Reorg detection is operator-guided; finalized rows inside lookback are flagged for review but not automatically repaired.
+- Drizzle migration metadata drift has a regression test and was reconciled through `0010_phase_i_transaction_status`, but the reconstructed `0005`-`0010` snapshots should be treated as release-critical metadata and checked with `pnpm --filter @base-orchestrator/api db:generate` before future migration work.
 
 ## Mock Provider Limitations
 

@@ -2,10 +2,9 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema.js";
+import { getRuntimeConfig } from "../config/runtime-config.js";
 
-const connectionString =
-  process.env.DATABASE_URL ??
-  "postgresql://base_orchestrator:base_orchestrator@localhost:5435/base_orchestrator";
+const connectionString = getRuntimeConfig().databaseUrl;
 
 export const dbPool = new Pool({
   connectionString,

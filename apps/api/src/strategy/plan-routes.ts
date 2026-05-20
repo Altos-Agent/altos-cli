@@ -1,9 +1,18 @@
 import type { FastifyInstance } from "fastify";
-import { BASE_CHAIN_ID } from "@base-orchestrator/shared";
+import {
+  BASE_CHAIN_ID,
+  dryRunPlanSchema,
+  quoteRequestSchema
+} from "@base-orchestrator/shared";
 import type { DbClient } from "../db/client.js";
 import { transactions } from "../db/schema.js";
+import {
+  handleValidationError,
+  parseRequestBody
+} from "../http/validation.js";
 import { createTelegramService } from "../notifications/telegram.js";
-import { planDryRunTrade, type DryRunPlanInput } from "./planner.js";
+import { checkAggregateRisk, upsertAggregateStats } from "../risk/aggregate-risk.js";
+import { estimateTradeUsd, planDryRunTrade, type DryRunPlanInput } from "./planner.js";
 import {
   amountToStorageUnits,
   loadTradeContextAndQuote
@@ -16,23 +25,42 @@ export const registerPlanRoutes = async (
   server.post<{ Body: DryRunPlanInput }>(
     "/api/plans/dry-run",
     async (request, reply) => {
-      if (request.body.mode !== "DRY_RUN_ONLY") {
-        return reply.code(400).send({ error: "Only DRY_RUN_ONLY is supported" });
+      let input: DryRunPlanInput;
+      try {
+        input = parseRequestBody(dryRunPlanSchema, request.body);
+      } catch (error) {
+        return handleValidationError(error, reply);
       }
 
-      const context = await loadTradeContextAndQuote(db, request.body);
+      const context = await loadTradeContextAndQuote(db, input);
       if (!context) {
         return reply.code(404).send({ error: "Wallet or pair not found" });
       }
 
-      const result = planDryRunTrade(request.body, context);
-      const status = result.accepted ? "DRY_RUN" : "REJECTED";
+      const amountUsd = estimateTradeUsd({
+        sellAmountDisplay: input.sellAmountDisplay,
+        sellTokenSymbol: context.tokenIn?.symbol,
+        quoteSellAmountUsd: context.quote?.sellAmountUsd,
+      });
+      const estimatedGasUsd = Number(context.quote?.estimatedGas?.gasUsd ?? "0");
+      const aggregateCheck = await checkAggregateRisk(db, amountUsd, estimatedGasUsd);
+
+      const result = planDryRunTrade(input, context);
+      const status = result.accepted
+        ? aggregateCheck.allowed
+          ? "DRY_RUN"
+          : "REJECTED"
+        : "REJECTED";
+
+      const reasons = aggregateCheck.allowed
+        ? result.reasons
+        : [...aggregateCheck.reasons, ...result.reasons];
 
       const [transaction] = await db
         .insert(transactions)
         .values({
-          walletId: request.body.walletId,
-          pairId: request.body.pairId,
+          walletId: input.walletId,
+          pairId: input.pairId,
           chainId: BASE_CHAIN_ID,
           txHash: null,
           status,
@@ -40,28 +68,68 @@ export const registerPlanRoutes = async (
           router: result.estimatedRoute.router,
           tokenIn: result.estimatedRoute.tokenIn,
           tokenOut: result.estimatedRoute.tokenOut,
-          amountIn: amountToStorageUnits(request.body.amountIn),
+          amountIn:
+            context.tokenIn === null
+              ? null
+              : amountToStorageUnits(
+                  input.sellAmountDisplay,
+                  context.tokenIn.decimals
+                ),
+          amountInRaw:
+            context.tokenIn === null
+              ? null
+              : amountToStorageUnits(
+                  input.sellAmountDisplay,
+                  context.tokenIn.decimals
+                ),
           amountOut: result.quote
-            ? amountToStorageUnits(result.quote.buyAmount)
+            ? result.quote.buyAmountRaw
             : null,
+          amountOutRaw: result.quote
+            ? result.quote.buyAmountRaw
+            : null,
+          amountInUsd: Number.isFinite(amountUsd) ? amountUsd.toFixed(2) : null,
+          amountOutUsd: result.quote?.buyAmountUsd ?? null,
           gasUsed: result.estimatedGas.gasUsed,
           gasUsd: result.estimatedGas.gasUsd,
           feeNative: result.estimatedGas.feeNative,
+          usdPriceSource: result.quote?.usdPriceSource ?? null,
+          usdPriceTimestamp: result.quote?.usdPriceTimestamp ?? null,
+          quoteUsdSource: result.quote?.quoteUsdSource ?? null,
+          riskCheckedAt: new Date(),
+          aggregateRiskSnapshotJson: {
+            allowed: aggregateCheck.allowed,
+            codes: aggregateCheck.codes,
+            reasons: aggregateCheck.reasons,
+            proposedTradeUsd: aggregateCheck.proposedTradeUsd,
+            proposedGasUsd: aggregateCheck.proposedGasUsd,
+            stats: aggregateCheck.stats,
+            limits: aggregateCheck.limits,
+          },
           errorMessage:
-            result.reasons.length > 0 ? result.reasons.join("; ") : null,
+            reasons.length > 0 ? reasons.join("; ") : null,
           basescanUrl: null
         })
         .returning();
 
+      if (result.accepted && aggregateCheck.allowed) {
+        await upsertAggregateStats(db).catch((err) => {
+          request.log.warn({ err }, "Failed to update aggregate stats");
+        });
+      }
+
       const telegram = createTelegramService(db);
       await telegram
         .notify({
-          eventType: result.accepted ? "dry-run accepted" : "dry-run rejected",
+          eventType:
+            result.accepted && aggregateCheck.allowed
+              ? "dry-run accepted"
+              : "dry-run rejected",
           walletName: context.wallet.name,
           walletAddress: context.wallet.address,
           action: "SWAP",
           pair: `${context.tokenIn?.symbol ?? "Unknown"}/${context.tokenOut?.symbol ?? "Unknown"}`,
-          amount: String(request.body.amountIn),
+          amount: input.sellAmountDisplay,
           status,
           txHash: null,
           basescanUrl: result.basescanLinks.wallet,
@@ -82,11 +150,14 @@ export const registerPlanRoutes = async (
   server.post<{ Body: Omit<DryRunPlanInput, "mode"> }>(
     "/api/quotes",
     async (request, reply) => {
+      let quoteRequest;
+      try {
+        quoteRequest = parseRequestBody(quoteRequestSchema, request.body);
+      } catch (error) {
+        return handleValidationError(error, reply);
+      }
       const input: DryRunPlanInput = {
-        walletId: request.body.walletId,
-        pairId: request.body.pairId,
-        amountIn: request.body.amountIn,
-        preferredRouter: request.body.preferredRouter,
+        ...quoteRequest,
         mode: "DRY_RUN_ONLY"
       };
       const context = await loadTradeContextAndQuote(db, input);

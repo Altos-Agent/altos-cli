@@ -3,6 +3,7 @@ import type { TransactionReceipt } from "viem";
 import { buildBasescanTransactionLink } from "../blockchain/basescan.js";
 import { basePublicClient } from "../blockchain/baseClient.js";
 import type { DbClient } from "../db/client.js";
+import { getRuntimeConfig } from "../config/runtime-config.js";
 import {
   dailyWalletStats,
   pairs,
@@ -11,10 +12,12 @@ import {
   wallets
 } from "../db/schema.js";
 import { createTelegramService } from "../notifications/telegram.js";
+import { TransactionManager } from "./transaction-manager.js";
 
 export interface MinimalReceipt {
   status: "success" | "reverted";
   gasUsed: bigint;
+  blockNumber: bigint;
 }
 
 export class TransactionConfirmationError extends Error {
@@ -32,12 +35,101 @@ const today = () => new Date().toISOString().slice(0, 10);
 const toNumber = (value: string | null) =>
   value === null ? 0 : Number(value) || 0;
 
-export const mapReceiptToTransactionUpdate = (receipt: MinimalReceipt) => ({
-  status: receipt.status === "success" ? ("CONFIRMED" as const) : ("FAILED" as const),
-  gasUsed: receipt.gasUsed.toString(),
-  errorMessage:
-    receipt.status === "success" ? null : "Transaction reverted on-chain"
-});
+export const calculateConfirmationCount = (
+  receiptBlockNumber: bigint,
+  latestBlockNumber: bigint
+) => {
+  if (latestBlockNumber < receiptBlockNumber) {
+    return 1;
+  }
+  return Number(latestBlockNumber - receiptBlockNumber + 1n);
+};
+
+export const mapReceiptToTransactionUpdate = ({
+  receipt,
+  latestBlockNumber,
+  confirmationsRequired
+}: {
+  receipt: MinimalReceipt;
+  latestBlockNumber: bigint;
+  confirmationsRequired: number;
+}) => {
+  const confirmationCount = calculateConfirmationCount(
+    receipt.blockNumber,
+    latestBlockNumber
+  );
+  if (receipt.status === "reverted") {
+    return {
+      status: "FAILED" as const,
+      gasUsed: receipt.gasUsed.toString(),
+      errorMessage: "Transaction reverted on-chain",
+      confirmationCount,
+      finalizedBlock: null
+    };
+  }
+
+  const finalized = confirmationCount >= confirmationsRequired;
+
+  return {
+    status: finalized
+      ? ("FINALIZED" as const)
+      : ("CONFIRMED_PENDING_FINALITY" as const),
+    gasUsed: receipt.gasUsed.toString(),
+    errorMessage: null,
+    confirmationCount,
+    finalizedBlock: finalized ? latestBlockNumber.toString() : null
+  };
+};
+
+export const evaluateMissingReceiptPolicy = ({
+  submittedAt,
+  now,
+  stuckAfterMinutes,
+  droppedAfterMinutes,
+  nonce,
+  fromAddress
+}: {
+  submittedAt: Date;
+  now: Date;
+  stuckAfterMinutes: number;
+  droppedAfterMinutes: number;
+  nonce: number | null;
+  fromAddress: string | null;
+}) => {
+  const ageMinutes = (now.getTime() - submittedAt.getTime()) / 60_000;
+  const replacementContext =
+    nonce !== null && fromAddress
+      ? `replacement detection requires operator review for nonce ${nonce}`
+      : "transaction may be dropped or replaced and requires operator explorer/RPC review";
+
+  if (ageMinutes >= droppedAfterMinutes) {
+    return {
+      status: "DROPPED" as const,
+      droppedReason: `Receipt unavailable after dropped timeout; ${replacementContext}`,
+      replacementDetection:
+        nonce !== null && fromAddress
+          ? ("OPERATOR_REVIEW_REQUIRED" as const)
+          : ("NOT_AVAILABLE" as const)
+    };
+  }
+
+  if (ageMinutes >= stuckAfterMinutes) {
+    return {
+      status: "STUCK" as const,
+      droppedReason: `Receipt unavailable after stuck timeout; ${replacementContext}`,
+      replacementDetection:
+        nonce !== null && fromAddress
+          ? ("OPERATOR_REVIEW_REQUIRED" as const)
+          : ("NOT_AVAILABLE" as const)
+    };
+  }
+
+  return {
+    status: null,
+    droppedReason: null,
+    replacementDetection: "NOT_DUE" as const
+  };
+};
 
 const pairLabel = (
   pairId: string | null,
@@ -90,10 +182,30 @@ export const hydrateTransactionRows = ({
     tokenOut: transaction.tokenOut,
     amountIn: transaction.amountIn,
     amountOut: transaction.amountOut,
+    amountInRaw: transaction.amountInRaw,
+    amountOutRaw: transaction.amountOutRaw,
+    amountInUsd: transaction.amountInUsd,
+    amountOutUsd: transaction.amountOutUsd,
     gasUsed: transaction.gasUsed,
     gasUsd: transaction.gasUsd,
     feeNative: transaction.feeNative,
-    errorMessage: transaction.errorMessage
+    usdPriceSource: transaction.usdPriceSource,
+    usdPriceTimestamp: transaction.usdPriceTimestamp,
+    quoteUsdSource: transaction.quoteUsdSource,
+    riskCheckedAt: transaction.riskCheckedAt,
+    aggregateRiskSnapshotJson: transaction.aggregateRiskSnapshotJson,
+    errorMessage: transaction.errorMessage,
+    requestId: transaction.requestId,
+    nonce: transaction.nonce,
+    fromAddress: transaction.fromAddress,
+    toAddress: transaction.toAddress,
+    calldataHash: transaction.calldataHash,
+    quoteHash: transaction.quoteHash,
+    simulationHash: transaction.simulationHash,
+    confirmationCount: transaction.confirmationCount,
+    finalizedBlock: transaction.finalizedBlock,
+    replacedByTxHash: transaction.replacedByTxHash,
+    droppedReason: transaction.droppedReason
   }));
 };
 
@@ -184,7 +296,7 @@ const notifyConfirmation = async (
   const telegram = createTelegramService(db);
   await telegram.notify({
     eventType:
-      transaction.status === "CONFIRMED"
+      transaction.status === "FINALIZED" || transaction.status === "CONFIRMED"
         ? "transaction confirmed"
         : "transaction failed",
     walletName: transaction.walletName ?? transaction.walletId,
@@ -202,7 +314,10 @@ const notifyConfirmation = async (
 export const refreshTransactionConfirmation = async (
   db: DbClient,
   id: string,
-  client: Pick<typeof basePublicClient, "getTransactionReceipt"> = basePublicClient
+  client: Pick<
+    typeof basePublicClient,
+    "getTransactionReceipt" | "getBlockNumber"
+  > = basePublicClient
 ) => {
   const [existing] = await db
     .select()
@@ -214,7 +329,29 @@ export const refreshTransactionConfirmation = async (
   if (!existing.txHash) {
     throw new TransactionConfirmationError("Transaction has no hash");
   }
-  if (existing.status !== "SUBMITTED") {
+  if (
+    existing.status !== "SUBMITTED" &&
+    existing.status !== "CONFIRMED_PENDING_FINALITY"
+  ) {
+    if (existing.status === "FINALIZED") {
+      const latestBlockNumber = await client.getBlockNumber().catch(() => null);
+      const finalizedBlock =
+        existing.finalizedBlock === null ? null : BigInt(existing.finalizedBlock);
+      if (
+        latestBlockNumber !== null &&
+        finalizedBlock !== null &&
+        latestBlockNumber >= finalizedBlock &&
+        Number(latestBlockNumber - finalizedBlock) <=
+          getRuntimeConfig().txReorgLookbackBlocks
+      ) {
+        return {
+          refreshed: false,
+          reason:
+            "Finalized transaction reorg detection is operator-guided within configured lookback",
+          transaction: await getTransaction(db, id)
+        };
+      }
+    }
     return {
       refreshed: false,
       reason: "Transaction is not submitted",
@@ -228,14 +365,55 @@ export const refreshTransactionConfirmation = async (
       hash: existing.txHash as `0x${string}`
     });
   } catch {
+    const config = getRuntimeConfig();
+    const missingPolicy = evaluateMissingReceiptPolicy({
+      submittedAt: existing.createdAt,
+      now: new Date(),
+      stuckAfterMinutes: config.txStuckAfterMinutes,
+      droppedAfterMinutes: config.txDroppedAfterMinutes,
+      nonce: existing.nonce,
+      fromAddress: existing.fromAddress
+    });
+    if (missingPolicy.status) {
+      const [updated] = await db
+        .update(transactions)
+        .set({
+          status: missingPolicy.status,
+          droppedReason: missingPolicy.droppedReason,
+          updatedAt: new Date()
+        })
+        .where(eq(transactions.id, id))
+        .returning();
+      if (updated && missingPolicy.status === "STUCK") {
+        void import("../ops/alert-webhook.js").then(
+          ({ alertIfStuckTransaction }) =>
+            alertIfStuckTransaction(updated.id, updated.walletId).catch(() => undefined),
+        );
+      } else if (updated && missingPolicy.status === "DROPPED") {
+        void import("../ops/alert-webhook.js").then(
+          ({ alertIfDroppedTransaction }) =>
+            alertIfDroppedTransaction(updated.id, updated.walletId).catch(() => undefined),
+        );
+      }
+    }
     return {
       refreshed: false,
-      reason: "Receipt not available yet",
+      reason:
+        missingPolicy.status === "STUCK"
+          ? "Transaction is stuck; replacement detection requires operator review"
+          : missingPolicy.status === "DROPPED"
+            ? "Transaction is dropped or replaced; operator review required"
+            : "Receipt not available yet",
       transaction: await getTransaction(db, id)
     };
   }
 
-  const update = mapReceiptToTransactionUpdate(receipt);
+  const latestBlockNumber = await client.getBlockNumber();
+  const update = mapReceiptToTransactionUpdate({
+    receipt,
+    latestBlockNumber,
+    confirmationsRequired: getRuntimeConfig().confirmationsRequired
+  });
   const [updated] = await db
     .update(transactions)
     .set({
@@ -243,21 +421,54 @@ export const refreshTransactionConfirmation = async (
       gasUsed: update.gasUsed,
       errorMessage: update.errorMessage,
       basescanUrl: existing.basescanUrl ?? buildBasescanTransactionLink(existing.txHash),
+      confirmationCount: update.confirmationCount,
+      finalizedBlock: update.finalizedBlock,
       updatedAt: new Date()
     })
     .where(eq(transactions.id, id))
     .returning();
 
   if (updated) {
-    await updateDailyStats(db, updated);
+    if (
+      updated.status === "FINALIZED" ||
+      updated.status === "CONFIRMED" ||
+      updated.status === "FAILED"
+    ) {
+      await updateDailyStats(db, updated);
+    }
+    if (
+      updated.requestId &&
+      (updated.status === "FINALIZED" ||
+        updated.status === "CONFIRMED" ||
+        updated.status === "FAILED")
+    ) {
+      const manager = new TransactionManager(db);
+      await manager.updateRequestStatus(
+        updated.requestId,
+        updated.status === "FINALIZED" ? "CONFIRMED" : updated.status
+      );
+      await manager.releaseWalletLock({
+        walletId: updated.walletId,
+        requestId: updated.requestId
+      });
+    }
   }
 
   const transaction = await getTransaction(db, id);
-  await notifyConfirmation(db, transaction).catch(() => undefined);
+  if (
+    transaction.status === "FINALIZED" ||
+    transaction.status === "CONFIRMED" ||
+    transaction.status === "FAILED"
+  ) {
+    await notifyConfirmation(db, transaction).catch(() => undefined);
+  }
 
   return {
     refreshed: true,
-    reason: null,
+    reason:
+      transaction.status === "CONFIRMED_PENDING_FINALITY"
+        ? "Waiting for finality confirmations"
+        : null,
     transaction
   };
 };

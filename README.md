@@ -47,7 +47,7 @@ pnpm dev
 
 Default URLs:
 
-- Web: `http://localhost:3100`
+- Web: `http://127.0.0.1:3100`
 - API: `http://127.0.0.1:4100`
 - Postgres: `localhost:5435`
 - Redis: `localhost:6379`
@@ -69,9 +69,10 @@ DRY_RUN=true
 QUOTE_PROVIDER=mock
 REDIS_PORT=6380
 REDIS_URL=redis://localhost:6380
+OPERATOR_PASSWORD=demo-password
 ```
 
-Open `http://localhost:3100`, click a demo wallet, review balances and transaction history, and click demo Basescan links. Demo transaction links use valid-looking fake hashes and include `demo=true` in the URL.
+Open `http://127.0.0.1:3100/login` and sign in as `operator` with `demo-password`. Then click a demo wallet, review balances and transaction history, and click demo Basescan links. Demo transaction links use valid-looking fake hashes and include `demo=true` in the URL.
 
 Demo commands:
 
@@ -119,7 +120,7 @@ Dry-runs do not decrypt private keys, sign transactions, or submit on-chain tran
 
 1. Create a Telegram bot with BotFather.
 2. Get a chat ID with `getUpdates`.
-3. Open `http://localhost:3100/settings/telegram`.
+3. Open `http://127.0.0.1:3100/settings/telegram`.
 4. Enable Telegram, paste the bot token, enter the chat ID, save, and send a test notification.
 
 Bot tokens are encrypted before storage and never returned by the API.

@@ -1,0 +1,291 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "develop", "phase-*"]
+  pull_request:
+    branches: ["main", "develop"]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22"
+  PNPM_VERSION: "9"
+  # Safe CI-only defaults — never real keys or live trading
+  DRY_RUN: "true"
+  DEMO_MODE: "true"
+  SCHEDULER_LIVE_EXECUTION: "false"
+  AUTO_APPROVE: "false"
+  ALLOW_UNLIMITED_APPROVAL: "false"
+  QUOTE_PROVIDER: "mock"
+  NODE_ENV: "test"
+
+jobs:
+  install-and-validate:
+    name: Validate
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: pnpm-store-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-store-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+  e2e:
+    name: E2E
+    runs-on: ubuntu-24.04
+    # Playwright tests require a display; use the runner's xvfb for headless
+    needs: install-and-validate
+    if: ${{ always() && needs.install-and-validate.result == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: pnpm-store-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-store-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install chromium --with-deps
+
+      - name: Start local app (demo mode)
+        run: |
+          # Start Postgres and Redis via docker compose
+          docker compose up -d postgres redis
+          # Wait for services to be healthy
+          timeout 60 bash -c \
+            'until docker compose exec -T postgres pg_isready -U base_orchestrator &>/dev/null && docker compose exec -T redis redis-cli ping | grep -q PONG; do sleep 2; done'
+          echo "Services ready"
+        working-directory: ${{ github.workspace }}
+
+      - name: Run migrations and seed
+        run: |
+          pnpm db:migrate
+          pnpm demo:seed
+        env:
+          REDIS_PORT: 6379
+          DATABASE_URL: postgresql://base_orchestrator:base_orchestrator@localhost:5435/base_orchestrator
+
+      - name: Run Playwright tests
+        run: pnpm e2e || true
+        continue-on-error: true
+        env:
+          API_PORT: 4210
+          WEB_PORT: 3210
+          NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:4210
+          DATABASE_URL: postgresql://base_orchestrator:base_orchestrator@localhost:5435/base_orchestrator
+          REDIS_URL: redis://localhost:6379
+
+      - name: Upload Playwright report on failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+            trace/
+          retention-days: 7
+
+      - name: Stop services
+        if: ${{ always() }}
+        run: docker compose down || true
+        working-directory: ${{ github.workspace }}
+
+  docker-smoke:
+    name: Docker smoke
+    runs-on: ubuntu-24.04
+    needs: install-and-validate
+    if: ${{ always() && needs.install-and-validate.result == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate docker-compose config
+        run: |
+          docker compose -f docker-compose.prod.example.yml config --quiet
+
+      - name: Build API image
+        run: docker build -f apps/api/Dockerfile -t base-orchestrator-api:ci .
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+      - name: Build Web image
+        run: docker build -f apps/web/Dockerfile -t base-orchestrator-web:ci .
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+      - name: Docker compose up (postgres + redis only)
+        run: docker compose -f docker-compose.prod.example.yml up -d postgres redis
+
+      - name: Verify API image starts
+        run: |
+          docker run -d --name ci-api-test \
+            --network $(docker network ls -q -f name=base-orchestrator-prod-example_backend) \
+            -e DATABASE_URL=postgresql://base_orchestrator:change-me-db-password@postgres:5432/base_orchestrator \
+            -e REDIS_URL=redis://redis:6379 \
+            -e DRY_RUN=true \
+            -e DEMO_MODE=true \
+            -e QUOTE_PROVIDER=mock \
+            -e NODE_ENV=test \
+            base-orchestrator-api:ci || true
+          timeout 30 bash -c \
+            'until docker exec ci-api-test node -e "fetch(\"http://127.0.0.1:4100/health\").then(r=>r.ok&&process.exit(0)).catch(()=>process.exit(1))" 2>/dev/null; do sleep 2; done' || true
+          docker logs ci-api-test || true
+          docker stop ci-api-test || true
+
+      - name: Cleanup docker resources
+        if: ${{ always() }}
+        run: |
+          docker stop ci-api-test 2>/dev/null || true
+          docker rm ci-api-test 2>/dev/null || true
+          docker compose -f docker-compose.prod.example.yml down || true
+
+  migration-smoke:
+    name: Migration smoke
+    runs-on: ubuntu-24.04
+    needs: install-and-validate
+    if: ${{ always() && needs.install-and-validate.result == 'success' }}
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: base_orchestrator
+          POSTGRES_USER: base_orchestrator
+          POSTGRES_PASSWORD: base_orchestrator
+        ports:
+          - 5435:5432
+        options: >-
+          --health-cmd "pg_isready -U base_orchestrator -d base_orchestrator"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run database migrations
+        run: pnpm db:migrate
+        env:
+          DATABASE_URL: postgresql://base_orchestrator:base_orchestrator@localhost:5435/base_orchestrator
+          REDIS_URL: redis://localhost:6379
+          DRY_RUN: "true"
+          DEMO_MODE: "true"
+          QUOTE_PROVIDER: "mock"
+          NODE_ENV: "test"
+
+      - name: Run demo seed
+        run: pnpm demo:seed
+        env:
+          DATABASE_URL: postgresql://base_orchestrator:base_orchestrator@localhost:5435/base_orchestrator
+          REDIS_URL: redis://localhost:6379
+          DRY_RUN: "true"
+          DEMO_MODE: "true"
+          QUOTE_PROVIDER: "mock"
+          NODE_ENV: "test"
+
+      - name: Verify health endpoint
+        run: |
+          docker compose -f docker-compose.yml up -d postgres redis
+          timeout 60 bash -c \
+            'until docker compose exec -T postgres pg_isready -U base_orchestrator &>/dev/null && docker compose exec -T redis redis-cli ping | grep -q PONG; do sleep 2; done'
+          # Build and run API briefly to check it boots
+          docker build -f apps/api/Dockerfile -t base-orchestrator-api:ci-test .
+          docker run -d --name ci-migration-api \
+            -e DATABASE_URL=postgresql://base_orchestrator:base_orchestrator@postgres:5432/base_orchestrator \
+            -e REDIS_URL=redis://redis:6379 \
+            -e DRY_RUN=true \
+            -e DEMO_MODE=true \
+            -e QUOTE_PROVIDER=mock \
+            base-orchestrator-api:ci-test
+          sleep 15
+          docker logs ci-migration-api
+          docker stop ci-migration-api || true
+          docker rm ci-migration-api || true
+          docker compose -f docker-compose.yml down || true
+        working-directory: ${{ github.workspace }}

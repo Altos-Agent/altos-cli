@@ -76,9 +76,13 @@ const seed = async () => {
         symbol: token.symbol,
         name: token.name,
         address: null,
+        checksumAddress: null,
         decimals: token.decimals,
         riskLevel: token.riskLevel,
-        enabled: false
+        enabled: false,
+        verificationStatus: "PLACEHOLDER",
+        verificationSource: "SEED_PLACEHOLDER",
+        verificationNotes: unverifiedAddressNote
       })
       .onConflictDoUpdate({
         target: [tokens.chainId, tokens.symbol],
@@ -86,7 +90,10 @@ const seed = async () => {
           name: token.name,
           decimals: token.decimals,
           riskLevel: token.riskLevel,
-          enabled: false
+          enabled: false,
+          verificationStatus: "PLACEHOLDER",
+          verificationSource: "SEED_PLACEHOLDER",
+          verificationNotes: unverifiedAddressNote
         }
       });
   }
@@ -98,8 +105,11 @@ const seed = async () => {
         chainId: BASE_MAINNET.chainId,
         name: router.name,
         address: null,
+        checksumAddress: null,
         enabled: false,
         riskLevel: router.riskLevel,
+        verificationStatus: "PLACEHOLDER",
+        verificationSource: "SEED_PLACEHOLDER",
         notes: unverifiedAddressNote
       })
       .onConflictDoUpdate({
@@ -107,6 +117,8 @@ const seed = async () => {
         set: {
           enabled: false,
           riskLevel: router.riskLevel,
+          verificationStatus: "PLACEHOLDER",
+          verificationSource: "SEED_PLACEHOLDER",
           notes: unverifiedAddressNote
         }
       });

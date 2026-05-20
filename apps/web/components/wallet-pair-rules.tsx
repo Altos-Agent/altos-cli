@@ -37,7 +37,7 @@ export const WalletPairRules = ({
   return (
     <div className="space-y-4">
       {error && (
-        <div className="rounded-md border border-rose-400/30 bg-rose-400/10 p-3 text-sm text-rose-200">
+        <div className="rounded-md border border-accent-red/30 bg-accent-red-soft p-3 text-sm text-accent-red">
           {error}
         </div>
       )}
@@ -52,10 +52,10 @@ export const WalletPairRules = ({
           return (
             <div
               key={pair.id}
-              className="grid gap-3 rounded-lg border border-white/10 bg-slate-950/35 p-4 md:grid-cols-[1fr_120px_120px_90px]"
+              className="grid gap-3 rounded-lg border border-hairline bg-surface-elevated p-4 md:grid-cols-[1fr_120px_120px_90px]"
             >
               <div>
-                <p className="font-medium text-slate-100">
+                <p className="font-medium text-ink">
                   {pair.tokenIn?.symbol ?? "Unknown"} /{" "}
                   {pair.tokenOut?.symbol ?? "Unknown"}
                 </p>
@@ -64,7 +64,7 @@ export const WalletPairRules = ({
                 </div>
               </div>
               <input
-                className="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200"
+                className="h-10 rounded-md border border-hairline bg-surface px-3 text-sm text-body"
                 placeholder="Max USD"
                 value={draft.maxTradeUsd}
                 onChange={(event) => {
@@ -74,7 +74,7 @@ export const WalletPairRules = ({
                 }}
               />
               <input
-                className="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200"
+                className="h-10 rounded-md border border-hairline bg-surface px-3 text-sm text-body"
                 placeholder="Trades/day"
                 value={draft.maxDailyTrades}
                 onChange={(event) => {
@@ -86,10 +86,10 @@ export const WalletPairRules = ({
                   setDrafts(next);
                 }}
               />
-              <label className="flex items-center gap-2 text-sm text-slate-300">
+              <label className="flex items-center gap-2 text-sm text-body">
                 <input
                   checked={draft.enabled}
-                  className="h-4 w-4 accent-blue-500"
+                  className="h-4 w-4 accent-accent-blue"
                   type="checkbox"
                   onChange={(event) => {
                     const next = [...drafts];
@@ -104,7 +104,7 @@ export const WalletPairRules = ({
         })}
       </div>
       <button
-        className="h-10 rounded-md bg-blue-500 px-4 text-sm font-semibold text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
+        className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-on-primary transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
         disabled={pending}
         type="button"
         onClick={async () => {

@@ -27,10 +27,17 @@ const token: Token = {
   symbol: "USDC",
   name: "USD Coin",
   address: "0x0000000000000000000000000000000000000002",
+  checksumAddress: "0x0000000000000000000000000000000000000002",
   decimals: 6,
   riskLevel: "LOW",
   maxTradeUsd: null,
   enabled: true,
+  verificationStatus: "VERIFIED",
+  verificationSource: null,
+  verificationEvidenceUrl: null,
+  verifiedAt: null,
+  verifiedBy: null,
+  verificationNotes: null,
   createdAt: now,
   updatedAt: now
 };
@@ -42,14 +49,16 @@ describe("quote engine", () => {
         wallet,
         sellToken: token,
         buyToken: { ...token, id: "token-2", symbol: "WETH" },
-        sellAmount: "10",
+        sellAmountDisplay: "10",
+        sellAmountRaw: "10000000",
         routerName: "Mock Router"
       },
       new MockQuoteProvider()
     );
 
     expect(quote.provider).toBe("mock");
-    expect(quote.buyAmount).toBe("9.900000");
+    expect(quote.sellAmountRaw).toBe("10000000");
+    expect(quote.buyAmountRaw).toBe("9900000");
     expect(quote.txData).toBeNull();
   });
 });

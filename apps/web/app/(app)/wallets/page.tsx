@@ -1,6 +1,6 @@
-import { api } from "../../../lib/api";
-import { Card, PageHeader } from "../../../components/ui";
+import { api, isApiError } from "../../../lib/api";
 import { WalletImportCard } from "../../../components/wallet-import-card";
+import { Card, ErrorState, PageHeader, PrimaryButton } from "../../../components/ui";
 import { WalletsTable } from "../../../components/wallets-table";
 
 export default async function WalletsPage() {
@@ -8,19 +8,38 @@ export default async function WalletsPage() {
     api.getWallets(),
     api.getProfiles()
   ]);
+  const readError = isApiError(wallets)
+    ? wallets
+    : isApiError(profiles)
+      ? profiles
+      : null;
+  const walletsData = wallets.ok ? wallets.data : [];
+  const profilesData = profiles.ok ? profiles.data : [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader
         title="Wallets"
         description="Review imported wallets, copy addresses, inspect Basescan, and filter by operating status."
+        action={<PrimaryButton>Add wallet</PrimaryButton>}
       />
-      <Card className="p-4">
+
+      {/* Import card */}
+      <Card className="p-5">
         <WalletImportCard />
       </Card>
-      <Card className="p-4">
-        <WalletsTable wallets={wallets} profiles={profiles} />
-      </Card>
+
+      {/* Table */}
+      {readError ? (
+        <Card className="p-5">
+          <ErrorState
+            title="Wallet API unavailable"
+            description={readError.message}
+          />
+        </Card>
+      ) : (
+        <WalletsTable wallets={walletsData} profiles={profilesData} />
+      )}
     </div>
   );
 }

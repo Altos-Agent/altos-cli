@@ -1,13 +1,21 @@
 import type { SQL } from "drizzle-orm";
 import {
+  aggregateRiskLimits,
+  aggregateRiskStats,
   auditLogs,
   dailyWalletStats,
   localSettings,
+  notificationDeliveries,
+  pendingWalletLocks,
   pairs,
   routers,
+  schedulerJobs,
+  schedulerLocks,
+  schedulerRuns,
   telegramSettings,
   tokens,
   transactions,
+  transactionRequests,
   walletPairRules,
   wallets,
   walletSchedules,
@@ -28,14 +36,22 @@ const conditionQueryConfig = {
 };
 
 const tableNames = new Map<Table, keyof InMemoryTables>([
+  [aggregateRiskLimits, "aggregateRiskLimits"],
+  [aggregateRiskStats, "aggregateRiskStats"],
   [auditLogs, "auditLogs"],
   [dailyWalletStats, "dailyWalletStats"],
   [localSettings, "localSettings"],
+  [notificationDeliveries, "notificationDeliveries"],
+  [pendingWalletLocks, "pendingWalletLocks"],
   [pairs, "pairs"],
   [routers, "routers"],
+  [schedulerJobs, "schedulerJobs"],
+  [schedulerLocks, "schedulerLocks"],
+  [schedulerRuns, "schedulerRuns"],
   [telegramSettings, "telegramSettings"],
   [tokens, "tokens"],
   [transactions, "transactions"],
+  [transactionRequests, "transactionRequests"],
   [walletPairRules, "walletPairRules"],
   [wallets, "wallets"],
   [walletSchedules, "walletSchedules"],
@@ -43,12 +59,18 @@ const tableNames = new Map<Table, keyof InMemoryTables>([
 
 const fieldNames: Record<string, string> = {
   allowance_target: "allowanceTarget",
+  allowance_target_address: "allowanceTargetAddress",
   amount_in: "amountIn",
+  amount_in_raw: "amountInRaw",
+  amount_in_usd: "amountInUsd",
   amount_out: "amountOut",
+  amount_out_raw: "amountOutRaw",
+  amount_out_usd: "amountOutUsd",
   app_name: "appName",
   basescan_url: "basescanUrl",
   chain_id: "chainId",
   chat_id: "chatId",
+  checksum_address: "checksumAddress",
   created_at: "createdAt",
   dry_run_default: "dryRunDefault",
   encrypted_bot_token: "encryptedBotToken",
@@ -60,10 +82,18 @@ const fieldNames: Record<string, string> = {
   fallback_router: "fallbackRouter",
   failed_tx_pause_threshold: "failedTxPauseThreshold",
   fee_native: "feeNative",
+  finalized_block: "finalizedBlock",
+  from_address: "fromAddress",
+  function_selector_allowlist: "functionSelectorAllowlist",
   gas_spent_usd: "gasSpentUsd",
   gas_used: "gasUsed",
   gas_usd: "gasUsd",
+  global_emergency_paused: "globalEmergencyPaused",
   last_scheduled_at: "lastScheduledAt",
+  last_run_at: "lastRunAt",
+  last_status: "lastStatus",
+  next_run_at: "nextRunAt",
+  max_daily_runs: "maxDailyRuns",
   max_daily_loss_usd: "maxDailyLossUsd",
   max_daily_trades: "maxDailyTrades",
   max_gas_usd: "maxGasUsd",
@@ -72,6 +102,12 @@ const fieldNames: Record<string, string> = {
   max_trade_usd: "maxTradeUsd",
   metadata_json: "metadataJson",
   min_interval_minutes: "minIntervalMinutes",
+  destination_preview: "destinationPreview",
+  error_code: "errorCode",
+  error_message: "errorMessage",
+  event_type: "eventType",
+  job_id: "jobId",
+  locked_by_request_id: "lockedByRequestId",
   notify_on_confirmed: "notifyOnConfirmed",
   notify_on_dry_run: "notifyOnDryRun",
   notify_on_failed: "notifyOnFailed",
@@ -79,17 +115,65 @@ const fieldNames: Record<string, string> = {
   notify_on_submitted: "notifyOnSubmitted",
   pair_id: "pairId",
   preferred_router: "preferredRouter",
+  request_hash: "requestHash",
+  request_id: "requestId",
   risk_level: "riskLevel",
   strategy_profile: "strategyProfile",
   token_in: "tokenIn",
   token_in_id: "tokenInId",
   token_out: "tokenOut",
   token_out_id: "tokenOutId",
+  to_address: "toAddress",
   trade_amount_usd: "tradeAmountUsd",
+  transaction_id: "transactionId",
   tx_count: "txCount",
   tx_hash: "txHash",
+  tx_target_address: "txTargetAddress",
   updated_at: "updatedAt",
+  verification_evidence_url: "verificationEvidenceUrl",
+  verification_notes: "verificationNotes",
+  verification_source: "verificationSource",
+  verification_status: "verificationStatus",
+  verified_at: "verifiedAt",
+  verified_by: "verifiedBy",
   wallet_id: "walletId",
+  buy_token: "buyToken",
+  sell_amount_raw: "sellAmountRaw",
+  sell_token: "sellToken",
+  spender_address: "spenderAddress",
+  idempotency_key: "idempotencyKey",
+  router_id: "routerId",
+  quote_hash: "quoteHash",
+  quote_usd_source: "quoteUsdSource",
+  simulation_hash: "simulationHash",
+  usd_price_source: "usdPriceSource",
+  usd_price_timestamp: "usdPriceTimestamp",
+  risk_checked_at: "riskCheckedAt",
+  aggregate_risk_snapshot_json: "aggregateRiskSnapshotJson",
+  calldata_hash: "calldataHash",
+  confirmation_count: "confirmationCount",
+  replaced_by_tx_hash: "replacedByTxHash",
+  dropped_reason: "droppedReason",
+  expires_at: "expiresAt",
+  owner_id: "ownerId",
+  heartbeat_at: "heartbeatAt",
+  started_at: "startedAt",
+  stopped_at: "stoppedAt",
+  stop_reason: "stopReason",
+  job_type: "jobType",
+  schedule_id: "scheduleId",
+  finished_at: "finishedAt",
+  failure_count: "failureCount",
+  max_daily_trade_usd: "maxDailyTradeUsd",
+  max_daily_gas_usd: "maxDailyGasUsd",
+  max_pending_trade_usd: "maxPendingTradeUsd",
+  max_pending_wallets: "maxPendingWallets",
+  max_failed_tx_per_day: "maxFailedTxPerDay",
+  total_trade_usd: "totalTradeUsd",
+  total_gas_usd: "totalGasUsd",
+  total_pending_usd: "totalPendingUsd",
+  active_wallet_count: "activeWalletCount",
+  failed_tx_count: "failedTxCount",
 };
 
 const fieldName = (columnName: string) => fieldNames[columnName] ?? columnName;
@@ -118,10 +202,64 @@ const defaultRow = (tableName: keyof InMemoryTables, values: Row): Row => {
     };
   }
 
+  if (tableName === "tokens") {
+    return {
+      id,
+      enabled: false,
+      verificationStatus: "UNVERIFIED",
+      verificationSource: null,
+      verificationEvidenceUrl: null,
+      verifiedAt: null,
+      verifiedBy: null,
+      verificationNotes: null,
+      checksumAddress: null,
+      createdAt: now,
+      updatedAt: now,
+      ...values,
+    };
+  }
+
+  if (tableName === "routers") {
+    return {
+      id,
+      enabled: false,
+      verificationStatus: "UNVERIFIED",
+      verificationSource: null,
+      verificationEvidenceUrl: null,
+      verifiedAt: null,
+      verifiedBy: null,
+      verificationNotes: null,
+      checksumAddress: null,
+      spenderAddress: null,
+      txTargetAddress: null,
+      allowanceTargetAddress: null,
+      functionSelectorAllowlist: null,
+      notes: null,
+      ...values,
+    };
+  }
+
+  if (tableName === "pairs") {
+    return {
+      id,
+      enabled: false,
+      verificationStatus: "UNVERIFIED",
+      verificationSource: null,
+      verificationEvidenceUrl: null,
+      verifiedAt: null,
+      verifiedBy: null,
+      verificationNotes: null,
+      createdAt: now,
+      updatedAt: now,
+      ...values,
+    };
+  }
+
   return {
     id,
     createdAt: now,
     updatedAt: now,
+    ...(tableName === "localSettings" ? { globalEmergencyPaused: false } : {}),
     ...values,
   };
 };
@@ -332,14 +470,22 @@ class UpdateBuilder {
 }
 
 export interface InMemoryTables {
+  aggregateRiskLimits: Row[];
+  aggregateRiskStats: Row[];
   auditLogs: Row[];
   dailyWalletStats: Row[];
   localSettings: Row[];
+  notificationDeliveries: Row[];
+  pendingWalletLocks: Row[];
   pairs: Row[];
   routers: Row[];
+  schedulerJobs: Row[];
+  schedulerLocks: Row[];
+  schedulerRuns: Row[];
   telegramSettings: Row[];
   tokens: Row[];
   transactions: Row[];
+  transactionRequests: Row[];
   walletPairRules: Row[];
   wallets: Row[];
   walletSchedules: Row[];
@@ -347,19 +493,30 @@ export interface InMemoryTables {
 
 export const createInMemoryDb = (seed?: Partial<InMemoryTables>) => {
   const tables: InMemoryTables = {
+    aggregateRiskLimits: [],
+    aggregateRiskStats: [],
     auditLogs: [],
     dailyWalletStats: [],
     localSettings: [],
+    notificationDeliveries: [],
+    pendingWalletLocks: [],
     pairs: [],
     routers: [],
+    schedulerJobs: [],
+    schedulerLocks: [],
+    schedulerRuns: [],
     telegramSettings: [],
     tokens: [],
     transactions: [],
+    transactionRequests: [],
     walletPairRules: [],
     wallets: [],
     walletSchedules: [],
     ...seed,
   };
+  tables.tokens = tables.tokens.map((row) => defaultRow("tokens", row));
+  tables.routers = tables.routers.map((row) => defaultRow("routers", row));
+  tables.pairs = tables.pairs.map((row) => defaultRow("pairs", row));
 
   const db = {
     select: (projection?: Projection) => new SelectBuilder(tables, projection),

@@ -11,17 +11,19 @@ export const createScheduledDryRun = async ({
   db,
   walletId,
   pairId,
-  amountIn
+  amountIn,
+  occurrenceId,
 }: {
   db: DbClient;
   walletId: string;
   pairId: string;
   amountIn: string;
+  occurrenceId?: string | null;
 }) => {
   const input: DryRunPlanInput = {
     walletId,
     pairId,
-    amountIn,
+    sellAmountDisplay: amountIn,
     mode: "DRY_RUN_ONLY"
   };
   const context = await loadTradeContextAndQuote(db, input);
@@ -43,13 +45,27 @@ export const createScheduledDryRun = async ({
       router: result.estimatedRoute.router,
       tokenIn: result.estimatedRoute.tokenIn,
       tokenOut: result.estimatedRoute.tokenOut,
-      amountIn: amountToStorageUnits(amountIn),
-      amountOut: result.quote ? amountToStorageUnits(result.quote.buyAmount) : null,
+      amountIn:
+        context.tokenIn === null
+          ? null
+          : amountToStorageUnits(amountIn, context.tokenIn.decimals),
+      amountInRaw:
+        context.tokenIn === null
+          ? null
+          : amountToStorageUnits(amountIn, context.tokenIn.decimals),
+      amountOut: result.quote ? result.quote.buyAmountRaw : null,
+      amountOutRaw: result.quote ? result.quote.buyAmountRaw : null,
+      amountInUsd: result.quote?.sellAmountUsd ?? result.estimatedCost.amountUsd,
+      amountOutUsd: result.quote?.buyAmountUsd ?? null,
       gasUsed: result.estimatedGas.gasUsed,
       gasUsd: result.estimatedGas.gasUsd,
       feeNative: result.estimatedGas.feeNative,
+      usdPriceSource: result.quote?.usdPriceSource ?? null,
+      usdPriceTimestamp: result.quote?.usdPriceTimestamp ?? null,
+      quoteUsdSource: result.quote?.quoteUsdSource ?? null,
       errorMessage: result.reasons.length > 0 ? result.reasons.join("; ") : null,
-      basescanUrl: null
+      basescanUrl: null,
+      occurrenceId: occurrenceId ?? null,
     })
     .returning();
 
@@ -57,6 +73,8 @@ export const createScheduledDryRun = async ({
     context,
     result,
     status,
-    transactionId: transaction?.id ?? null
+    transactionId: transaction?.id ?? null,
+    quoteHash: transaction?.quoteHash ?? null,
+    simulationHash: transaction?.simulationHash ?? null,
   };
 };

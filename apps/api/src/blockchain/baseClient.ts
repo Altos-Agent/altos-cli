@@ -3,6 +3,7 @@ import {
   BASE_NATIVE_SYMBOL
 } from "@base-orchestrator/shared";
 import { createPublicClient, defineChain, http } from "viem";
+import { getRuntimeConfig } from "../config/runtime-config.js";
 
 export const baseMainnet = defineChain({
   id: BASE_CHAIN_ID,
@@ -14,20 +15,20 @@ export const baseMainnet = defineChain({
   },
   rpcUrls: {
     default: {
-      http: [process.env.BASE_RPC_URL ?? "https://mainnet.base.org"]
+      http: [getRuntimeConfig().baseRpcUrl]
     }
   },
   blockExplorers: {
     default: {
       name: "Basescan",
-      url: process.env.BASESCAN_BASE_URL ?? "https://basescan.org"
+      url: getRuntimeConfig().basescanBaseUrl
     }
   }
 });
 
 export const basePublicClient = createPublicClient({
   chain: baseMainnet,
-  transport: http(process.env.BASE_RPC_URL ?? "https://mainnet.base.org")
+  transport: http(getRuntimeConfig().baseRpcUrl)
 });
 
 export type BasePublicClient = typeof basePublicClient;
@@ -43,7 +44,7 @@ export const getBaseChainStatus = async (
   return {
     chainId,
     latestBlockNumber: latestBlockNumber.toString(),
-    rpcUrl: process.env.BASE_RPC_URL ?? "https://mainnet.base.org",
+    rpcUrl: getRuntimeConfig().baseRpcUrl,
     nativeSymbol: BASE_NATIVE_SYMBOL
   };
 };

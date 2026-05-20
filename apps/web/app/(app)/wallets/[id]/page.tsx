@@ -1,16 +1,13 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { api } from "../../../../lib/api";
+import { api, isApiError } from "../../../../lib/api";
 import {
   formatOptionalUsd,
   formatTokenAmount,
   shortenAddress
 } from "../../../../lib/format";
 import {
-  Card,
-  EmptyState,
-  PageHeader,
-  SecondaryButton,
+  ErrorState,
   StatusBadge
 } from "../../../../components/ui";
 import { AllowancesPanel } from "../../../../components/allowances-panel";
@@ -20,6 +17,11 @@ import { EmergencyPauseButton } from "../../../../components/emergency-pause-but
 import { ExecuteOnceCard } from "../../../../components/execute-once-card";
 import { WalletPairRules } from "../../../../components/wallet-pair-rules";
 import { WalletScheduleSettings } from "../../../../components/wallet-schedule-settings";
+import { WalletStatusActions } from "../../../../components/wallet-status-actions";
+import {
+  DemoBasescanBadge,
+  isDemoBasescanUrl
+} from "../../../../components/demo-basescan-badge";
 
 export default async function WalletDetailPage({
   params
@@ -37,273 +39,305 @@ export default async function WalletDetailPage({
     allowances,
     schedule
   ] = await Promise.all([
-      api.getWallet(id),
-      api.getWalletBalances(id),
-      api.getWalletBasescan(id),
-      api.getTransactions(),
-      api.getWalletPairRules(id),
-      api.getLiveExecutionStatus(),
-      api.getWalletAllowances(id),
-      api.getWalletSchedule(id)
-    ]);
+    api.getWallet(id),
+    api.getWalletBalances(id),
+    api.getWalletBasescan(id),
+    api.getTransactions(),
+    api.getWalletPairRules(id),
+    api.getLiveExecutionStatus(),
+    api.getWalletAllowances(id),
+    api.getWalletSchedule(id)
+  ]);
 
-  if (!wallet) {
-    notFound();
+  if (isApiError(wallet)) {
+    return (
+      <div className="space-y-5">
+        <ErrorState title="Wallet API unavailable" description={wallet.message} />
+      </div>
+    );
   }
 
-  const walletTransactions = transactions.filter((tx) => tx.walletId === id);
+  const walletData = wallet.data;
+  if (!walletData) notFound();
+
+  const walletTransactions = isApiError(transactions)
+    ? []
+    : transactions.data.filter((tx) => tx.walletId === id);
+  const pairRulesData = isApiError(pairRules) ? [] : pairRules.data;
+  const allowancesData = isApiError(allowances) ? [] : allowances.data;
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title={wallet.name}
-        description="Wallet summary, balances, limits, allowed pairs, and related transaction history."
-        action={
-          <div className="flex gap-2">
-            <SecondaryButton disabled>
-              {wallet.status === "ACTIVE" ? "Pause" : "Resume"}
-            </SecondaryButton>
-            <SecondaryButton disabled>Disable</SecondaryButton>
-            <EmergencyPauseButton walletId={id} />
+    <div className="space-y-5">
+      {/* ── Header card ────────────────────────────────────────── */}
+      <div className="rounded-xl border border-hairline bg-surface">
+        {/* Top accent stripe */}
+        <div
+          className="h-px w-full"
+          style={{
+            background: "linear-gradient(90deg, #ff5757 0%, #a1131a 100%)",
+          }}
+        />
+        <div className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-xl font-medium text-ink tracking-tight" style={{ fontFeatureSettings: '"calt", "kern", "liga", "ss03"' }}>
+              {walletData.name}
+            </h1>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <code className="text-sm text-body">{shortenAddress(walletData.address, 8)}</code>
+              <CopyButton value={walletData.address} />
+              {!isApiError(basescan) && (
+                <a
+                  className="inline-flex items-center gap-1.5 rounded-md border border-hairline bg-surface-elevated px-2 py-1 text-xs text-accent-blue hover:text-accent-blue/80"
+                  href={basescan.data.basescanUrl}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  Basescan
+                  <svg className="size-3" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={1.5}>
+                    <path d="M3 9l6-6M9 3H3v6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </a>
+              )}
+            </div>
+            {walletData.notes && (
+              <p className="mt-3 rounded-md border border-hairline bg-surface-elevated px-3 py-2 text-sm text-muted">
+                {walletData.notes}
+              </p>
+            )}
           </div>
-        }
-      />
-
-      <div className="grid gap-4 lg:grid-cols-[1fr_0.8fr]">
-        <Card className="p-5">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <p className="text-sm text-slate-400">Address</p>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <code className="text-sm text-slate-100">
-                  {shortenAddress(wallet.address, 8)}
-                </code>
-                <CopyButton value={wallet.address} />
-                {basescan && (
-                  <a
-                    className="rounded-md border border-slate-700 px-2 py-1 text-xs text-blue-300 hover:text-blue-100"
-                    href={basescan.basescanUrl}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    Basescan
-                  </a>
-                )}
-              </div>
+          <div className="flex flex-wrap items-start gap-3">
+            <div className="flex flex-wrap gap-2">
+              <WalletStatusActions wallet={walletData} />
+              <EmergencyPauseButton walletId={id} />
             </div>
-            <StatusBadge status={wallet.status} />
+            <StatusBadge status={walletData.status} />
           </div>
-          {wallet.notes && (
-            <p className="mt-5 rounded-md bg-slate-950/60 p-3 text-sm text-slate-300">
-              {wallet.notes}
-            </p>
-          )}
-        </Card>
+        </div>
 
-        <Card className="p-5">
-          <p className="text-sm font-medium text-slate-200">Limits</p>
-          <dl className="mt-4 grid grid-cols-2 gap-4 text-sm">
+        {/* Limits row */}
+        <div className="border-t border-hairline px-5 py-3">
+          <div className="flex flex-wrap items-center gap-6 text-sm">
             <div>
-              <dt className="text-slate-500">Max trade</dt>
-              <dd className="mt-1 text-slate-100">
-                {formatOptionalUsd(wallet.maxTradeUsd)}
-              </dd>
+              <span className="text-muted">Max trade </span>
+              <span className="font-medium text-body">{formatOptionalUsd(walletData.maxTradeUsd) ?? "—"}</span>
             </div>
             <div>
-              <dt className="text-slate-500">Daily trades</dt>
-              <dd className="mt-1 text-slate-100">
-                {wallet.maxDailyTrades ?? "Not set"}
-              </dd>
+              <span className="text-muted">Daily trades </span>
+              <span className="font-medium text-body">{walletData.maxDailyTrades ?? "—"}</span>
             </div>
             <div>
-              <dt className="text-slate-500">Daily loss</dt>
-              <dd className="mt-1 text-slate-100">
-                {formatOptionalUsd(wallet.maxDailyLossUsd)}
-              </dd>
+              <span className="text-muted">Daily loss </span>
+              <span className="font-medium text-body">{formatOptionalUsd(walletData.maxDailyLossUsd) ?? "—"}</span>
             </div>
             <div>
-              <dt className="text-slate-500">Max gas</dt>
-              <dd className="mt-1 text-slate-100">
-                {formatOptionalUsd(wallet.maxGasUsd)}
-              </dd>
+              <span className="text-muted">Max gas </span>
+              <span className="font-medium text-body">{formatOptionalUsd(walletData.maxGasUsd) ?? "—"}</span>
             </div>
-          </dl>
-        </Card>
+          </div>
+        </div>
       </div>
 
-      <Card className="p-5">
-        <h2 className="text-base font-semibold text-slate-50">Balances</h2>
-        {!balances ? (
-          <EmptyState
-            title="Balances unavailable"
-            description="Start the API, database, and Base RPC connection to read wallet balances."
-          />
-        ) : (
-          <div className="mt-4 overflow-x-auto">
-            <table className="min-w-full divide-y divide-white/10 text-sm">
-              <thead className="text-left text-xs uppercase text-slate-500">
-                <tr>
-                  <th className="py-3 pr-4">Asset</th>
-                  <th className="py-3 pr-4">Type</th>
-                  <th className="py-3 pr-4">Balance</th>
-                  <th className="py-3 pr-4">State</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/10">
-                <tr>
-                  <td className="py-3 pr-4 text-slate-100">
-                    {balances.balances.native.symbol}
-                  </td>
-                  <td className="py-3 pr-4 text-slate-400">Native</td>
-                  <td className="py-3 pr-4 text-slate-100">
-                    {formatTokenAmount(
-                      balances.balances.native.balanceFormatted
-                    )}
-                  </td>
-                  <td className="py-3 pr-4">
-                    <StatusBadge status="ACTIVE" />
-                  </td>
-                </tr>
-                {balances.balances.tokens.map((token) => (
-                  <tr key={token.tokenId}>
-                    <td className="py-3 pr-4 text-slate-100">
-                      {token.symbol}
-                    </td>
-                    <td className="py-3 pr-4 text-slate-400">ERC20</td>
-                    <td className="py-3 pr-4 text-slate-100">
-                      {formatTokenAmount(token.balanceFormatted)}
-                    </td>
-                    <td className="py-3 pr-4 text-slate-500">
-                      {token.skippedReason ?? (token.enabled ? "Enabled" : "Disabled")}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {/* ── Balance cards ─────────────────────────────────────── */}
+      {!isApiError(balances) && (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-xl border border-hairline bg-surface px-4 py-3">
+            <p className="text-xs text-muted">{balances.data.balances.native.symbol} (Native)</p>
+            <p className="mt-1.5 text-xl font-medium text-ink">
+              {formatTokenAmount(balances.data.balances.native.balanceFormatted)}
+            </p>
+            <StatusBadge status="ACTIVE" />
           </div>
-        )}
-      </Card>
-
-      <Card className="p-5">
-        <h2 className="text-base font-semibold text-slate-50">
-          Dry Run Trade
-        </h2>
-        <p className="mt-2 text-sm text-slate-400">
-          Plan a placeholder swap without decrypting keys, signing, or sending a
-          transaction.
-        </p>
-        <div className="mt-4">
-          <DryRunTradeCard walletId={wallet.id} pairRules={pairRules} />
+          {balances.data.balances.tokens.slice(0, 3).map((token) => (
+            <div key={token.tokenId} className="rounded-xl border border-hairline bg-surface px-4 py-3">
+              <p className="text-xs text-muted">{token.symbol} (ERC20)</p>
+              <p className="mt-1.5 text-xl font-medium text-ink">
+                {formatTokenAmount(token.balanceFormatted)}
+              </p>
+              <span className={`inline-flex items-center rounded-xs border px-1.5 py-0.5 text-[11px] font-medium ${
+                token.enabled
+                  ? "border-accent-green/30 bg-accent-green-soft text-accent-green"
+                  : "border-hairline bg-surface-elevated text-stone"
+              }`}>
+                {token.enabled ? "Enabled" : token.skippedReason ?? "Disabled"}
+              </span>
+            </div>
+          ))}
         </div>
-      </Card>
+      )}
 
-      <Card className="p-5">
-        <h2 className="text-base font-semibold text-slate-50">
-          Schedule Settings
-        </h2>
-        <p className="mt-2 text-sm text-slate-400">
-          Configure deterministic wallet scheduling for queue reliability,
-          wallet separation, and rate limiting.
-        </p>
-        <div className="mt-4">
-          <WalletScheduleSettings walletId={wallet.id} initialSchedule={schedule} />
-        </div>
-      </Card>
+      {/* ── Section nav tabs ──────────────────────────────────── */}
+      <div className="flex items-center gap-1 border-b border-hairline">
+        {["overview", "transactions", "pair-rules", "allowances", "schedule"].map((tab) => (
+          <a
+            key={tab}
+            href={`#${tab}`}
+            className={`px-4 py-2.5 text-sm font-medium capitalize transition-colors ${
+              tab === "overview"
+                ? "border-b-2 border-accent-blue text-ink"
+                : "text-muted hover:text-body"
+            }`}
+          >
+            {tab === "pair-rules" ? "Pair Rules" : tab === "allowances" ? "Allowances" : tab === "schedule" ? "Schedule" : tab}
+          </a>
+        ))}
+      </div>
 
-      <Card className="p-5">
-        <h2 className="text-base font-semibold text-slate-50">
-          Execute Once
-        </h2>
-        <p className="mt-2 text-sm text-slate-400">
-          Submit a single live swap only when the API is explicitly configured
-          for live mode and the request is confirmed.
-        </p>
-        <div className="mt-4">
-          <ExecuteOnceCard
-            walletId={wallet.id}
-            pairRules={pairRules}
-            liveStatus={liveStatus}
-          />
-        </div>
-      </Card>
-
-      <Card className="p-5">
-        <h2 className="text-base font-semibold text-slate-50">
-          Allowances
-        </h2>
-        <p className="mt-2 text-sm text-slate-400">
-          Review ERC20 allowances by token and router, approve exact amounts,
-          and revoke stale permissions.
-        </p>
-        <div className="mt-4">
-          <AllowancesPanel
-            walletId={wallet.id}
-            allowances={allowances}
-            liveStatus={liveStatus}
-          />
-        </div>
-      </Card>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="p-5">
-          <h2 className="text-base font-semibold text-slate-50">
-            Allowed pairs
-          </h2>
-          <div className="mt-4">
-            <WalletPairRules walletId={wallet.id} rules={pairRules} />
-          </div>
-        </Card>
-
-        <Card className="p-5">
-          <h2 className="text-base font-semibold text-slate-50">
-            Transaction history
-          </h2>
-          <div className="mt-4">
-            {walletTransactions.length === 0 ? (
-              <EmptyState
-                title="No transactions recorded"
-                description="Planned, dry-run, submitted, and confirmed transactions will appear here."
-              />
+      {/* ── Section: Overview ─────────────────────────────────── */}
+      <div id="overview" className="space-y-4">
+        <div className="grid gap-4 lg:grid-cols-2">
+          {/* Dry Run Trade */}
+          <div className="rounded-xl border border-hairline bg-surface p-5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-medium text-ink">Dry Run Trade</h2>
+              <span className="rounded-xs border border-hairline bg-surface-elevated px-1.5 py-0.5 text-[11px] text-muted">no signing</span>
+            </div>
+            <p className="mt-2 text-xs text-muted">
+              Plan a placeholder swap without decrypting keys, signing, or sending a transaction.
+            </p>
+            {isApiError(pairRules) ? (
+              <ErrorState title="Pair rules unavailable" description={pairRules.message} />
             ) : (
-              <div className="space-y-3">
-                {walletTransactions.slice(0, 5).map((transaction) => (
-                  <div
-                    key={transaction.id}
-                    className="rounded-md border border-white/10 bg-slate-950/35 p-3"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-sm text-slate-100">
-                        {transaction.action} {transaction.pair ?? ""}
-                      </span>
-                      <StatusBadge status={transaction.status} />
-                    </div>
-                    {transaction.errorMessage && (
-                      <p className="mt-2 text-xs text-rose-200">
-                        {transaction.errorMessage}
-                      </p>
-                    )}
-                    {transaction.txHash && transaction.basescanUrl && (
-                      <a
-                        className="mt-2 inline-flex text-xs text-blue-300 hover:text-blue-100"
-                        href={transaction.basescanUrl}
-                        rel="noreferrer"
-                        target="_blank"
-                      >
-                        Open in Basescan
-                      </a>
-                    )}
-                    <Link
-                      className="mt-2 inline-flex text-xs text-blue-300 hover:text-blue-100"
-                      href={`/transactions/${transaction.id}`}
-                    >
-                      Open transaction
-                    </Link>
-                  </div>
-                ))}
+              <div className="mt-4">
+                <DryRunTradeCard walletId={walletData.id} pairRules={pairRulesData} />
               </div>
             )}
           </div>
-        </Card>
+
+          {/* Execute Once */}
+          <div className="rounded-xl border border-hairline bg-surface p-5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-medium text-ink">Execute Once</h2>
+            </div>
+            <p className="mt-2 text-xs text-muted">
+              Submit a single live swap only when the API is explicitly configured for live mode and the request is confirmed.
+            </p>
+            <div className="mt-4">
+              <ExecuteOnceCard
+                walletId={walletData.id}
+                pairRules={pairRulesData}
+                liveStatus={isApiError(liveStatus) ? null : liveStatus.data}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Schedule Settings */}
+        <div className="rounded-xl border border-hairline bg-surface p-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-medium text-ink">Schedule</h2>
+          </div>
+          <p className="mt-2 text-xs text-muted">
+            Configure deterministic wallet scheduling for queue reliability, wallet separation, and rate limiting.
+          </p>
+          {isApiError(schedule) ? (
+            <ErrorState title="Schedule unavailable" description={schedule.message} />
+          ) : (
+            <div className="mt-4">
+              <WalletScheduleSettings walletId={walletData.id} initialSchedule={schedule.data} />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Section: Pair Rules ──────────────────────────────── */}
+      <div id="pair-rules" className="rounded-xl border border-hairline bg-surface p-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-medium text-ink">Pair Rules</h2>
+        </div>
+        {isApiError(pairRules) ? (
+          <ErrorState title="Pair rules unavailable" description={pairRules.message} />
+        ) : (
+          <div className="mt-4">
+            <WalletPairRules walletId={walletData.id} rules={pairRulesData} />
+          </div>
+        )}
+      </div>
+
+      {/* ── Section: Allowances ──────────────────────────────── */}
+      <div id="allowances" className="rounded-xl border border-hairline bg-surface p-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-medium text-ink">Allowances</h2>
+        </div>
+        <p className="mt-2 text-xs text-muted">
+          Review ERC20 allowances by token and router, approve exact amounts, and revoke stale permissions.
+        </p>
+        {isApiError(allowances) ? (
+          <ErrorState title="Allowances unavailable" description={allowances.message} />
+        ) : (
+          <div className="mt-4">
+            <AllowancesPanel
+              walletId={walletData.id}
+              walletAddress={walletData.address}
+              allowances={allowancesData}
+              liveStatus={isApiError(liveStatus) ? null : liveStatus.data}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* ── Section: Transactions ────────────────────────────── */}
+      <div id="transactions" className="rounded-xl border border-hairline bg-surface">
+        <div className="flex items-center justify-between border-b border-hairline px-4 py-3">
+          <h2 className="text-sm font-medium text-ink">Transaction history</h2>
+          <span className="text-xs text-stone">{walletTransactions.length} total</span>
+        </div>
+        <div className="divide-y divide-hairline">
+          {isApiError(transactions) ? (
+            <div className="px-4 py-8">
+              <ErrorState title="Transactions unavailable" description={transactions.message} />
+            </div>
+          ) : walletTransactions.length === 0 ? (
+            <div className="px-4 py-8 text-center">
+              <p className="text-sm text-muted">No transactions recorded for this wallet</p>
+            </div>
+          ) : (
+            walletTransactions.slice(0, 8).map((tx) => (
+              <div key={tx.id} className="flex items-center gap-3 px-4 py-3 hover:bg-surface-elevated transition-colors">
+                <StatusBadge status={tx.status} />
+                <span className="min-w-0 flex-1 text-sm text-body truncate">
+                  {tx.action} {tx.pair ?? ""}
+                </span>
+                {tx.errorMessage && (
+                  <span className="text-xs text-accent-red truncate">{tx.errorMessage}</span>
+                )}
+                {tx.txHash && (
+                  <>
+                    <code className="rounded-xs border border-hairline bg-surface-elevated px-1.5 py-0.5 text-[11px] text-stone">
+                      {shortenAddress(tx.txHash, 4)}
+                    </code>
+                    {tx.basescanUrl && (
+                      <a
+                        className="shrink-0 text-xs text-accent-blue hover:text-accent-blue/80"
+                        href={tx.basescanUrl}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        {isDemoBasescanUrl(tx.basescanUrl) ? (
+                          <DemoBasescanBadge />
+                        ) : (
+                          "↗"
+                        )}
+                      </a>
+                    )}
+                  </>
+                )}
+                <Link
+                  className="shrink-0 text-xs text-muted hover:text-ink"
+                  href={`/transactions/${tx.id}`}
+                >
+                  Open
+                </Link>
+              </div>
+            ))
+          )}
+        </div>
+        {walletTransactions.length > 8 && (
+          <div className="border-t border-hairline px-4 py-3 text-center">
+            <Link href="/transactions" className="text-xs text-accent-blue hover:text-accent-blue/80">
+              View all {walletTransactions.length} transactions →
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

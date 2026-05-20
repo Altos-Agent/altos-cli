@@ -14,28 +14,40 @@ export const WalletImportCard = () => {
 
   return (
     <div className="space-y-4">
+      {/* Caution header */}
+      <div className="flex items-center gap-3 rounded-lg border border-accent-yellow/30 bg-accent-yellow/5 px-4 py-3">
+        <span className="inline-flex items-center rounded-xs border border-accent-yellow/40 bg-accent-yellow/15 px-2 py-0.5 text-[11px] font-semibold text-accent-yellow">
+          CAUTION
+        </span>
+        <p className="text-sm text-muted">
+          Private keys are encrypted before storage and never returned by the API.
+          Plaintext CSV import is not supported.
+        </p>
+      </div>
+
+      {/* Form */}
       <div className="grid gap-3 md:grid-cols-[1fr_1.4fr_1fr_auto]">
         <input
-          className="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200"
+          className="h-10 rounded-md border border-hairline bg-surface-elevated px-3 text-sm text-body placeholder:text-stone focus:border-hairline-strong focus:outline-none"
           placeholder="Wallet name"
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
         <input
-          className="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200"
+          className="h-10 rounded-md border border-hairline bg-surface-elevated px-3 text-sm text-body placeholder:text-stone focus:border-hairline-strong focus:outline-none"
           placeholder="Private key"
           type="password"
           value={privateKey}
           onChange={(event) => setPrivateKey(event.target.value)}
         />
         <input
-          className="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200"
+          className="h-10 rounded-md border border-hairline bg-surface-elevated px-3 text-sm text-body placeholder:text-stone focus:border-hairline-strong focus:outline-none"
           placeholder="Notes optional"
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
         />
         <button
-          className="h-10 rounded-md bg-blue-500 px-4 text-sm font-semibold text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-on-primary transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
           disabled={pending || !name.trim() || !privateKey.trim()}
           type="button"
           onClick={async () => {
@@ -59,14 +71,15 @@ export const WalletImportCard = () => {
             }
           }}
         >
-          Add
+          {pending ? "Importing…" : "Add"}
         </button>
       </div>
-      <p className="text-sm text-slate-500">
-        Add wallets one by one. Plaintext CSV private-key import is not
-        supported.
-      </p>
-      {message && <p className="text-sm text-slate-300">{message}</p>}
+
+      {message && (
+        <p className={`text-sm ${message.includes("failed") || message.includes("error") ? "text-accent-red" : "text-body"}`}>
+          {message}
+        </p>
+      )}
     </div>
   );
 };

@@ -1,13 +1,15 @@
-import { maxUint256, parseUnits } from "viem";
+import { maxUint256 } from "viem";
+import { parseTokenAmount } from "@base-orchestrator/shared";
+import { getRuntimeConfig } from "../config/runtime-config.js";
 
 export const maxUint256String = maxUint256.toString();
 
 export const allowUnlimitedApproval = () =>
-  process.env.ALLOW_UNLIMITED_APPROVAL === "true";
+  getRuntimeConfig().allowUnlimitedApproval;
 
 export const parseApprovalAmount = (amount: string, decimals: number) => {
   try {
-    return parseUnits(amount, decimals).toString();
+    return parseTokenAmount(amount, decimals).toString();
   } catch {
     throw new Error("Approval amount must be a valid token amount");
   }

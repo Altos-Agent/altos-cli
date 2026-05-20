@@ -32,3 +32,16 @@ export interface HealthStatus {
   dryRun: typeof DEFAULT_DRY_RUN;
   network: SupportedChain;
 }
+
+export * from "./amounts.js";
+export * from "./schemas/common.js";
+export * from "./schemas/auth.js";
+export * from "./schemas/wallet.js";
+export * from "./schemas/token.js";
+export * from "./schemas/pair.js";
+export * from "./schemas/router.js";
+export * from "./schemas/quote.js";
+export * from "./schemas/trade.js";
+export * from "./schemas/approval.js";
+export * from "./schemas/telegram.js";
+export * from "./schemas/scheduler.js";

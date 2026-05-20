@@ -19,6 +19,7 @@
 Owner files:
 
 - `apps/api/src/vault/wallet-vault.ts`
+- `apps/api/src/vault/vault-lock.ts`
 - `apps/api/src/wallets/wallet-service.ts`
 
 Rules:
@@ -29,15 +30,24 @@ Rules:
 - API responses never return private keys or encrypted private-key payloads.
 - New wallets default to `PAUSED`.
 - Signing code decrypts keys only in memory and only after server-side safety gates pass.
+- The vault starts `LOCKED`; live signing routes require `UNLOCKED`.
+- Dry-run planning does not require vault unlock.
+- `VAULT_AUTO_LOCK_MS` controls the unlock timeout.
 
 ## Live Execution Gates
 
 Live transaction writes require:
 
+- Authenticated local operator session.
+- Argon2id `OPERATOR_PASSWORD_HASH` for shared-machine or production-like use.
+- Valid CSRF token for mutating requests.
+- `global_emergency_paused=false`.
+- Vault status `UNLOCKED`.
 - `DRY_RUN=false`.
 - `REQUIRE_LIVE_CONFIRMATION=true` by default.
 - Request-level `confirmLiveExecution=true`.
 - Active wallet status.
+- No same-wallet `SUBMITTED`, `CONFIRMED_PENDING_FINALITY`, or `STUCK` transaction.
 - Enabled pair, token, router, and wallet-pair rule.
 - Risk engine approval.
 - Quote transaction target and hex calldata.
@@ -46,6 +56,12 @@ Live transaction writes require:
 - viem simulation before signing.
 
 Manual execute-once exists. Live scheduled execution is not implemented.
+
+## Nonce And Replacement Policy
+
+The system serializes live-impacting writes per wallet with `pending_wallet_locks` and submitted transaction status checks. It stores nonce and from-address metadata when available from the signing/submission path. A wallet with a `SUBMITTED`, `CONFIRMED_PENDING_FINALITY`, or `STUCK` transaction cannot start another live execute-once, approve, or revoke by default.
+
+Replacement transaction sending is intentionally not implemented. If a transaction becomes `STUCK` or `DROPPED`, review it with the RPC provider and Basescan before resuming the wallet. Do not manually clear locks or force another live transaction unless you have independently confirmed nonce state and replacement risk.
 
 ## ERC20 Approvals
 
@@ -88,6 +104,8 @@ Rules:
 
 Emergency pause:
 
+- Has a global mode stored as `local_settings.global_emergency_paused`.
+- Blocks approvals, revokes, execute-once, scheduler start, scheduled jobs, and auto-approval while enabled.
 - Sets wallet status to `PAUSED`.
 - Disables the wallet schedule.
 - Sets `emergencyPaused=true`.

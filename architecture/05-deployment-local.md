@@ -4,7 +4,7 @@
 
 | Service  | Default URL or port     | Config                              |
 | -------- | ----------------------- | ----------------------------------- |
-| Web app  | `http://localhost:3100` | `WEB_PORT`                          |
+| Web app  | `http://127.0.0.1:3100` | `WEB_PORT`                          |
 | API      | `http://127.0.0.1:4100` | `API_HOST`, `API_PORT`              |
 | Postgres | `localhost:5435`        | `DATABASE_URL`, `POSTGRES_PASSWORD` |
 | Redis    | `localhost:6379`        | `REDIS_URL`                         |
@@ -53,6 +53,7 @@ Quotes:
 
 Safety:
 
+- `DEMO_MODE`
 - `DRY_RUN`
 - `REQUIRE_LIVE_CONFIRMATION`
 - `ALLOW_UNLIMITED_APPROVAL`
@@ -61,13 +62,27 @@ Safety:
 
 Secrets:
 
+- `OPERATOR_USERNAME`
+- `OPERATOR_PASSWORD`
+- `OPERATOR_PASSWORD_HASH`
+- `SESSION_SECRET`
 - `VAULT_STORAGE_PATH`
 - `MASTER_KEY_FILE`
+- `VAULT_UNLOCK_PASSPHRASE`
+- `VAULT_AUTO_LOCK_MS`
 - `TELEGRAM_ENABLED`
 - `TELEGRAM_BOT_TOKEN`
 - `TELEGRAM_CHAT_ID`
 
 Do not commit real `.env` values, private keys, bot tokens, master keys, or RPC credentials.
+
+## Local Auth
+
+The dashboard requires login before app routes render. The API sets an HTTP-only session cookie and requires `x-csrf-token` on mutating routes.
+
+Local startup must provide either `OPERATOR_PASSWORD` for development or `OPERATOR_PASSWORD_HASH` for stronger local/server use. `SESSION_SECRET` must be at least 32 characters.
+
+See `docs/AUTH_SETUP.md`.
 
 ## Startup Commands
 
@@ -79,6 +94,12 @@ cp .env.example .env
 pnpm db:up
 pnpm db:migrate
 pnpm db:seed
+```
+
+Open the dashboard and log in:
+
+```text
+http://127.0.0.1:3100/login
 ```
 
 Run both apps:

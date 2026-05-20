@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import type { FastifyInstance } from "fastify";
 import type { DbClient } from "../db/client.js";
 import { transactions, wallets } from "../db/schema.js";
+import { handleValidationError, parseIdParams } from "../http/validation.js";
 import { getBaseChainStatus } from "./baseClient.js";
 import {
   buildBasescanAddressLink,
@@ -38,6 +39,12 @@ export const registerChainRoutes = async (
   server.get<{ Params: IdParams }>(
     "/api/wallets/:id/balances",
     async (request, reply) => {
+      let params: IdParams;
+      try {
+        params = parseIdParams(request.params);
+      } catch (error) {
+        return handleValidationError(error, reply);
+      }
       const [wallet] = await db
         .select({
           id: wallets.id,
@@ -45,7 +52,7 @@ export const registerChainRoutes = async (
           name: wallets.name,
         })
         .from(wallets)
-        .where(eq(wallets.id, request.params.id));
+        .where(eq(wallets.id, params.id));
 
       if (!wallet) {
         const handled = notFound("Wallet");
@@ -67,6 +74,12 @@ export const registerChainRoutes = async (
   server.get<{ Params: IdParams }>(
     "/api/wallets/:id/basescan",
     async (request, reply) => {
+      let params: IdParams;
+      try {
+        params = parseIdParams(request.params);
+      } catch (error) {
+        return handleValidationError(error, reply);
+      }
       const [wallet] = await db
         .select({
           id: wallets.id,
@@ -74,7 +87,7 @@ export const registerChainRoutes = async (
           name: wallets.name,
         })
         .from(wallets)
-        .where(eq(wallets.id, request.params.id));
+        .where(eq(wallets.id, params.id));
 
       if (!wallet) {
         const handled = notFound("Wallet");
@@ -92,6 +105,12 @@ export const registerChainRoutes = async (
   server.get<{ Params: IdParams }>(
     "/api/transactions/:id/basescan",
     async (request, reply) => {
+      let params: IdParams;
+      try {
+        params = parseIdParams(request.params);
+      } catch (error) {
+        return handleValidationError(error, reply);
+      }
       const [transaction] = await db
         .select({
           id: transactions.id,
@@ -99,7 +118,7 @@ export const registerChainRoutes = async (
           basescanUrl: transactions.basescanUrl,
         })
         .from(transactions)
-        .where(eq(transactions.id, request.params.id));
+        .where(eq(transactions.id, params.id));
 
       if (!transaction) {
         const handled = notFound("Transaction");

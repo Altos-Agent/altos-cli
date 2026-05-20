@@ -1,0 +1,4 @@
+ALTER TYPE "public"."transaction_status" ADD VALUE IF NOT EXISTS 'FINALIZED' AFTER 'CONFIRMED';
+ALTER TYPE "public"."transaction_status" ADD VALUE IF NOT EXISTS 'STUCK' AFTER 'REJECTED';
+ALTER TYPE "public"."transaction_status" ADD VALUE IF NOT EXISTS 'DROPPED' AFTER 'STUCK';
+ALTER TYPE "public"."transaction_status" ADD VALUE IF NOT EXISTS 'REPLACED' AFTER 'DROPPED';

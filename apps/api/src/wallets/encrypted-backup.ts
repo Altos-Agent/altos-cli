@@ -8,12 +8,14 @@ export interface EncryptedWalletBackupEntry {
   address: string;
   encryptedPrivateKey: string;
   encryptionVersion: number;
-  status?: "ACTIVE" | "PAUSED" | "DISABLED";
+  status?: "ACTIVE" | "PAUSED" | "DISABLED" | "QUARANTINED";
   maxTradeUsd?: string | null;
   maxDailyTrades?: number | null;
   maxDailyLossUsd?: string | null;
   maxGasUsd?: string | null;
   notes?: string | null;
+  nonce?: number | null;
+  nonceStatus?: "CLEAN" | "UNCERTAIN" | "QUARANTINED";
   [key: string]: unknown;
 }
 

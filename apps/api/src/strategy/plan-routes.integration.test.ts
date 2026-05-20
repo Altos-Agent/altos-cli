@@ -43,6 +43,7 @@ describe("dry-run plan integration", () => {
           riskLevel: "LOW",
           maxTradeUsd: null,
           enabled: true,
+          verificationStatus: "VERIFIED",
           createdAt: now,
           updatedAt: now,
         },
@@ -56,6 +57,7 @@ describe("dry-run plan integration", () => {
           riskLevel: "LOW",
           maxTradeUsd: null,
           enabled: true,
+          verificationStatus: "VERIFIED",
           createdAt: now,
           updatedAt: now,
         },
@@ -68,6 +70,7 @@ describe("dry-run plan integration", () => {
           address: null,
           enabled: true,
           riskLevel: "LOW",
+          verificationStatus: "VERIFIED",
           notes: null,
         },
       ],
@@ -109,7 +112,7 @@ describe("dry-run plan integration", () => {
       payload: {
         walletId: "wallet-1",
         pairId: "pair-1",
-        amountIn: "25",
+        sellAmountDisplay: "25",
         mode: "DRY_RUN_ONLY",
       },
     });
@@ -127,6 +130,8 @@ describe("dry-run plan integration", () => {
       pairId: "pair-1",
       tokenIn: "USDC",
       tokenOut: "WETH",
+      amountIn: "25000000",
+      amountOut: "24750000",
     });
 
     await server.close();

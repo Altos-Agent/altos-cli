@@ -21,8 +21,10 @@ import {
   createMasterKeyFingerprint,
   encryptedWalletBackupFormat,
   validateEncryptedWalletBackup,
-  type EncryptedWalletBackup
+  type EncryptedWalletBackup,
+  type EncryptedWalletBackupEntry,
 } from "./encrypted-backup.js";
+import { getCurrentRequestId } from "../http/request-context.js";
 
 const localActor = "local";
 
@@ -73,7 +75,11 @@ const sanitizeWallet = (wallet: typeof wallets.$inferSelect): SafeWallet => ({
   maxGasUsd: wallet.maxGasUsd,
   notes: wallet.notes,
   createdAt: wallet.createdAt,
-  updatedAt: wallet.updatedAt
+  updatedAt: wallet.updatedAt,
+  nonce: wallet.nonce,
+  nonceStatus: wallet.nonceStatus,
+  quarantineReason: wallet.quarantineReason,
+  quarantinedAt: wallet.quarantinedAt,
 });
 
 const insertAuditLog = async (
@@ -87,23 +93,28 @@ const insertAuditLog = async (
     action,
     entityType: "wallet",
     entityId,
-    metadataJson
+    metadataJson: {
+      ...(metadataJson ?? {}),
+      requestId: getCurrentRequestId()
+    }
   });
 };
 
 const sanitizeEncryptedBackupWallet = (
   wallet: typeof wallets.$inferSelect
-) => ({
+): EncryptedWalletBackupEntry => ({
   name: wallet.name,
   address: wallet.address,
   encryptedPrivateKey: wallet.encryptedPrivateKey,
   encryptionVersion: wallet.encryptionVersion,
-  status: wallet.status,
+  status: wallet.status as "ACTIVE" | "PAUSED" | "DISABLED",
   maxTradeUsd: wallet.maxTradeUsd,
   maxDailyTrades: wallet.maxDailyTrades,
   maxDailyLossUsd: wallet.maxDailyLossUsd,
   maxGasUsd: wallet.maxGasUsd,
-  notes: wallet.notes
+  notes: wallet.notes,
+  nonce: wallet.nonce,
+  nonceStatus: wallet.nonceStatus,
 });
 
 export const createWalletService = (db: DbClient) => ({

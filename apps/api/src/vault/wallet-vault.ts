@@ -7,6 +7,7 @@ import {
 import { mkdir, readFile, writeFile, chmod } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { Wallet, getAddress } from "ethers";
+import { getRuntimeConfig } from "../config/runtime-config.js";
 
 const algorithm = "aes-256-gcm";
 const currentEncryptionVersion = 1;
@@ -33,7 +34,7 @@ export interface EncryptedPrivateKeyPayload {
 }
 
 export const getMasterKeyPath = () =>
-  resolve(process.env.MASTER_KEY_FILE ?? ".local/master.key");
+  resolve(getRuntimeConfig().masterKeyFile);
 
 export const loadOrCreateMasterKey = async (
   masterKeyPath = getMasterKeyPath()

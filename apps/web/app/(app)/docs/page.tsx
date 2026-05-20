@@ -18,10 +18,10 @@ export default function DocsPage() {
       <div className="grid gap-4 md:grid-cols-2">
         {docs.map(([title, path]) => (
           <Card key={path} className="p-5">
-            <h2 className="font-semibold text-slate-50">{title}</h2>
-            <p className="mt-2 text-sm text-slate-500">{path}</p>
+            <h2 className="text-sm font-medium text-ink">{title}</h2>
+            <p className="mt-1 text-xs text-muted">{path}</p>
             <Link
-              className="mt-4 inline-flex text-sm font-medium text-blue-300 hover:text-blue-100"
+              className="mt-3 inline-flex text-xs font-medium text-accent-blue hover:text-accent-blue/80"
               href="#"
             >
               Available in repository

@@ -3,9 +3,14 @@ export type TransactionStatus =
   | "PLANNED"
   | "DRY_RUN"
   | "SUBMITTED"
+  | "CONFIRMED_PENDING_FINALITY"
   | "CONFIRMED"
+  | "FINALIZED"
   | "FAILED"
-  | "REJECTED";
+  | "REJECTED"
+  | "STUCK"
+  | "DROPPED"
+  | "REPLACED";
 export type TransactionAction =
   | "SWAP"
   | "APPROVE"
@@ -18,6 +23,47 @@ export interface ChainStatus {
   latestBlockNumber: string;
   rpcUrl: string;
   nativeSymbol: string;
+}
+
+export interface AuthMe {
+  authenticated: boolean;
+  username: string | null;
+}
+
+export interface LoginResult {
+  authenticated: boolean;
+  username: string;
+}
+
+export interface CsrfResult {
+  csrfToken: string;
+}
+
+export interface VaultStatus {
+  status: "LOCKED" | "UNLOCKED";
+  autoLockMs: number;
+  unlockedUntil: string | null;
+}
+
+export interface EmergencyPauseStatus {
+  globalEmergencyPaused: boolean;
+  updatedAt: string;
+}
+
+export interface RuntimeStatus {
+  demoMode: boolean;
+  dryRun: boolean;
+  liveExecutionAllowed: boolean;
+  requireLiveConfirmation: boolean;
+  schedulerLiveExecution: boolean;
+  autoApprove: boolean;
+  allowUnlimitedApproval: boolean;
+  quoteProvider: "mock" | "0x" | "zeroX";
+  baseChainId: number;
+  baseRpcUrlMasked: string;
+  vaultStatus: VaultStatus;
+  emergencyPaused: boolean;
+  authEnabled: boolean;
 }
 
 export interface Wallet {
@@ -79,13 +125,24 @@ export interface EncryptedWalletBackup {
 }
 
 export type RiskLevel = "LOW" | "MEDIUM" | "HIGH";
+export type VerificationStatus = "UNVERIFIED" | "VERIFIED" | "PLACEHOLDER" | "BLOCKED";
 
-export interface Token {
+export interface VerificationFields {
+  verificationStatus: VerificationStatus;
+  verificationSource: string | null;
+  verificationEvidenceUrl: string | null;
+  verifiedAt: string | null;
+  verifiedBy: string | null;
+  verificationNotes: string | null;
+}
+
+export interface Token extends VerificationFields {
   id: string;
   chainId: number;
   symbol: string;
   name: string;
   address: string | null;
+  checksumAddress: string | null;
   decimals: number;
   riskLevel: RiskLevel;
   maxTradeUsd: string | null;
@@ -94,7 +151,7 @@ export interface Token {
   updatedAt: string;
 }
 
-export interface Pair {
+export interface Pair extends VerificationFields {
   id: string;
   chainId: number;
   tokenInId: string;
@@ -111,11 +168,16 @@ export interface Pair {
   tokenOut: Token | null;
 }
 
-export interface RouterConfig {
+export interface RouterConfig extends VerificationFields {
   id: string;
   chainId: number;
   name: string;
   address: string | null;
+  checksumAddress: string | null;
+  spenderAddress: string | null;
+  txTargetAddress: string | null;
+  allowanceTargetAddress: string | null;
+  functionSelectorAllowlist: Record<string, string[]> | null;
   enabled: boolean;
   riskLevel: RiskLevel;
   notes: string | null;
@@ -176,6 +238,7 @@ export interface WalletBasescan {
 
 export interface Transaction {
   id: string;
+  requestId: string | null;
   walletId: string;
   walletName?: string;
   walletAddress?: string;
@@ -192,10 +255,70 @@ export interface Transaction {
   tokenOut?: string | null;
   amountIn?: string | null;
   amountOut?: string | null;
+  amountInRaw?: string | null;
+  amountOutRaw?: string | null;
+  amountInUsd?: string | null;
+  amountOutUsd?: string | null;
   gasUsed?: string | null;
   gasUsd?: string | null;
   feeNative?: string | null;
+  usdPriceSource?: string | null;
+  usdPriceTimestamp?: string | null;
+  quoteUsdSource?: string | null;
+  riskCheckedAt?: string | null;
+  aggregateRiskSnapshotJson?: unknown | null;
   errorMessage?: string | null;
+  nonce?: number | null;
+  fromAddress?: string | null;
+  toAddress?: string | null;
+  calldataHash?: string | null;
+  quoteHash?: string | null;
+  simulationHash?: string | null;
+  confirmationCount?: number | null;
+  finalizedBlock?: string | null;
+  replacedByTxHash?: string | null;
+  droppedReason?: string | null;
+}
+
+export type TransactionRequestStatus =
+  | "PENDING"
+  | "SUBMITTED"
+  | "CONFIRMED"
+  | "REJECTED"
+  | "FAILED"
+  | "CONFLICT";
+
+export interface TransactionRequest {
+  id: string;
+  idempotencyKey: string;
+  walletId: string;
+  action: TransactionAction;
+  status: TransactionRequestStatus;
+  requestHash: string;
+  pairId: string | null;
+  routerId: string | null;
+  sellToken: string | null;
+  buyToken: string | null;
+  sellAmountRaw: string | null;
+  quoteHash: string | null;
+  simulationHash: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PendingWalletLock {
+  walletId: string;
+  lockedByRequestId: string;
+  nonce: number | null;
+  status: "ACTIVE" | "RELEASED" | "EXPIRED";
+  expiresAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WalletPendingState {
+  lock: PendingWalletLock | null;
+  request: TransactionRequest | null;
 }
 
 export interface TransactionRefreshResult {
@@ -205,12 +328,20 @@ export interface TransactionRefreshResult {
 }
 
 export interface NormalizedQuote {
+  chainId: number;
   provider: "mock" | "zeroX";
   routerName: string;
+  routerAddress: string | null;
+  spenderAddress: string | null;
   sellToken: string;
   buyToken: string;
-  sellAmount: string;
-  buyAmount: string;
+  sellTokenAddress: string | null;
+  buyTokenAddress: string | null;
+  sellAmountDisplay: string;
+  sellAmountRaw: string;
+  buyAmountDisplay: string;
+  buyAmountRaw: string;
+  minBuyAmountRaw: string | null;
   estimatedGas: {
     gasUsed: string;
     gasUsd: string;
@@ -219,6 +350,12 @@ export interface NormalizedQuote {
   allowanceTarget: string | null;
   txTo: string | null;
   txData: string | null;
+  priceImpactBps: number | null;
+  slippageBps: number;
+  txValue: string;
+  quotedAt: string;
+  quoteTimestamp: string;
+  expiresAt: string;
   warnings: string[];
   rawResponse: unknown | null;
 }
@@ -232,7 +369,8 @@ export interface DryRunPlanResult {
     router: string | null;
     tokenIn: string | null;
     tokenOut: string | null;
-    amountIn: string;
+    sellAmountDisplay: string;
+    sellAmountRaw: string | null;
   };
   estimatedGas: {
     gasUsed: string;
@@ -324,18 +462,94 @@ export interface TelegramSettings {
   notifyOnDryRun: boolean;
   createdAt: string;
   updatedAt: string;
+  lastTestStatus: string | null;
+  lastDeliveryAt: string | null;
+  recentDeliveries: NotificationDelivery[];
+  state: {
+    disabled: boolean;
+    tokenMissing: boolean;
+    chatMissing: boolean;
+  };
+}
+
+export interface NotificationDelivery {
+  id: string;
+  channel: string;
+  eventType: string;
+  status: "SENT" | "FAILED" | "SKIPPED" | string;
+  requestId: string | null;
+  jobId: string | null;
+  walletId: string | null;
+  transactionId: string | null;
+  destinationPreview: string | null;
+  errorCode: string | null;
+  errorMessage: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OpsSummary {
+  queueDepth: SchedulerStatus["queues"] | null;
+  notificationFailuresCount: number;
+  submittedTxCount: number;
+  failedTxCount: number;
+  emergencyPauseStatus: EmergencyPauseStatus;
+  vaultStatus: VaultStatus;
+  runtimeStatus: RuntimeStatus;
+  healthStatus: {
+    ok: boolean;
+    status: "ok" | "degraded" | string;
+    dependencies: Record<
+      "database" | "redis" | "rpc",
+      {
+        status: "ok" | "degraded" | "down" | "skipped" | string;
+        detail?: string;
+        checkedAt: string;
+      }
+    >;
+  };
 }
 
 export interface DashboardSummary {
+  apiError: {
+    ok: false;
+    status: number;
+    message: string;
+    path: string;
+  } | null;
   activeWallets: number;
   pausedWallets: number;
   totalSubmittedTx: number;
   confirmedTx: number;
   failedTx: number;
-  dryRunStatus: "Enabled" | "Disabled";
-  telegramStatus: "Enabled" | "Disabled";
+  dryRunStatus: "Enabled" | "Disabled" | "Unavailable";
+  telegramStatus: "Enabled" | "Disabled" | "Unavailable";
   chainStatus: ChainStatus | null;
   schedulerStatus: SchedulerStatus | null;
+  aggregateRisk: AggregateRiskStatus | null;
+}
+
+export interface AggregateRiskStatus {
+  enabled: boolean;
+  limits: AggregateLimits | null;
+  stats: AggregateStats;
+}
+
+export interface AggregateLimits {
+  maxDailyTradeUsd: string;
+  maxDailyGasUsd: string;
+  maxPendingTradeUsd: string;
+  maxPendingWallets: number;
+  maxFailedTxPerDay: number;
+  enabled: boolean;
+}
+
+export interface AggregateStats {
+  totalTradeUsd: string;
+  totalGasUsd: string;
+  totalPendingUsd: string;
+  activeWalletCount: number;
+  failedTxCount: number;
 }
 
 export type StrategyProfile =
@@ -346,12 +560,81 @@ export type StrategyProfile =
 
 export interface SchedulerStatus {
   started: boolean;
+  activeLoop: boolean;
+  paused: boolean;
+  lockOwner: string | null;
+  lockHeartbeatAt: string | null;
+  lockExpiresAt: string | null;
   dryRun: boolean;
   liveSchedulerEnabled: boolean;
+  schedulerMode: "DRY_RUN_ONLY" | "LIVE_REJECTED" | string;
+  emergencyPaused: boolean;
+  nextRuns: {
+    walletId: string;
+    walletName: string;
+    scheduleId: string;
+    nextRunAt: string | null;
+    lastStatus: string | null;
+    emergencyPaused: boolean;
+  }[];
+  failedJobs: {
+    id: string;
+    walletId: string;
+    scheduleId: string | null;
+    jobType: string;
+    status: string;
+    reason: string | null;
+    createdAt: string;
+    finishedAt: string | null;
+  }[];
+  pausedWallets: {
+    walletId: string;
+    walletName: string;
+    scheduleId: string;
+    emergencyPaused: boolean;
+  }[];
   queues: Record<
     "quoteQueue" | "tradeQueue" | "confirmationQueue" | "notificationQueue",
     Record<string, number>
   >;
+  dlq?: {
+    total: number;
+    unresolved: number;
+    retryableUnresolved: number;
+    byErrorCode: Record<string, number>;
+  };
+  provider?: {
+    circuitState: "CLOSED" | "HALF_OPEN" | "OPEN";
+    rateLimit429Count: number;
+    totalRequests: number;
+    successfulRequests: number;
+    failedRequests: number;
+    rejectedRequests: number;
+    currentConcurrent: number;
+    lastErrorAt: string | null;
+    lastErrorCode: string | null;
+    lastRateLimitedAt: string | null;
+  };
+}
+
+export interface DeadLetterJobEntry {
+  id: string;
+  queueName: string;
+  jobId: string;
+  jobType: string;
+  walletId: string | null;
+  pairId: string | null;
+  scheduleId: string | null;
+  requestId: string | null;
+  traceId: string | null;
+  errorCode: string;
+  errorMessage: string;
+  retryable: boolean;
+  payloadPreviewJson: Record<string, unknown> | null;
+  failedAt: string;
+  resolvedAt: string | null;
+  resolvedBy: string | null;
+  resolutionNote: string | null;
 }
 
 export interface WalletSchedule {
@@ -361,10 +644,15 @@ export interface WalletSchedule {
   tradeAmountUsd: string;
   minIntervalMinutes: number;
   maxDailyTrades: number | null;
+  maxDailyRuns: number | null;
   strategyProfile: StrategyProfile;
   emergencyPaused: boolean;
   failedTxPauseThreshold: number;
   lastScheduledAt: string | null;
+  nextRunAt: string | null;
+  lastRunAt: string | null;
+  lastStatus: string | null;
+  failureCount: number;
   createdAt: string | null;
   updatedAt: string | null;
 }

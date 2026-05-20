@@ -28,8 +28,9 @@ export const WalletScheduleSettings = ({
   const [minIntervalMinutes, setMinIntervalMinutes] = useState(
     String(initialSchedule?.minIntervalMinutes ?? 60)
   );
-  const [maxDailyTrades, setMaxDailyTrades] = useState(
-    initialSchedule?.maxDailyTrades?.toString() ?? ""
+  const [maxDailyRuns, setMaxDailyRuns] = useState(
+    (initialSchedule?.maxDailyRuns ?? initialSchedule?.maxDailyTrades)?.toString() ??
+      ""
   );
   const [failedTxPauseThreshold, setFailedTxPauseThreshold] = useState(
     String(initialSchedule?.failedTxPauseThreshold ?? 3)
@@ -53,9 +54,9 @@ export const WalletScheduleSettings = ({
 
       <div className="grid gap-3 md:grid-cols-3">
         <label className="space-y-1 text-sm">
-          <span className="text-slate-400">Strategy profile</span>
+          <span className="text-muted">Strategy profile</span>
           <select
-            className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-slate-200"
+            className="h-10 w-full rounded-md border border-hairline bg-surface-elevated px-3 text-sm text-body"
             value={strategyProfile}
             onChange={(event) =>
               setStrategyProfile(event.target.value as StrategyProfile)
@@ -69,37 +70,37 @@ export const WalletScheduleSettings = ({
           </select>
         </label>
         <label className="space-y-1 text-sm">
-          <span className="text-slate-400">Trade amount USD</span>
+          <span className="text-muted">Trade amount USD</span>
           <input
-            className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-slate-200"
+            className="h-10 w-full rounded-md border border-hairline bg-surface-elevated px-3 text-sm text-body"
             inputMode="decimal"
             value={tradeAmountUsd}
             onChange={(event) => setTradeAmountUsd(event.target.value)}
           />
         </label>
         <label className="space-y-1 text-sm">
-          <span className="text-slate-400">Min interval minutes</span>
+          <span className="text-muted">Min interval minutes</span>
           <input
-            className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-slate-200"
+            className="h-10 w-full rounded-md border border-hairline bg-surface-elevated px-3 text-sm text-body"
             inputMode="numeric"
             value={minIntervalMinutes}
             onChange={(event) => setMinIntervalMinutes(event.target.value)}
           />
         </label>
         <label className="space-y-1 text-sm">
-          <span className="text-slate-400">Max daily trades</span>
+          <span className="text-muted">Max daily runs</span>
           <input
-            className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-slate-200"
+            className="h-10 w-full rounded-md border border-hairline bg-surface-elevated px-3 text-sm text-body"
             inputMode="numeric"
             placeholder="Wallet default"
-            value={maxDailyTrades}
-            onChange={(event) => setMaxDailyTrades(event.target.value)}
+            value={maxDailyRuns}
+            onChange={(event) => setMaxDailyRuns(event.target.value)}
           />
         </label>
         <label className="space-y-1 text-sm">
-          <span className="text-slate-400">Failed tx pause threshold</span>
+          <span className="text-muted">Failed tx pause threshold</span>
           <input
-            className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-slate-200"
+            className="h-10 w-full rounded-md border border-hairline bg-surface-elevated px-3 text-sm text-body"
             inputMode="numeric"
             value={failedTxPauseThreshold}
             onChange={(event) => setFailedTxPauseThreshold(event.target.value)}
@@ -107,7 +108,7 @@ export const WalletScheduleSettings = ({
         </label>
       </div>
 
-      <div className="flex flex-wrap gap-4 text-sm text-slate-300">
+      <div className="flex flex-wrap gap-4 text-sm text-body">
         <label className="inline-flex items-center gap-2">
           <input
             checked={enabled}
@@ -127,7 +128,7 @@ export const WalletScheduleSettings = ({
       </div>
 
       <button
-        className="h-10 rounded-md bg-blue-500 px-4 text-sm font-semibold text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
+        className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-on-primary transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
         disabled={pending}
         type="button"
         onClick={async () => {
@@ -139,8 +140,8 @@ export const WalletScheduleSettings = ({
               enabled,
               tradeAmountUsd,
               minIntervalMinutes: Number(minIntervalMinutes),
-              maxDailyTrades:
-                maxDailyTrades.trim() === "" ? null : Number(maxDailyTrades),
+              maxDailyRuns:
+                maxDailyRuns.trim() === "" ? null : Number(maxDailyRuns),
               strategyProfile,
               failedTxPauseThreshold: Number(failedTxPauseThreshold),
               emergencyPaused
@@ -161,9 +162,9 @@ export const WalletScheduleSettings = ({
         Save Schedule
       </button>
 
-      {saved && <p className="text-sm text-emerald-200">Schedule saved.</p>}
+      {saved && <p className="text-sm text-accent-green">Schedule saved.</p>}
       {error && (
-        <p className="rounded-md border border-rose-400/30 bg-rose-400/10 p-2 text-sm text-rose-200">
+        <p className="rounded-md border border-accent-red/30 bg-accent-red-soft p-2 text-sm text-accent-red">
           {error}
         </p>
       )}

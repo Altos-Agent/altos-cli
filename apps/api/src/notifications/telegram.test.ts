@@ -27,13 +27,23 @@ describe("telegram notifications", () => {
       status: "DRY_RUN",
       txHash: null,
       basescanUrl: null,
-      timestamp: new Date("2026-01-01T00:00:00.000Z")
+      timestamp: new Date("2026-01-01T00:00:00.000Z"),
+      mode: "DRY_RUN",
+      chainId: 8453,
+      requestId: "req-123",
+      jobId: "job-456",
+      transactionId: "tx-1"
     });
 
     expect(message).toContain("base-orchestrator");
     expect(message).toContain("dry-run accepted");
+    expect(message).toContain("Mode: DRY_RUN");
+    expect(message).toContain("Chain: Base 8453");
+    expect(message).toContain("Request ID: req-123");
+    expect(message).toContain("Job ID: job-456");
     expect(message).toContain("Primary");
     expect(message).toContain("0x0000...0001");
+    expect(message).toContain("No transaction was sent");
   });
 
   it("sends messages through Telegram Bot API without exposing token in the request body", async () => {
@@ -53,5 +63,8 @@ describe("telegram notifications", () => {
     ][];
     const [, init] = calls[0] ?? ["", {}];
     expect(init?.body).toBe(JSON.stringify({ chat_id: "123", text: "hello" }));
+    expect(JSON.stringify(init?.body)).not.toContain(
+      "123456:ABCDEFghijklmnopqrstuvwxyz"
+    );
   });
 });

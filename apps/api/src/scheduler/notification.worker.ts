@@ -9,6 +9,7 @@ export const processNotificationJob =
     const telegram = createTelegramService(db);
     await telegram.notify({
       ...job.data,
+      jobId: job.id ?? null,
       timestamp: new Date()
     });
   };

@@ -1,5 +1,25 @@
 import type { FastifyInstance } from "fastify";
+import {
+  bulkApplyProfileSchema,
+  bulkWalletStatusSchema,
+  emptyWalletMutationBodySchema,
+  importEncryptedWalletBackupSchema,
+  importWalletSchema,
+  updateWalletSchema,
+  walletIdsSchema
+} from "@base-orchestrator/shared";
 import type { DbClient } from "../db/client.js";
+import {
+  assertNoRequestBody,
+  handleValidationError,
+  parseIdParams,
+  parseRequestBody
+} from "../http/validation.js";
+import {
+  assertVaultUnlocked,
+  requiresVaultForLiveSigning,
+  VaultLockedError
+} from "../vault/vault-lock.js";
 import { createWalletService, isWalletError } from "./wallet-service.js";
 import type { ImportWalletInput, UpdateWalletInput } from "./types.js";
 
@@ -8,6 +28,13 @@ interface IdParams {
 }
 
 const handleWalletError = (error: unknown) => {
+  if (error instanceof VaultLockedError) {
+    return {
+      statusCode: 423,
+      body: { error: error.message }
+    };
+  }
+
   if (isWalletError(error)) {
     return {
       statusCode: error.statusCode,
@@ -24,12 +51,21 @@ export const registerWalletRoutes = async (
 ) => {
   const walletService = createWalletService(db);
 
+  const assertVaultForSensitiveBackup = () => {
+    if (requiresVaultForLiveSigning()) {
+      assertVaultUnlocked();
+    }
+  };
+
   server.get("/api/wallets", async () => walletService.listWallets());
 
   server.get<{ Params: IdParams }>("/api/wallets/:id", async (request, reply) => {
     try {
-      return await walletService.getWallet(request.params.id);
+      const params = parseIdParams(request.params);
+      return await walletService.getWallet(params.id);
     } catch (error) {
+      const validation = handleValidationError(error, reply);
+      if (validation) return validation;
       const handled = handleWalletError(error);
       return reply.code(handled.statusCode).send(handled.body);
     }
@@ -39,9 +75,12 @@ export const registerWalletRoutes = async (
     "/api/wallets/import",
     async (request, reply) => {
       try {
-        const wallet = await walletService.importWallet(request.body);
+        const body = parseRequestBody(importWalletSchema, request.body);
+        const wallet = await walletService.importWallet(body);
         return reply.code(201).send(wallet);
       } catch (error) {
+        const validation = handleValidationError(error, reply);
+        if (validation) return validation;
         const handled = handleWalletError(error);
         return reply.code(handled.statusCode).send(handled.body);
       }
@@ -56,11 +95,29 @@ export const registerWalletRoutes = async (
     };
   }>("/api/wallets/bulk/import-encrypted", async (request, reply) => {
     try {
-      const result = await walletService.importEncryptedWalletBackup(
+      const body = parseRequestBody(
+        importEncryptedWalletBackupSchema,
         request.body
+      );
+      if (body.rotateKeys) {
+        assertVaultForSensitiveBackup();
+      }
+      const result = await walletService.importEncryptedWalletBackup(
+        {
+          backup: body.backup,
+          ...(body.rotateKeys !== undefined ? { rotateKeys: body.rotateKeys } : {}),
+          ...(body.allowDisabledMismatchImport !== undefined
+            ? {
+                allowDisabledMismatchImport:
+                  body.allowDisabledMismatchImport
+              }
+            : {})
+        }
       );
       return reply.code(201).send(result);
     } catch (error) {
+      const validation = handleValidationError(error, reply);
+      if (validation) return validation;
       const handled = handleWalletError(error);
       return reply.code(handled.statusCode).send(handled.body);
     }
@@ -70,8 +127,12 @@ export const registerWalletRoutes = async (
     "/api/wallets/bulk/export-encrypted",
     async (request, reply) => {
       try {
-        return await walletService.exportEncryptedWalletBackup(request.body);
+        assertVaultForSensitiveBackup();
+        const body = parseRequestBody(walletIdsSchema, request.body);
+        return await walletService.exportEncryptedWalletBackup(body);
       } catch (error) {
+        const validation = handleValidationError(error, reply);
+        if (validation) return validation;
         const handled = handleWalletError(error);
         return reply.code(handled.statusCode).send(handled.body);
       }
@@ -90,8 +151,11 @@ export const registerWalletRoutes = async (
     };
   }>("/api/wallets/bulk/apply-profile", async (request, reply) => {
     try {
-      return await walletService.applyProfileToWallets(request.body);
+      const body = parseRequestBody(bulkApplyProfileSchema, request.body);
+      return await walletService.applyProfileToWallets(body);
     } catch (error) {
+      const validation = handleValidationError(error, reply);
+      if (validation) return validation;
       const handled = handleWalletError(error);
       return reply.code(handled.statusCode).send(handled.body);
     }
@@ -101,11 +165,14 @@ export const registerWalletRoutes = async (
     Body: { walletIds: string[]; status: "ACTIVE" | "PAUSED" | "DISABLED" };
   }>("/api/wallets/bulk/status", async (request, reply) => {
     try {
+      const body = parseRequestBody(bulkWalletStatusSchema, request.body);
       return await walletService.setBulkWalletStatus(
-        request.body.walletIds,
-        request.body.status
+        body.walletIds,
+        body.status
       );
     } catch (error) {
+      const validation = handleValidationError(error, reply);
+      if (validation) return validation;
       const handled = handleWalletError(error);
       return reply.code(handled.statusCode).send(handled.body);
     }
@@ -115,8 +182,12 @@ export const registerWalletRoutes = async (
     "/api/wallets/:id",
     async (request, reply) => {
       try {
-        return await walletService.updateWallet(request.params.id, request.body);
+        const params = parseIdParams(request.params);
+        const body = parseRequestBody(updateWalletSchema, request.body);
+        return await walletService.updateWallet(params.id, body);
       } catch (error) {
+        const validation = handleValidationError(error, reply);
+        if (validation) return validation;
         const handled = handleWalletError(error);
         return reply.code(handled.statusCode).send(handled.body);
       }
@@ -127,12 +198,16 @@ export const registerWalletRoutes = async (
     "/api/wallets/:id/pause",
     async (request, reply) => {
       try {
+        const params = parseIdParams(request.params);
+        parseRequestBody(emptyWalletMutationBodySchema, request.body);
         return await walletService.setWalletStatus(
-          request.params.id,
+          params.id,
           "PAUSED",
           "wallet.pause"
         );
       } catch (error) {
+        const validation = handleValidationError(error, reply);
+        if (validation) return validation;
         const handled = handleWalletError(error);
         return reply.code(handled.statusCode).send(handled.body);
       }
@@ -143,12 +218,16 @@ export const registerWalletRoutes = async (
     "/api/wallets/:id/resume",
     async (request, reply) => {
       try {
+        const params = parseIdParams(request.params);
+        parseRequestBody(emptyWalletMutationBodySchema, request.body);
         return await walletService.setWalletStatus(
-          request.params.id,
+          params.id,
           "ACTIVE",
           "wallet.resume"
         );
       } catch (error) {
+        const validation = handleValidationError(error, reply);
+        if (validation) return validation;
         const handled = handleWalletError(error);
         return reply.code(handled.statusCode).send(handled.body);
       }
@@ -159,12 +238,16 @@ export const registerWalletRoutes = async (
     "/api/wallets/:id/disable",
     async (request, reply) => {
       try {
+        const params = parseIdParams(request.params);
+        parseRequestBody(emptyWalletMutationBodySchema, request.body);
         return await walletService.setWalletStatus(
-          request.params.id,
+          params.id,
           "DISABLED",
           "wallet.disable"
         );
       } catch (error) {
+        const validation = handleValidationError(error, reply);
+        if (validation) return validation;
         const handled = handleWalletError(error);
         return reply.code(handled.statusCode).send(handled.body);
       }
@@ -175,8 +258,13 @@ export const registerWalletRoutes = async (
     "/api/wallets/:id/rotate-key",
     async (request, reply) => {
       try {
-        return await walletService.rotateWalletKey(request.params.id);
+        const params = parseIdParams(request.params);
+        assertNoRequestBody(request.body);
+        assertVaultForSensitiveBackup();
+        return await walletService.rotateWalletKey(params.id);
       } catch (error) {
+        const validation = handleValidationError(error, reply);
+        if (validation) return validation;
         const handled = handleWalletError(error);
         return reply.code(handled.statusCode).send(handled.body);
       }
@@ -187,8 +275,12 @@ export const registerWalletRoutes = async (
     "/api/wallets/:id",
     async (request, reply) => {
       try {
-        return await walletService.deleteWallet(request.params.id);
+        const params = parseIdParams(request.params);
+        assertNoRequestBody(request.body);
+        return await walletService.deleteWallet(params.id);
       } catch (error) {
+        const validation = handleValidationError(error, reply);
+        if (validation) return validation;
         const handled = handleWalletError(error);
         return reply.code(handled.statusCode).send(handled.body);
       }

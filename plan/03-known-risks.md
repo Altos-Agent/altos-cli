@@ -56,10 +56,12 @@ Mitigations:
 - `BASE_RPC_URL` can be unavailable, lagging, rate-limited, or inconsistent.
 - Receipt polling can fail temporarily.
 - Simulation can pass but send can still fail due to state changes.
+- Missing receipts can represent RPC lag, mempool replacement, dropped transactions, or reorg-related inconsistency.
 
 Mitigations:
 
 - Treat `SUBMITTED` as pending until receipt refresh confirms final status.
+- Treat `STUCK` and `DROPPED` as operator-review states; verify nonce state outside the app before resuming that wallet.
 - Run manual refresh for important transactions.
 - Use reliable RPC providers for live mode.
 
@@ -97,11 +99,24 @@ Mitigations:
 - Do not add detection-bypass randomization or platform-abuse features.
 - Review external platform rules before using automated workflows.
 
+## Cross-Wallet Aggregate Exposure
+
+When operating 10+ wallets, individual limits are insufficient — a coordinated run across wallets can exceed safe total exposure in gas, volume, or pending tx count.
+
+Mitigations:
+
+- Configure `aggregate_risk_limits` with daily trade cap, gas cap, pending cap, pending wallet count limit, and failed tx threshold.
+- Aggregate stats are computed daily and pending stats are live from transaction rows.
+- Dry-run plans are rejected if aggregate limits are exceeded, with reasons recorded in the transaction record.
+- Dashboard shows aggregate exposure card when aggregate risk is enabled.
+- Keep `SCHEDULER_LIVE_EXECUTION=false` — aggregate risk engine applies to dry-run planning first; live paths are gated separately.
+
 ## Current Live Execution Risks
 
 - Manual execute-once is implemented but not proven against verified live Base contracts in this workspace.
 - Native ETH transaction value is not modeled; execute-once sends `value=0`.
-- No nonce manager exists; avoid concurrent live transactions per wallet.
+- Nonce handling is conservative: same-wallet live writes are blocked while submitted, pending-finality, or stuck transactions exist, but replacement/cancel sending is not implemented.
+- Reorg handling is operator-guided; the app flags lookback review but does not automatically roll back finalized rows.
 - Mock quotes cannot execute because they do not include calldata.
 - 0x integration is a scaffold and needs live validation.
 - Telegram delivery failure does not roll back operations.

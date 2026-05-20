@@ -40,7 +40,7 @@ pnpm dev
 
 Open:
 
-- Web: `http://localhost:3100`
+- Web: `http://127.0.0.1:3100`
 - API: `http://127.0.0.1:4100`
 
 Default safety state:
@@ -71,6 +71,7 @@ Default safety state:
 - Telegram setup: `docs/TELEGRAM_SETUP.md`
 - Basescan links: `docs/BASESCAN_LINKS.md`
 - Operations runbook: `docs/OPERATIONS_RUNBOOK.md`
+- USD-normalized risk accounting: `docs/USD_NORMALIZED_RISK_ACCOUNTING.md`
 - System architecture: `architecture/00-system-map.md`
 - Transaction flow: `architecture/02-transaction-flow.md`
 - Test plan: `plan/02-test-plan.md`

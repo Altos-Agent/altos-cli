@@ -1,5 +1,10 @@
-import type { Router } from "../db/schema.js";
+import type { Pair, Router, Token, Wallet } from "../db/schema.js";
 import type { NormalizedQuote } from "../quote/types.js";
+import { validateQuoteForExecution } from "../quote/quote-validation.js";
+import {
+  routerAllowanceTargetAddress,
+  routerTxTargetAddress,
+} from "../risk/verification.js";
 
 const normalizeAddress = (value: string) => value.toLowerCase();
 
@@ -11,9 +16,17 @@ export interface LiveExecutionSafetyInput {
   riskAccepted: boolean;
   riskReasons: string[];
   quote: NormalizedQuote | null;
+  wallet?: Wallet;
+  pair?: Pair;
+  sellToken?: Token | null;
+  buyToken?: Token | null;
+  sellAmountRaw?: string | null;
   routers: Router[];
   simulated: boolean;
   now?: Date;
+  nativeValueSwapsEnabled?: boolean;
+  maxNativeValueWei?: string;
+  functionSelectorAllowlist?: Record<string, string[]>;
 }
 
 export interface LiveExecutionSafetyResult {
@@ -27,8 +40,14 @@ const isHexData = (value: string | null) =>
 
 const enabledRouterAddresses = (routers: Router[]) =>
   routers
-    .filter((router) => router.enabled && router.address)
-    .map((router) => normalizeAddress(router.address as string));
+    .filter((router) => router.enabled && router.address && router.verificationStatus === "VERIFIED")
+    .flatMap((router) => [
+      router.address,
+      routerTxTargetAddress(router),
+      routerAllowanceTargetAddress(router),
+    ])
+    .filter((address): address is string => Boolean(address))
+    .map((address) => normalizeAddress(address));
 
 export const evaluateLiveExecutionSafety = (
   input: LiveExecutionSafetyInput,
@@ -50,6 +69,36 @@ export const evaluateLiveExecutionSafety = (
   }
   if (!input.quote) {
     reasons.push("Quote is required");
+  }
+  if (
+    input.quote &&
+    input.wallet &&
+    input.pair &&
+    input.sellAmountRaw !== undefined
+  ) {
+    const quoteValidationInput = {
+      quote: input.quote,
+      wallet: input.wallet,
+      pair: input.pair,
+      sellToken: input.sellToken ?? null,
+      buyToken: input.buyToken ?? null,
+      sellAmountRaw: input.sellAmountRaw,
+      routers: input.routers,
+      live: true,
+      ...(input.now ? { now: input.now } : {}),
+      ...(input.nativeValueSwapsEnabled === undefined
+        ? {}
+        : { nativeValueSwapsEnabled: input.nativeValueSwapsEnabled }),
+      ...(input.maxNativeValueWei === undefined
+        ? {}
+        : { maxNativeValueWei: input.maxNativeValueWei }),
+      ...(input.functionSelectorAllowlist === undefined
+        ? {}
+        : { functionSelectorAllowlist: input.functionSelectorAllowlist })
+    };
+    reasons.push(
+      ...validateQuoteForExecution(quoteValidationInput).reasons
+    );
   }
   if (input.quote && !input.quote.txTo) {
     reasons.push("Quote does not include a transaction target");

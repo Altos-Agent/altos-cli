@@ -1,51 +1,97 @@
 # Executive Summary
-Date: 2026-05-08
-Repository audit scope: Local-first Base multi-wallet orchestration dashboard, including API, web UI, shared package, docs, local DevOps, wallet vault, transaction planning, approvals, scheduler, Telegram, and tests.
-Verdict/status: LOCAL_DEMO_READY. Live mode is LIVE_NOT_RECOMMENDED until the critical and high items below are fixed.
 
-## One-page Overview
+Date: 2026-05-13  
+Scope: Fresh audit of the current repository state for local demo, dry-run, manual live, automation, and deployment readiness.  
+Verdict/status: DRY_RUN_READY; live funds and server deployment remain no-go without operator review.
 
-The repository implements a meaningful local demo and dry-run Base trading dashboard. The strongest implemented areas are wallet import with encrypted local vault storage, demo data without real private keys, dry-run planning, basic risk checks, Telegram notification storage with encrypted bot token, Basescan link generation, guarded approval and execute-once paths, and a dark Next.js dashboard.
+## Current Overall Verdict
 
-The current maturity is local-demo and dry-run oriented. The code has several live-mode gates: `DRY_RUN=true` by default, `DEMO_MODE=true` blocks live transactions, `REQUIRE_LIVE_CONFIRMATION=true`, unlimited approvals are disabled by default, and live scheduled execution is explicitly unimplemented. These are good safety defaults.
+| Area | Verdict | Reason |
+| --- | --- | --- |
+| Local demo readiness | LOCAL_DEMO_READY | `README.md`, `package.json`, `apps/api/src/e2e-server.ts`, demo seed files, and E2E config support demo/dry-run operation. |
+| Dry-run readiness | DRY_RUN_READY | Planner, quote abstraction, risk checks, scheduler dry-run jobs, and UI flows are implemented and tested. |
+| Tiny manual live readiness | MANUAL_LIVE_TEST_NOT_READY | Code guardrails exist, but live provider/router/token verification, backup restore drill, and operator runbook gates were not live-tested in this audit. |
+| Live automation readiness | LIVE_AUTOMATION_NOT_READY | `apps/api/src/scheduler/scheduler-service.ts` explicitly rejects live scheduled execution. |
+| Server deployment readiness | SERVER_DEPLOYMENT_NOT_READY | Production compose is a preparation artifact with placeholder secrets, demo/dry-run defaults, and incomplete public-hardening signoff. |
 
-The project is not ready for live wallet automation. The main blockers are missing authentication, local master-key exposure risk, weak input validation on management routes, no nonce/idempotency strategy, incomplete scheduler semantics, no production-grade secret management, no E2E/live guardrail tests, no confirmation-depth/reorg handling, and token amount/decimal risks in the trade path.
+## What Works Now
 
-## Biggest Strengths
+1. Authenticated local operator dashboard with CSRF protection for mutating `/api/*` routes.
+2. AES-256-GCM wallet vault with local master-key file and vault lock/unlock state.
+3. Dry-run planning with amount parsing, risk limits, quote freshness, slippage, price-impact, router, token, and allowance-target checks.
+4. Manual execute-once path is gated by demo mode, dry-run, confirmation, emergency pause, vault unlock, same-wallet lock, idempotency, allowance, quote validation, and simulation.
+5. ERC20 approval/revoke flows exist and reject unlimited approval unless explicitly enabled.
+6. Scheduler supports dry-run queueing, singleton lock, stop/pause/purge, wallet schedules, job history, and confirmation jobs.
+7. Transaction states include submitted, pending finality, finalized, failed, rejected, stuck, dropped, and replaced.
+8. Telegram settings encrypt bot tokens and audit delivery attempts.
+9. Redesigned Raycast-style web UI exists across dashboard, wallets, transactions, tokens/pairs/routers, settings, login, and docs.
+10. Unit/integration tests and Playwright E2E specs are present.
 
-| Severity | Status | Strength | Evidence |
-|---|---|---|---|
-| INFO | IMPLEMENTED | Demo mode does not require private keys and blocks live execution. | `apps/api/src/db/demo-data.ts`, `apps/api/src/runtime/mode.ts`, `apps/api/src/trades/live-execution.ts` |
-| INFO | IMPLEMENTED | Private keys are encrypted before storage and omitted from wallet API responses. | `apps/api/src/vault/wallet-vault.ts`, `apps/api/src/wallets/wallet-service.ts` |
-| INFO | IMPLEMENTED | Guarded approval flow rejects dry-run/default live writes and unlimited approvals by default. | `apps/api/src/approvals/approval-service.ts`, `apps/api/src/approvals/approval-policy.ts` |
-| INFO | IMPLEMENTED | Test scripts and validation commands exist. | `package.json`, `apps/api/src/**/*.test.ts` |
-| INFO | IMPLEMENTED | Architecture, plan, and docs folders already describe intended safety posture. | `architecture/`, `plan/`, `docs/` |
+## What Is Still Unsafe
 
-## Biggest Risks
+- Do not use primary wallets or meaningful funds.
+- Do not run live scheduler; it is intentionally unsupported.
+- Do not expose this app publicly with current example secrets or in-memory session/rate-limit posture.
+- Do not rely on seeded token/router data for live trades without independent address verification.
+- Do not treat stuck/dropped/replaced state handling as a complete nonce recovery system.
+- Do not treat local file-based vault custody as equivalent to KMS, HSM, MPC, or hardware wallet custody.
 
-| Severity | Status | Risk | Why it matters | Required fix |
-|---|---|---|---|---|
-| CRITICAL | MISSING | No authentication or authorization on local API. | Any process/user able to reach the API can import wallets, alter risk settings, start scheduler, and request live execution if environment gates are changed. | Add local auth/session protection, CSRF protection for browser-origin writes, and route-level authorization. |
-| CRITICAL | PARTIAL | Local master key is file-based and hot on the same host as encrypted wallet data. | DB plus `.local/master.key` compromise decrypts all wallet private keys. | Move to OS keyring/KMS/HSM/MPC, add passphrase unlock, rotation, and backup procedure. |
-| HIGH | PARTIAL | Live execute-once lacks idempotency, nonce strategy, and double-submit protection. | Repeated clicks or retries can submit duplicate transactions. | Add idempotency keys, per-wallet nonce locks, pending-tx state, and retry semantics. |
-| HIGH | PARTIAL | Token amount and decimals handling is not consistently raw-unit safe. | Wrong magnitude can cause bad approvals or stored trade amounts. | Standardize amount parsing per token decimals and test USDC/WETH/DAI edge cases. |
-| HIGH | PARTIAL | Input validation is mostly manual and inconsistent. | Bad addresses, invalid decimal values, and malformed bodies can enter config tables. | Add shared Zod/TypeBox schemas for all API routes. |
-| HIGH | PARTIAL | Scheduler is not a production scheduler. | It enqueues at start, drains jobs on stop, has no distributed singleton, and live scheduled execution is not implemented. | Redesign scheduler lifecycle and recurrence before enabling live jobs. |
-| HIGH | PARTIAL | Quote/live transaction validation is incomplete. | Calldata, recipient, value, slippage, price impact, and native-token semantics need stronger verification. | Validate quote payloads against pair, router, allowance target, expected chain, min-out, and value. |
-| HIGH | MISSING | No confirmation-depth or reorg policy. | A single receipt status is not enough for operational finality. | Add block confirmations and reorg-aware status updates. |
-| HIGH | MISSING | Production deployment controls are absent. | No TLS/auth/reverse proxy/secrets/backups/monitoring plan implemented. | Build deployment hardening before remote/server use. |
-| HIGH | PARTIAL | Tests are useful but not live-mode complete. | Existing tests do not prove real-chain, browser, Redis/Postgres, or E2E guardrails. | Add integration/E2E matrix and mocked RPC failure tests. |
+## Top 10 Strengths
 
-## Top 10 Priority Fixes
+1. Dry-run and demo are defaulted in `.env.example`, `README.md`, and production compose.
+2. Explicit live write gates in `apps/api/src/trades/live-execution.ts`.
+3. CSRF/session middleware in `apps/api/src/auth/auth-middleware.ts`.
+4. Wallet encryption and address verification in `apps/api/src/vault/wallet-vault.ts`.
+5. Per-wallet idempotency and lock logic in `apps/api/src/transactions/transaction-manager.ts`.
+6. Confirmation/finality tests in `apps/api/src/transactions/confirmation*.test.ts`.
+7. Quote validation tests in `apps/api/src/quote/quote-validation.test.ts`.
+8. Emergency pause integration tests in `apps/api/src/security/emergency-pause.integration.test.ts`.
+9. UI safety badges and warnings in `apps/web/components/app-shell.tsx` and settings pages.
+10. Deployment docs clearly label server setup as preparation only.
 
-1. CRITICAL: Add authentication, authorization, CSRF protection, and local bind controls for all mutating routes.
-2. CRITICAL: Replace or harden file-based master key handling; document and test backup/restore/key-rotation workflows.
-3. HIGH: Add idempotency keys and per-wallet nonce locking for live transactions and approvals.
-4. HIGH: Add route schemas for wallet, token, pair, router, approval, scheduler, Telegram, and trade inputs.
-5. HIGH: Correct raw amount conversion by token decimals across planner, approvals, execution, transaction storage, and tests.
-6. HIGH: Add strict quote payload validation, including chain, router target, allowance target, calldata presence, value, slippage, and min-out.
-7. HIGH: Implement confirmation-depth and reorg handling in the watcher.
-8. HIGH: Redesign scheduler recurrence and job lifecycle before any live scheduled mode.
-9. HIGH: Add E2E/UI tests for demo, dry-run, wallet import, Telegram settings, and live-mode blocked states.
-10. HIGH: Create a production deployment hardening package: TLS, firewall, backups, secret manager, monitoring, and incident runbook.
+## Top 10 Risks
+
+| Severity | Risk | Evidence |
+| --- | --- | --- |
+| CRITICAL | Live-funds custody is local file based | `MASTER_KEY_FILE`, `apps/api/src/vault/wallet-vault.ts` |
+| CRITICAL | Live automation is not implemented | `scheduler-service.ts` throws on live scheduler |
+| HIGH | Production auth uses in-memory sessions and unsalted SHA-256 password hash option | `apps/api/src/auth/session-store.ts`, `password.ts` |
+| HIGH | Router/token addresses require operator verification before live use | `README.md`, management schemas |
+| HIGH | Replacement/reorg handling is limited/operator-guided | `apps/api/src/transactions/confirmation.ts`, docs |
+| HIGH | Server compose contains placeholder secrets | `docker-compose.prod.example.yml` |
+| MEDIUM | Migration metadata appears dirty/incomplete for newer migrations | `apps/api/drizzle/meta/_journal.json`, 0005-0010 untracked |
+| MEDIUM | Build and E2E were not rerun in this audit due report-only mutation boundary | `playwright.config.ts` writes artifacts |
+| MEDIUM | Telegram is third-party infrastructure and can leak metadata | `docs/TELEGRAM_SETUP.md`, `telegram.ts` |
+| MEDIUM | Login route lacks a durable distributed rate-limit | `auth-routes.ts`, `rate-limit.ts` usage |
+
+## Top 10 Next Actions
+
+1. Commit or discard the large dirty worktree after review; current state is not release-hygienic.
+2. Perform a demo-mode E2E run in a permitted implementation/validation pass.
+3. Run `pnpm build` in a permitted pass and record artifact health.
+4. Add production-grade password hashing and login rate limiting before public exposure.
+5. Add KMS/HSM/MPC/hardware-wallet signing design before meaningful funds.
+6. Verify live token/router/allowance addresses manually and record evidence.
+7. Drill backup/restore with demo wallets and matching master key.
+8. Add reliable replacement/nonce recovery operations before repeated live usage.
+9. Add production monitoring for queues, RPC, stuck transactions, and notification failures.
+10. Keep scheduled live execution disabled until a separate safety design is implemented.
+
+## Validation Commands Run
+
+| Command | Result |
+| --- | --- |
+| `pnpm typecheck` | PASS |
+| `pnpm lint` | PASS |
+| `pnpm test` | PASS: API 31 files / 109 tests, web 1 file / 2 tests |
+| `docker compose config` | PASS |
+| `docker compose -f docker-compose.prod.example.yml config` | PASS |
+| `pnpm build` | NOT_TESTED: would write build artifacts outside `report_md/` during report-only audit |
+| `pnpm e2e` | NOT_TESTED: would start app servers and write Playwright artifacts outside `report_md/` during report-only audit |
+
+## Go / No-Go Recommendation
+
+GO for local demo and dry-run operation only.  
+NO-GO for tiny manual live transaction until operator verification and restore/emergency drills are complete.  
+NO-GO for live automation and public/server deployment with live funds.
 

@@ -19,16 +19,22 @@ Current API unit coverage areas:
 - Live execution safety checks.
 - Approval policy.
 - Scheduler policy.
+- Scheduler lifecycle, duplicate suppression, non-draining stop, max daily runs, dry-run job records, and live scheduled execution rejection.
 - Transaction confirmation mapping.
 - Basescan link builders.
 - Wallet profiles.
+- Shared route schemas for malformed bodies, invalid decimals, same-token pairs, and negative limits.
+- Route validation integration for invalid auth login body, invalid vault unlock body, invalid encrypted backup import, invalid route params, and unexpected bodies on no-body mutations.
+- Ops summary integration for runtime status, emergency pause/vault state, notification failure counts, and transaction counts.
+- Confirmation finality policy for pending finality, stuck timeout, dropped timeout, and operator-guided reorg/replacement placeholders.
+- Pending-wallet policy rejecting another live write while a wallet has submitted or pending-finality transaction state.
+- Web API client error handling that preserves structured API errors instead of returning null.
+- Token amount parsing/formatting for USDC 6 decimals, WETH/DAI 18 decimals, low-decimal tokens, excess precision, and rejected scientific notation.
 
 Future unit tests:
 
-- Runtime environment validation.
 - Native-value quote handling once implemented.
-- Nonce management once implemented.
-- Token decimals conversion edge cases across approval and trade flows.
+- Automatic replacement/cancel transaction flows if they are ever implemented.
 
 ## Integration Tests
 
@@ -44,10 +50,36 @@ Local integration checklist:
 8. Verify wallet list/detail API responses omit private and encrypted keys.
 9. Create or update token, router, pair, and wallet-pair-rule records.
 10. Run dry-run planner.
-11. Start and stop scheduler against Redis.
+11. Start, pause, and stop scheduler against Redis; confirm stop does not drain waiting jobs.
 12. Refresh a transaction that has no hash and confirm it errors safely.
 
 Use only dedicated wallets and placeholder or tiny-value test data.
+
+## Web E2E Tests
+
+Run:
+
+```bash
+pnpm exec playwright install chromium
+pnpm e2e
+```
+
+Current operator-flow coverage:
+
+- Login with the local demo operator account when auth is enabled.
+- Dashboard loads and shows `DEMO MODE`, `DRY RUN`, and vault status badges from `/api/runtime/status`.
+- Wallet detail opens from the wallet list.
+- Wallet transaction history is visible.
+- Demo Basescan links show a `DEMO` badge so seeded demo data is not confused with a submitted transaction.
+- Telegram settings opens from navigation.
+- Execute-once remains blocked in demo/dry-run state.
+- Emergency pause disable requires typed confirmation.
+
+Future E2E coverage:
+
+- API-offline dashboard state with a deliberately unavailable API.
+- Confirmation modal typed-confirmation paths for backup import, pair enablement, and vault unlock.
+- Mobile-width navigation and dense wallet list readability.
 
 ## Dry-Run Tests
 
@@ -62,7 +94,6 @@ Dry-run acceptance checklist:
 - Wallet daily trade limit is not reached.
 - Estimated gas is below wallet gas limit.
 - Slippage is below pair limit.
-- `DRY_RUN=true`.
 - Result creates a `DRY_RUN` transaction.
 
 Dry-run rejection checklist:
@@ -76,8 +107,11 @@ Dry-run rejection checklist:
 - Daily trade limit rejects.
 - Gas above limit rejects.
 - Slippage above limit rejects.
-- `DRY_RUN=false` rejects dry-run planning.
+- Price impact above limit rejects when quote data includes price impact.
+- Stale or expired quote rejects.
 - Rejection creates a `REJECTED` transaction with readable reasons.
+
+Dry-run planning remains a no-sign/no-submit path even if live mode is configured elsewhere. Live execute-once remains blocked by default through `DRY_RUN=true`, `DEMO_MODE=true`, confirmation, vault, auth, and emergency-pause gates.
 
 ## Live Test Checklist
 
@@ -136,3 +170,7 @@ Do not test native ETH swaps until transaction value support is implemented.
 - Confirm insufficient allowance returns `NEEDS_APPROVAL`.
 - Confirm unlimited approval rejects by default.
 - Confirm emergency pause disables wallet schedule and pauses wallet.
+- Confirm disabled and emergency-paused wallets are not scheduled.
+- Confirm scheduler status shows active loop, lock owner, next runs, failed jobs, paused wallets, emergency pause, and `DRY_RUN_ONLY`.
+- Confirm live scheduled execution remains rejected even when manual live execution is separately configured.
+- Confirm API unavailable states are visually distinct from empty wallet, token, pair, and transaction lists.

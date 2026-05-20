@@ -16,12 +16,15 @@ Primary threats:
 
 Mitigations in code:
 
+- Local operator auth and CSRF middleware in `apps/api/src/auth`.
 - Fastify logger redaction in `apps/api/src/server.ts`.
 - API response sanitization in `apps/api/src/wallets/wallet-service.ts`.
 - AES-256-GCM authenticated encryption in `apps/api/src/vault/wallet-vault.ts`.
 - Private-key/address validation before insert and before signing.
 - New imports default to `PAUSED`.
 - Live execution decrypts only after pre-send gates and simulation.
+- Vault lock state in `apps/api/src/vault/vault-lock.ts`; live signing requires unlock.
+- Global emergency pause in `apps/api/src/security/emergency-pause.ts`.
 - Approvals are exact amount by default; unlimited approval is blocked unless `ALLOW_UNLIMITED_APPROVAL=true`.
 - Seed phrase fields are rejected from encrypted backup imports.
 
@@ -35,7 +38,7 @@ Mitigations in code:
 6. `encryptPrivateKey` encrypts the private key with AES-256-GCM and a fresh 12-byte IV.
 7. The database stores only the encrypted payload and encryption version.
 8. API responses omit encrypted and plaintext key material.
-9. Signing paths decrypt in memory only after safety checks. There is no plaintext key file output.
+9. Signing paths require authenticated API access, CSRF, emergency pause disabled, and an unlocked vault before live key use.
 10. Key rotation re-encrypts the same private key with a fresh nonce; it does not change the wallet address.
 
 ## Encryption Strategy
@@ -62,6 +65,26 @@ The same `encryptSecret` and `decryptSecret` helpers encrypt wallet private keys
 - Losing the master key makes encrypted wallet keys and Telegram tokens unrecoverable.
 - Copying the master key together with encrypted database/backups gives an attacker the material needed to decrypt secrets.
 - Future production/server deployment should move this responsibility to KMS, HSM, MPC, or an OS keychain rather than a flat local file.
+
+## Vault Lock
+
+Owner files: `apps/api/src/vault/vault-lock.ts`, `apps/api/src/vault/vault-routes.ts`.
+
+- API: `GET /api/vault/status`, `POST /api/vault/unlock`, `POST /api/vault/lock`.
+- Initial state is `LOCKED`.
+- Unlock accepts operator password re-auth or `VAULT_UNLOCK_PASSPHRASE` when configured.
+- Unlock expires after `VAULT_AUTO_LOCK_MS`.
+- Dry-run planning does not require unlock.
+- Approvals, revokes, execute-once, and sensitive backup/key-rotation paths require unlock when live signing is possible.
+
+## Local Auth Boundary
+
+Owner files: `apps/api/src/auth/*`.
+
+- API login sets an HTTP-only SameSite session cookie.
+- Mutating routes require `x-csrf-token`.
+- Wallet, balance, settings, scheduler, vault, transaction, and management routes require authentication.
+- `GET /api/auth/me` and `POST /api/auth/login` are public by design.
 
 ## What Is Never Logged
 
@@ -115,10 +138,12 @@ Current controls:
 
 ## Emergency Pause
 
-Owner files: `apps/api/src/scheduler/scheduler-service.ts`, `apps/api/src/scheduler/scheduler-routes.ts`, `apps/web/components/emergency-pause-button.tsx`.
+Owner files: `apps/api/src/security/emergency-pause.ts`, `apps/api/src/security/emergency-pause-routes.ts`, `apps/api/src/scheduler/scheduler-service.ts`, `apps/api/src/scheduler/scheduler-routes.ts`, `apps/web/components/global-emergency-pause-button.tsx`, `apps/web/components/emergency-pause-button.tsx`.
 
 Emergency pause:
 
+- Global emergency pause stores `local_settings.global_emergency_paused=true`.
+- Global pause blocks approvals, revokes, execute-once, scheduler start, scheduled jobs, and auto-approval.
 - Sets wallet status to `PAUSED`.
 - Updates wallet schedule to `enabled=false` and `emergencyPaused=true`.
 - Writes a `wallet.emergency_pause` audit log.

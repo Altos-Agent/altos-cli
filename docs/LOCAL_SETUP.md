@@ -62,7 +62,7 @@ SCHEDULER_LIVE_EXECUTION=false
 
 Default local ports:
 
-- Web: `http://localhost:3100`
+- Web: `http://127.0.0.1:3100`
 - API: `http://127.0.0.1:4100`
 - Postgres: `localhost:5435`
 - Redis: `localhost:6379`
@@ -132,8 +132,19 @@ Connection settings:
 pnpm typecheck
 pnpm lint
 pnpm test
+pnpm build
+pnpm validate
 docker compose config
 ```
+
+Optional operator-flow E2E tests:
+
+```bash
+pnpm exec playwright install chromium
+pnpm e2e
+```
+
+The E2E harness starts a demo API and web app on `127.0.0.1:4100` and `127.0.0.1:3100`. It uses seeded demo data, `DRY_RUN=true`, and local operator credentials only. The test confirms the dashboard safety badges, wallet detail flow, transaction history, demo Basescan badge, Telegram settings page, and execute-once dry-run blocking.
 
 ## 9. Stop
 

@@ -1,7 +1,10 @@
 import { eq } from "drizzle-orm";
-import { PRODUCT_NAME } from "@base-orchestrator/shared";
+import { BASE_CHAIN_ID, PRODUCT_NAME } from "@base-orchestrator/shared";
 import type { DbClient } from "../db/client.js";
-import { telegramSettings } from "../db/schema.js";
+import { notificationDeliveries, telegramSettings } from "../db/schema.js";
+import { getRuntimeConfig } from "../config/runtime-config.js";
+import { assertLocalRateLimit, LocalRateLimitError } from "../http/rate-limit.js";
+import { getCurrentRequestId } from "../http/request-context.js";
 import {
   decryptSecret,
   encryptSecret,
@@ -32,30 +35,60 @@ export interface TelegramSettingsResponse {
   notifyOnDryRun: boolean;
   createdAt: Date;
   updatedAt: Date;
+  lastTestStatus: string | null;
+  lastDeliveryAt: Date | null;
+  recentDeliveries: NotificationDeliveryResponse[];
+  state: {
+    disabled: boolean;
+    tokenMissing: boolean;
+    chatMissing: boolean;
+  };
 }
 
 export interface UpdateTelegramSettingsInput {
-  enabled?: boolean;
-  botToken?: string | null;
-  chatId?: string | null;
-  notifyOnSubmitted?: boolean;
-  notifyOnConfirmed?: boolean;
-  notifyOnFailed?: boolean;
-  notifyOnRejected?: boolean;
-  notifyOnDryRun?: boolean;
+  enabled?: boolean | undefined;
+  botToken?: string | null | undefined;
+  chatId?: string | null | undefined;
+  notifyOnSubmitted?: boolean | undefined;
+  notifyOnConfirmed?: boolean | undefined;
+  notifyOnFailed?: boolean | undefined;
+  notifyOnRejected?: boolean | undefined;
+  notifyOnDryRun?: boolean | undefined;
 }
 
 export interface TelegramNotificationPayload {
   eventType: TelegramEventType;
   walletName: string;
   walletAddress: string;
+  walletId?: string | null | undefined;
   action: string;
   pair: string;
   amount: string;
   status: string;
   txHash: string | null;
   basescanUrl: string | null;
+  transactionId?: string | null | undefined;
   timestamp: Date;
+  mode?: "DEMO" | "DRY_RUN" | "LIVE" | undefined;
+  chainId?: number | undefined;
+  requestId?: string | null | undefined;
+  jobId?: string | null | undefined;
+}
+
+export interface NotificationDeliveryResponse {
+  id: string;
+  channel: string;
+  eventType: string;
+  status: string;
+  requestId: string | null;
+  jobId: string | null;
+  walletId: string | null;
+  transactionId: string | null;
+  destinationPreview: string | null;
+  errorCode: string | null;
+  errorMessage: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export class TelegramNotificationError extends Error {
@@ -67,6 +100,11 @@ export class TelegramNotificationError extends Error {
     this.name = "TelegramNotificationError";
   }
 }
+
+const notificationRateLimit = {
+  limit: 20,
+  windowMs: 60_000
+};
 
 const shortenAddress = (address: string) =>
   address.length <= 14 ? address : `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -80,11 +118,85 @@ export const maskTelegramToken = (token: string) => {
   return `${prefix}:${secret.slice(0, 3)}...${secret.slice(-3)}`;
 };
 
+const modeFromRuntime = () => {
+  const config = getRuntimeConfig();
+  if (config.demoMode) return "DEMO" as const;
+  if (config.dryRun) return "DRY_RUN" as const;
+  return "LIVE" as const;
+};
+
+const destinationPreview = (chatId: string | null) =>
+  chatId ? `chat:${chatId.length > 6 ? `${chatId.slice(0, 3)}...${chatId.slice(-3)}` : chatId}` : null;
+
+const redactErrorMessage = (message: string) =>
+  message
+    .replace(/bot\d+:[A-Za-z0-9_-]+/g, "bot[redacted]")
+    .replace(/\d+:[A-Za-z0-9_-]{6,}/g, "[redacted-token]");
+
+const deliveryResponse = (
+  row: typeof notificationDeliveries.$inferSelect,
+): NotificationDeliveryResponse => ({
+  id: row.id,
+  channel: row.channel,
+  eventType: row.eventType,
+  status: row.status,
+  requestId: row.requestId,
+  jobId: row.jobId,
+  walletId: row.walletId,
+  transactionId: row.transactionId,
+  destinationPreview: row.destinationPreview,
+  errorCode: row.errorCode,
+  errorMessage: row.errorMessage,
+  createdAt: row.createdAt,
+  updatedAt: row.updatedAt,
+});
+
+const insertDelivery = async (
+  db: DbClient,
+  input: {
+    eventType: string;
+    status: "SENT" | "FAILED" | "SKIPPED";
+    requestId?: string | null;
+    jobId?: string | null;
+    walletId?: string | null;
+    transactionId?: string | null;
+    destinationPreview?: string | null;
+    errorCode?: string | null;
+    errorMessage?: string | null;
+  },
+) => {
+  const [row] = await db
+    .insert(notificationDeliveries)
+    .values({
+      channel: "telegram",
+      eventType: input.eventType,
+      status: input.status,
+      requestId: input.requestId ?? getCurrentRequestId(),
+      jobId: input.jobId ?? null,
+      walletId: input.walletId ?? null,
+      transactionId: input.transactionId ?? null,
+      destinationPreview: input.destinationPreview ?? null,
+      errorCode: input.errorCode ?? null,
+      errorMessage: input.errorMessage
+        ? redactErrorMessage(input.errorMessage)
+        : null,
+    })
+    .returning();
+
+  return row ? deliveryResponse(row) : null;
+};
+
 export const buildTelegramMessage = (payload: TelegramNotificationPayload) => {
+  const mode = payload.mode ?? modeFromRuntime();
+  const chainId = payload.chainId ?? BASE_CHAIN_ID;
   const lines = [
     PRODUCT_NAME,
     `Event: ${payload.eventType}`,
+    `Mode: ${mode}`,
+    `Chain: Base ${chainId}`,
+    `Request ID: ${payload.requestId ?? "not available"}`,
     `Wallet: ${payload.walletName} (${shortenAddress(payload.walletAddress)})`,
+    `Wallet address: ${shortenAddress(payload.walletAddress)}`,
     `Action: ${payload.action}`,
     `Pair: ${payload.pair}`,
     `Amount: ${payload.amount}`,
@@ -95,8 +207,19 @@ export const buildTelegramMessage = (payload: TelegramNotificationPayload) => {
   if (payload.txHash) {
     lines.push(`Tx hash: ${payload.txHash}`);
   }
+  if (payload.jobId) {
+    lines.push(`Job ID: ${payload.jobId}`);
+  }
   if (payload.basescanUrl) {
     lines.push(`Basescan: ${payload.basescanUrl}`);
+  }
+  if (
+    !payload.txHash &&
+    (payload.status === "DRY_RUN" ||
+      payload.status === "REJECTED" ||
+      payload.eventType.startsWith("dry-run"))
+  ) {
+    lines.push("No transaction was sent");
   }
 
   return lines.join("\n");
@@ -143,6 +266,7 @@ export const sendTelegramMessage = async ({
 };
 
 const sanitizeSettings = async (
+  db: DbClient,
   row: typeof telegramSettings.$inferSelect
 ): Promise<TelegramSettingsResponse> => {
   let tokenPreview: string | null = null;
@@ -152,6 +276,14 @@ const sanitizeSettings = async (
     const token = decryptSecret(row.encryptedBotToken, masterKey);
     tokenPreview = maskTelegramToken(token);
   }
+
+  const deliveries = await db.select().from(notificationDeliveries);
+  const telegramDeliveries = deliveries
+    .filter((delivery) => delivery.channel === "telegram")
+    .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime());
+  const lastTest = telegramDeliveries.find(
+    (delivery) => delivery.eventType === "test notification",
+  );
 
   return {
     id: row.id,
@@ -164,7 +296,15 @@ const sanitizeSettings = async (
     notifyOnRejected: row.notifyOnRejected,
     notifyOnDryRun: row.notifyOnDryRun,
     createdAt: row.createdAt,
-    updatedAt: row.updatedAt
+    updatedAt: row.updatedAt,
+    lastTestStatus: lastTest?.status ?? null,
+    lastDeliveryAt: telegramDeliveries[0]?.createdAt ?? null,
+    recentDeliveries: telegramDeliveries.slice(0, 10).map(deliveryResponse),
+    state: {
+      disabled: !row.enabled,
+      tokenMissing: !row.encryptedBotToken,
+      chatMissing: !row.chatId,
+    }
   };
 };
 
@@ -196,7 +336,7 @@ const getOrCreateSettings = async (db: DbClient) => {
 
 export const createTelegramService = (db: DbClient) => ({
   async getSettings() {
-    return await sanitizeSettings(await getOrCreateSettings(db));
+    return await sanitizeSettings(db, await getOrCreateSettings(db));
   },
 
   async updateSettings(input: UpdateTelegramSettingsInput) {
@@ -233,12 +373,23 @@ export const createTelegramService = (db: DbClient) => ({
       throw new TelegramNotificationError("Failed to update Telegram settings", 500);
     }
 
-    return await sanitizeSettings(updated);
+    return await sanitizeSettings(db, updated);
   },
 
   async sendTest() {
     const settings = await getOrCreateSettings(db);
+    const requestId = getCurrentRequestId();
     if (!settings.encryptedBotToken || !settings.chatId) {
+      await insertDelivery(db, {
+        eventType: "test notification",
+        status: "SKIPPED",
+        requestId,
+        destinationPreview: destinationPreview(settings.chatId),
+        errorCode: !settings.encryptedBotToken
+          ? "TELEGRAM_TOKEN_MISSING"
+          : "TELEGRAM_CHAT_MISSING",
+        errorMessage: "Telegram bot token and chat ID are required",
+      });
       throw new TelegramNotificationError(
         "Telegram bot token and chat ID are required"
       );
@@ -246,11 +397,30 @@ export const createTelegramService = (db: DbClient) => ({
 
     const masterKey = await loadOrCreateMasterKey();
     const botToken = decryptSecret(settings.encryptedBotToken, masterKey);
-    await sendTelegramMessage({
-      botToken,
-      chatId: settings.chatId,
-      text: `${PRODUCT_NAME}\nEvent: test notification\nTimestamp: ${new Date().toISOString()}`
-    });
+    try {
+      await sendTelegramMessage({
+        botToken,
+        chatId: settings.chatId,
+        text: `${PRODUCT_NAME}\nEvent: test notification\nMode: ${modeFromRuntime()}\nChain: Base ${BASE_CHAIN_ID}\nRequest ID: ${requestId ?? "not available"}\nTimestamp: ${new Date().toISOString()}`
+      });
+      await insertDelivery(db, {
+        eventType: "test notification",
+        status: "SENT",
+        requestId,
+        destinationPreview: destinationPreview(settings.chatId),
+      });
+    } catch (error) {
+      await insertDelivery(db, {
+        eventType: "test notification",
+        status: "FAILED",
+        requestId,
+        destinationPreview: destinationPreview(settings.chatId),
+        errorCode: "TELEGRAM_SEND_FAILED",
+        errorMessage:
+          error instanceof Error ? error.message : "Telegram send failed",
+      });
+      throw error;
+    }
 
     return {
       ok: true,
@@ -260,8 +430,36 @@ export const createTelegramService = (db: DbClient) => ({
 
   async notify(payload: TelegramNotificationPayload) {
     const settings = await getOrCreateSettings(db);
-    if (!settings.enabled || !settings.encryptedBotToken || !settings.chatId) {
-      return { sent: false, reason: "Telegram disabled or incomplete" };
+    const requestId = payload.requestId ?? getCurrentRequestId();
+    const deliveryBase = {
+      eventType: payload.eventType,
+      requestId,
+      jobId: payload.jobId ?? null,
+      walletId: payload.walletId ?? null,
+      transactionId: payload.transactionId ?? null,
+      destinationPreview: destinationPreview(settings.chatId),
+    };
+
+    if (!settings.enabled) {
+      await insertDelivery(db, {
+        ...deliveryBase,
+        status: "SKIPPED",
+        errorCode: "TELEGRAM_DISABLED",
+        errorMessage: "Telegram notifications are disabled",
+      });
+      return { sent: false, reason: "Telegram disabled" };
+    }
+
+    if (!settings.encryptedBotToken || !settings.chatId) {
+      await insertDelivery(db, {
+        ...deliveryBase,
+        status: "SKIPPED",
+        errorCode: !settings.encryptedBotToken
+          ? "TELEGRAM_TOKEN_MISSING"
+          : "TELEGRAM_CHAT_MISSING",
+        errorMessage: "Telegram bot token or chat ID is missing",
+      });
+      return { sent: false, reason: "Telegram incomplete" };
     }
 
     const shouldSend =
@@ -284,18 +482,71 @@ export const createTelegramService = (db: DbClient) => ({
                   settings.notifyOnRejected;
 
     if (!shouldSend) {
+      await insertDelivery(db, {
+        ...deliveryBase,
+        status: "SKIPPED",
+        errorCode: "TELEGRAM_PREFERENCE_DISABLED",
+        errorMessage: "Notification preference disabled",
+      });
       return { sent: false, reason: "Notification preference disabled" };
+    }
+
+    try {
+      assertLocalRateLimit({
+        key: "telegram:send",
+        limit: notificationRateLimit.limit,
+        windowMs: notificationRateLimit.windowMs,
+      });
+    } catch (error) {
+      if (error instanceof LocalRateLimitError) {
+        await insertDelivery(db, {
+          ...deliveryBase,
+          status: "SKIPPED",
+          errorCode: "TELEGRAM_RATE_LIMITED",
+          errorMessage: error.message,
+        });
+        return { sent: false, reason: "Telegram rate limited" };
+      }
+      throw error;
     }
 
     const masterKey = await loadOrCreateMasterKey();
     const botToken = decryptSecret(settings.encryptedBotToken, masterKey);
-    await sendTelegramMessage({
-      botToken,
-      chatId: settings.chatId,
-      text: buildTelegramMessage(payload)
-    });
+    try {
+      await sendTelegramMessage({
+        botToken,
+        chatId: settings.chatId,
+        text: buildTelegramMessage({
+          ...payload,
+          requestId,
+          mode: payload.mode ?? modeFromRuntime(),
+          chainId: payload.chainId ?? BASE_CHAIN_ID,
+        })
+      });
+      await insertDelivery(db, {
+        ...deliveryBase,
+        status: "SENT",
+      });
+    } catch (error) {
+      await insertDelivery(db, {
+        ...deliveryBase,
+        status: "FAILED",
+        errorCode: "TELEGRAM_SEND_FAILED",
+        errorMessage:
+          error instanceof Error ? error.message : "Telegram send failed",
+      });
+      throw error;
+    }
 
     return { sent: true };
+  },
+
+  async listDeliveries() {
+    const rows = await db.select().from(notificationDeliveries);
+    return rows
+      .filter((delivery) => delivery.channel === "telegram")
+      .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime())
+      .map(deliveryResponse);
   }
 });
 

@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
 :root {
   color-scheme: dark;
 }
@@ -12,8 +14,12 @@
 
 body {
   margin: 0;
-  background: #030712;
-  color: #f9fafb;
+  background: #07080a;
+  color: #cdcdcd;
+  font-family: "Inter", "Inter Fallback", system-ui, sans-serif;
+  font-feature-settings: "calt", "kern", "liga", "ss03";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {

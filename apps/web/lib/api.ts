@@ -21,36 +21,145 @@ import type {
   LiveExecutionStatus,
   QuoteResponse,
   TelegramSettings,
-  WalletAllowance
+  WalletAllowance,
+  AuthMe,
+  LoginResult,
+  CsrfResult,
+  VaultStatus,
+  EmergencyPauseStatus,
+  RuntimeStatus,
+  OpsSummary,
+  TransactionRequest,
+  WalletPendingState,
+  AggregateRiskStatus
 } from "./types";
 
-const apiBaseUrl =
+const browserApiBaseUrl =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:4100";
+const serverApiBaseUrl = process.env.INTERNAL_API_BASE_URL ?? browserApiBaseUrl;
+const apiBaseUrl = () =>
+  typeof window === "undefined" ? serverApiBaseUrl : browserApiBaseUrl;
 
-const safeFetchJson = async <T>(path: string): Promise<T | null> => {
+export interface ApiErrorResult {
+  ok: false;
+  status: number;
+  message: string;
+  path: string;
+}
+
+export interface ApiSuccessResult<T> {
+  ok: true;
+  data: T;
+}
+
+export type ApiReadResult<T> = ApiSuccessResult<T> | ApiErrorResult;
+
+export const isApiError = <T>(
+  result: ApiReadResult<T> | T | null
+): result is ApiErrorResult =>
+  Boolean(
+    result &&
+      typeof result === "object" &&
+      "ok" in result &&
+      result.ok === false
+  );
+
+const serverCookieHeader = async () => {
+  if (typeof window !== "undefined") {
+    return {};
+  }
   try {
-    const response = await fetch(`${apiBaseUrl}${path}`, {
-      cache: "no-store"
+    const { cookies } = await import("next/headers");
+    const cookieStore = await cookies();
+    const cookieHeader = cookieStore.toString();
+    return cookieHeader ? { cookie: cookieHeader } : {};
+  } catch {
+    return {};
+  }
+};
+
+const fetchJsonResult = async <T>(path: string): Promise<ApiReadResult<T>> => {
+  try {
+    const cookieHeader = await serverCookieHeader();
+    const response = await fetch(`${apiBaseUrl()}${path}`, {
+      cache: "no-store",
+      credentials: "include",
+      headers: {
+        ...cookieHeader
+      }
     });
+    const body = (await response.json().catch(() => null)) as
+      | T
+      | { error?: string }
+      | null;
 
     if (!response.ok) {
-      return null;
+      return {
+        ok: false,
+        status: response.status,
+        message:
+          body && typeof body === "object" && "error" in body && body.error
+            ? body.error
+            : `API request failed with ${response.status}`,
+        path
+      };
     }
 
-    return (await response.json()) as T;
+    return { ok: true, data: body as T };
   } catch {
-    return null;
+    return {
+      ok: false,
+      status: 0,
+      message: "API unavailable",
+      path
+    };
   }
+};
+
+const isUnsafeRequest = (method: string | undefined) =>
+  ["POST", "PATCH", "PUT", "DELETE"].includes((method ?? "GET").toUpperCase());
+
+const newIdempotencyKey = () => {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
+const csrfToken = async () => {
+  const cookieHeader = await serverCookieHeader();
+  const response = await fetch(`${apiBaseUrl()}/api/auth/csrf`, {
+    cache: "no-store",
+    credentials: "include",
+    headers: {
+      ...cookieHeader
+    }
+  });
+  if (!response.ok) {
+    throw new Error("Unable to load CSRF token");
+  }
+  return ((await response.json()) as CsrfResult).csrfToken;
 };
 
 export const apiRequest = async <T>(
   path: string,
   init: RequestInit = {}
 ): Promise<T> => {
-  const response = await fetch(`${apiBaseUrl}${path}`, {
+  const cookieHeader = await serverCookieHeader();
+  const csrfHeader =
+    isUnsafeRequest(init.method) && path !== "/api/auth/login"
+      ? { "x-csrf-token": await csrfToken() }
+      : {};
+  const response = await fetch(`${apiBaseUrl()}${path}`, {
     ...init,
+    credentials: "include",
     headers: {
-      "content-type": "application/json",
+      ...(init.body !== undefined ? { "content-type": "application/json" } : {}),
+      ...cookieHeader,
+      ...csrfHeader,
       ...init.headers
     }
   });
@@ -82,16 +191,84 @@ export interface UpdateTelegramSettingsRequest {
 }
 
 export const api = {
+  async getAuthMe() {
+    return await fetchJsonResult<AuthMe>("/api/auth/me");
+  },
+
+  async login(input: { username: string; password: string }) {
+    return await apiRequest<LoginResult>("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify(input)
+    });
+  },
+
+  async logout() {
+    return await apiRequest<{ authenticated: false }>("/api/auth/logout", {
+      method: "POST"
+    });
+  },
+
+  async getVaultStatus() {
+    return await fetchJsonResult<VaultStatus>("/api/vault/status");
+  },
+
+  async unlockVault(input: {
+    username?: string;
+    password?: string;
+    passphrase?: string;
+  }) {
+    return await apiRequest<VaultStatus>("/api/vault/unlock", {
+      method: "POST",
+      body: JSON.stringify(input)
+    });
+  },
+
+  async lockVault() {
+    return await apiRequest<VaultStatus>("/api/vault/lock", {
+      method: "POST"
+    });
+  },
+
+  async getEmergencyPause() {
+    return await fetchJsonResult<EmergencyPauseStatus>("/api/emergency-pause");
+  },
+
+  async getRuntimeStatus() {
+    return await fetchJsonResult<RuntimeStatus>("/api/runtime/status");
+  },
+
+  async getOpsSummary() {
+    return await fetchJsonResult<OpsSummary>("/api/ops/summary");
+  },
+
+  async enableEmergencyPause() {
+    return await apiRequest<EmergencyPauseStatus>(
+      "/api/emergency-pause/enable",
+      {
+        method: "POST"
+      }
+    );
+  },
+
+  async disableEmergencyPause() {
+    return await apiRequest<EmergencyPauseStatus>(
+      "/api/emergency-pause/disable",
+      {
+        method: "POST"
+      }
+    );
+  },
+
   async getChainStatus() {
-    return await safeFetchJson<ChainStatus>("/api/chain/status");
+    return await fetchJsonResult<ChainStatus>("/api/chain/status");
   },
 
   async getWallets() {
-    return (await safeFetchJson<Wallet[]>("/api/wallets")) ?? [];
+    return await fetchJsonResult<Wallet[]>("/api/wallets");
   },
 
   async getProfiles() {
-    return (await safeFetchJson<WalletProfile[]>("/api/profiles")) ?? [];
+    return await fetchJsonResult<WalletProfile[]>("/api/profiles");
   },
 
   async importWallet(input: {
@@ -162,51 +339,55 @@ export const api = {
   },
 
   async getWallet(id: string) {
-    return await safeFetchJson<Wallet>(`/api/wallets/${id}`);
+    return await fetchJsonResult<Wallet>(`/api/wallets/${id}`);
   },
 
   async getWalletBalances(id: string) {
-    return await safeFetchJson<WalletBalances>(`/api/wallets/${id}/balances`);
+    return await fetchJsonResult<WalletBalances>(`/api/wallets/${id}/balances`);
   },
 
   async getWalletBasescan(id: string) {
-    return await safeFetchJson<WalletBasescan>(`/api/wallets/${id}/basescan`);
+    return await fetchJsonResult<WalletBasescan>(`/api/wallets/${id}/basescan`);
+  },
+
+  async getWalletPending(id: string) {
+    return await fetchJsonResult<WalletPendingState>(`/api/wallets/${id}/pending`);
   },
 
   async getTokens() {
-    return (await safeFetchJson<Token[]>("/api/tokens")) ?? [];
+    return await fetchJsonResult<Token[]>("/api/tokens");
   },
 
   async getPairs() {
-    return (await safeFetchJson<Pair[]>("/api/pairs")) ?? [];
+    return await fetchJsonResult<Pair[]>("/api/pairs");
   },
 
   async getRouters() {
-    return (await safeFetchJson<RouterConfig[]>("/api/routers")) ?? [];
+    return await fetchJsonResult<RouterConfig[]>("/api/routers");
   },
 
   async getWalletPairRules(id: string) {
-    return (
-      (await safeFetchJson<WalletPairRule[]>(
-        `/api/wallets/${id}/pair-rules`
-      )) ?? []
+    return await fetchJsonResult<WalletPairRule[]>(
+      `/api/wallets/${id}/pair-rules`
     );
   },
 
   async getWalletAllowances(id: string) {
-    return (
-      (await safeFetchJson<WalletAllowance[]>(
-        `/api/wallets/${id}/allowances`
-      )) ?? []
+    return await fetchJsonResult<WalletAllowance[]>(
+      `/api/wallets/${id}/allowances`
     );
   },
 
-  async getTransactions(): Promise<Transaction[]> {
-    return (await safeFetchJson<Transaction[]>("/api/transactions")) ?? [];
+  async getTransactions() {
+    return await fetchJsonResult<Transaction[]>("/api/transactions");
+  },
+
+  async getTransactionRequests() {
+    return await fetchJsonResult<TransactionRequest[]>("/api/transactions/requests");
   },
 
   async getTransaction(id: string) {
-    return await safeFetchJson<Transaction>(`/api/transactions/${id}`);
+    return await fetchJsonResult<Transaction>(`/api/transactions/${id}`);
   },
 
   async refreshTransaction(id: string) {
@@ -219,11 +400,11 @@ export const api = {
   },
 
   async getTelegramSettings() {
-    return await safeFetchJson<TelegramSettings>("/api/settings/telegram");
+    return await fetchJsonResult<TelegramSettings>("/api/settings/telegram");
   },
 
   async getSchedulerStatus() {
-    return await safeFetchJson<SchedulerStatus>("/api/scheduler/status");
+    return await fetchJsonResult<SchedulerStatus>("/api/scheduler/status");
   },
 
   async startScheduler() {
@@ -235,6 +416,19 @@ export const api = {
   async stopScheduler() {
     return await apiRequest<SchedulerStatus>("/api/scheduler/stop", {
       method: "POST"
+    });
+  },
+
+  async pauseScheduler() {
+    return await apiRequest<SchedulerStatus>("/api/scheduler/pause", {
+      method: "POST"
+    });
+  },
+
+  async purgeSchedulerQueues() {
+    return await apiRequest<SchedulerStatus>("/api/scheduler/purge", {
+      method: "POST",
+      body: JSON.stringify({ confirm: "PURGE SCHEDULER QUEUES" })
     });
   },
 
@@ -255,11 +449,11 @@ export const api = {
   },
 
   async getLiveExecutionStatus() {
-    return await safeFetchJson<LiveExecutionStatus>("/api/trades/live-status");
+    return await fetchJsonResult<LiveExecutionStatus>("/api/trades/live-status");
   },
 
   async getWalletSchedule(id: string) {
-    return await safeFetchJson<WalletSchedule>(`/api/wallets/${id}/schedule`);
+    return await fetchJsonResult<WalletSchedule>(`/api/wallets/${id}/schedule`);
   },
 
   async updateWalletSchedule(
@@ -268,7 +462,7 @@ export const api = {
       enabled: boolean;
       tradeAmountUsd: string;
       minIntervalMinutes: number;
-      maxDailyTrades: number | null;
+      maxDailyRuns: number | null;
       strategyProfile: StrategyProfile;
       failedTxPauseThreshold: number;
       emergencyPaused: boolean;
@@ -289,7 +483,7 @@ export const api = {
   async createDryRunPlan(input: {
     walletId: string;
     pairId: string;
-    amountIn: string;
+    sellAmountDisplay: string;
     preferredRouter?: string | null;
     mode: "DRY_RUN_ONLY";
   }) {
@@ -302,7 +496,7 @@ export const api = {
   async createQuote(input: {
     walletId: string;
     pairId: string;
-    amountIn: string;
+    sellAmountDisplay: string;
     preferredRouter?: string | null;
   }) {
     return await apiRequest<QuoteResponse>("/api/quotes", {
@@ -314,12 +508,16 @@ export const api = {
   async executeOnce(input: {
     walletId: string;
     pairId: string;
-    amountIn: string;
+    sellAmountDisplay: string;
     preferredRouter?: string | null;
     confirmLiveExecution: boolean;
+    idempotencyKey?: string;
   }) {
     return await apiRequest<ExecuteOnceResult>("/api/trades/execute-once", {
       method: "POST",
+      headers: {
+        "Idempotency-Key": input.idempotencyKey ?? newIdempotencyKey()
+      },
       body: JSON.stringify(input)
     });
   },
@@ -330,11 +528,15 @@ export const api = {
     routerId: string;
     amount: string;
     confirmLiveExecution: boolean;
+    idempotencyKey?: string;
   }) {
     return await apiRequest<ApprovalActionResult>(
       `/api/wallets/${input.walletId}/approve`,
       {
         method: "POST",
+        headers: {
+          "Idempotency-Key": input.idempotencyKey ?? newIdempotencyKey()
+        },
         body: JSON.stringify({
           tokenId: input.tokenId,
           routerId: input.routerId,
@@ -350,11 +552,15 @@ export const api = {
     tokenId: string;
     routerId: string;
     confirmLiveExecution: boolean;
+    idempotencyKey?: string;
   }) {
     return await apiRequest<ApprovalActionResult>(
       `/api/wallets/${input.walletId}/revoke`,
       {
         method: "POST",
+        headers: {
+          "Idempotency-Key": input.idempotencyKey ?? newIdempotencyKey()
+        },
         body: JSON.stringify({
           tokenId: input.tokenId,
           routerId: input.routerId,
@@ -371,32 +577,84 @@ export const api = {
       chainStatus,
       telegramSettings,
       liveExecutionStatus,
-      schedulerStatus
+      schedulerStatus,
+      aggregateRisk
     ] = await Promise.all([
       this.getWallets(),
       this.getTransactions(),
       this.getChainStatus(),
       this.getTelegramSettings(),
       this.getLiveExecutionStatus(),
-      this.getSchedulerStatus()
+      this.getSchedulerStatus(),
+      this.getAggregateRisk()
     ]);
 
+    const readError =
+      isApiError(wallets)
+        ? wallets
+        : isApiError(transactions)
+          ? transactions
+          : isApiError(chainStatus)
+            ? chainStatus
+            : null;
+    const runtimeError = isApiError(liveExecutionStatus)
+      ? liveExecutionStatus
+      : null;
+    const telegramError = isApiError(telegramSettings)
+      ? telegramSettings
+      : null;
+    const schedulerError = isApiError(schedulerStatus) ? schedulerStatus : null;
+    const aggregateError = isApiError(aggregateRisk) ? aggregateRisk : null;
+    const secondaryError = runtimeError ?? telegramError ?? schedulerError;
+
+    if (readError ?? secondaryError ?? aggregateError) {
+      return {
+        apiError: readError ?? secondaryError ?? aggregateError,
+        activeWallets: 0,
+        pausedWallets: 0,
+        totalSubmittedTx: 0,
+        confirmedTx: 0,
+        failedTx: 0,
+        dryRunStatus: "Unavailable",
+        telegramStatus: "Unavailable",
+        chainStatus: null,
+        schedulerStatus: null,
+        aggregateRisk: null
+      };
+    }
+
+    const walletRows = wallets.ok ? wallets.data : [];
+    const transactionRows = transactions.ok ? transactions.data : [];
+    const chainStatusData = chainStatus.ok ? chainStatus.data : null;
+    const liveExecutionData = liveExecutionStatus.ok
+      ? liveExecutionStatus.data
+      : null;
+    const telegramData = telegramSettings.ok ? telegramSettings.data : null;
+    const schedulerData = schedulerStatus.ok ? schedulerStatus.data : null;
+
     return {
-      activeWallets: wallets.filter((wallet) => wallet.status === "ACTIVE")
+      apiError: null,
+      activeWallets: walletRows.filter((wallet) => wallet.status === "ACTIVE")
         .length,
-      pausedWallets: wallets.filter((wallet) => wallet.status === "PAUSED")
+      pausedWallets: walletRows.filter((wallet) => wallet.status === "PAUSED")
         .length,
-      totalSubmittedTx: transactions.filter(
+      totalSubmittedTx: transactionRows.filter(
         (tx) => tx.status === "SUBMITTED"
       ).length,
-      confirmedTx: transactions.filter((tx) => tx.status === "CONFIRMED")
-        .length,
-      failedTx: transactions.filter((tx) => tx.status === "FAILED").length,
+      confirmedTx: transactionRows.filter(
+        (tx) => tx.status === "CONFIRMED" || tx.status === "FINALIZED"
+      ).length,
+      failedTx: transactionRows.filter((tx) => tx.status === "FAILED").length,
       dryRunStatus:
-        liveExecutionStatus?.dryRun === false ? "Disabled" : "Enabled",
-      telegramStatus: telegramSettings?.enabled ? "Enabled" : "Disabled",
-      chainStatus,
-      schedulerStatus
+        liveExecutionData?.dryRun === false ? "Disabled" : "Enabled",
+      telegramStatus: telegramData?.enabled ? "Enabled" : "Disabled",
+      chainStatus: chainStatusData,
+      schedulerStatus: schedulerData,
+      aggregateRisk: aggregateRisk.ok ? aggregateRisk.data : null,
     };
+  },
+
+  async getAggregateRisk() {
+    return await fetchJsonResult<AggregateRiskStatus>("/api/risk/aggregate");
   }
 };

@@ -16,7 +16,7 @@ export const RefreshTransactionButton = ({
   return (
     <div className="space-y-2">
       <button
-        className="h-9 rounded-md bg-blue-500 px-3 text-sm font-semibold text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
+        className="h-9 rounded-md bg-primary px-3 text-sm font-medium text-on-primary transition hover:bg-gray-200 disabled:opacity-60"
         disabled={pending}
         type="button"
         onClick={async () => {
@@ -43,7 +43,7 @@ export const RefreshTransactionButton = ({
       >
         Refresh status
       </button>
-      {message && <p className="text-sm text-slate-400">{message}</p>}
+      {message && <p className="text-sm text-muted">{message}</p>}
     </div>
   );
 };

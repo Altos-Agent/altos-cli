@@ -1,7 +1,6 @@
-import { BASESCAN_BASE_URL } from "@base-orchestrator/shared";
+import { getRuntimeConfig } from "../config/runtime-config.js";
 
-const getBasescanBaseUrl = () =>
-  (process.env.BASESCAN_BASE_URL ?? BASESCAN_BASE_URL).replace(/\/+$/, "");
+const getBasescanBaseUrl = () => getRuntimeConfig().basescanBaseUrl;
 
 const encodePathSegment = (value: string) => encodeURIComponent(value.trim());
 

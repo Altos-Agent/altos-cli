@@ -33,10 +33,17 @@ const token: Token = {
   symbol: "USDC",
   name: "USD Coin",
   address: "0x0000000000000000000000000000000000000002",
+  checksumAddress: "0x0000000000000000000000000000000000000002",
   decimals: 6,
   riskLevel: "LOW",
   maxTradeUsd: null,
   enabled: true,
+  verificationStatus: "VERIFIED",
+  verificationSource: null,
+  verificationEvidenceUrl: null,
+  verifiedAt: null,
+  verifiedBy: null,
+  verificationNotes: null,
   createdAt: now,
   updatedAt: now
 };
@@ -52,6 +59,12 @@ const pair: Pair = {
   maxPriceImpactBps: 100,
   preferredRouter: "0x",
   fallbackRouter: null,
+  verificationStatus: "VERIFIED",
+  verificationSource: null,
+  verificationEvidenceUrl: null,
+  verifiedAt: null,
+  verifiedBy: null,
+  verificationNotes: null,
   createdAt: now,
   updatedAt: now
 };
@@ -72,8 +85,19 @@ const router: Router = {
   chainId: 8453,
   name: "0x",
   address: null,
+  checksumAddress: null,
+  spenderAddress: null,
+  txTargetAddress: null,
+  allowanceTargetAddress: null,
+  functionSelectorAllowlist: null,
   enabled: true,
   riskLevel: "LOW",
+  verificationStatus: "VERIFIED",
+  verificationSource: null,
+  verificationEvidenceUrl: null,
+  verifiedAt: null,
+  verifiedBy: null,
+  verificationNotes: null,
   notes: null
 };
 
@@ -94,7 +118,7 @@ describe("dry-run planner", () => {
       {
         walletId: wallet.id,
         pairId: pair.id,
-        amountIn: "50",
+        sellAmountDisplay: "50",
         mode: "DRY_RUN_ONLY"
       },
       {
@@ -118,7 +142,7 @@ describe("dry-run planner", () => {
       {
         walletId: wallet.id,
         pairId: pair.id,
-        amountIn: "85",
+        sellAmountDisplay: "85",
         mode: "DRY_RUN_ONLY"
       },
       {
@@ -145,7 +169,7 @@ describe("dry-run planner", () => {
       {
         walletId: wallet.id,
         pairId: pair.id,
-        amountIn: "50",
+        sellAmountDisplay: "50",
         mode: "DRY_RUN_ONLY"
       },
       {
@@ -158,12 +182,22 @@ describe("dry-run planner", () => {
         dailyWalletStats: stats,
         dryRunEnabled: true,
         quote: {
+          chainId: 8453,
           provider: "zeroX",
           routerName: "0x",
+          routerAddress: router.address,
+          spenderAddress: "0x0000000000000000000000000000000000000999",
           sellToken: "USDC",
           buyToken: "WETH",
-          sellAmount: "50",
-          buyAmount: "49",
+          sellTokenAddress: token.address,
+          buyTokenAddress: token.address,
+          sellAmountRaw: "50000000",
+          sellAmountDisplay: "50",
+          buyAmountRaw: "49000000",
+          buyAmountDisplay: "49",
+          sellAmountUsd: "50.00",
+          buyAmountUsd: null,
+          minBuyAmountRaw: "48000000",
           estimatedGas: {
             gasUsed: "180000",
             gasUsd: "2.50",
@@ -172,6 +206,15 @@ describe("dry-run planner", () => {
           allowanceTarget: "0x0000000000000000000000000000000000000999",
           txTo: null,
           txData: null,
+          priceImpactBps: null,
+          slippageBps: 100,
+          txValue: "0",
+          usdPriceSource: "test",
+          usdPriceTimestamp: new Date("2026-01-01T00:00:00.000Z"),
+          quoteUsdSource: "test",
+          quotedAt: new Date("2026-01-01T00:00:00.000Z"),
+          quoteTimestamp: new Date("2026-01-01T00:00:00.000Z"),
+          expiresAt: new Date("2026-01-01T00:00:30.000Z"),
           warnings: [],
           rawResponse: null
         }
@@ -179,6 +222,132 @@ describe("dry-run planner", () => {
     );
 
     expect(result.accepted).toBe(false);
-    expect(result.reasons).toContain("Unknown allowance target");
+    expect(result.reasons).toContain("Unknown or unverified allowance target");
+  });
+
+  it("rejects quotes that exceed pair price impact limits", () => {
+    const result = planDryRunTrade(
+      {
+        walletId: wallet.id,
+        pairId: pair.id,
+        sellAmountDisplay: "50",
+        mode: "DRY_RUN_ONLY"
+      },
+      {
+        wallet,
+        pair: { ...pair, maxPriceImpactBps: 25 },
+        walletPairRule: rule,
+        tokenIn: token,
+        tokenOut: { ...token, id: "token-2", symbol: "WETH" },
+        routers: [router],
+        dailyWalletStats: stats,
+        dryRunEnabled: true,
+        quote: {
+          chainId: 8453,
+          provider: "mock",
+          routerName: "0x",
+          routerAddress: router.address,
+          spenderAddress: null,
+          sellToken: "USDC",
+          buyToken: "WETH",
+          sellTokenAddress: token.address,
+          buyTokenAddress: token.address,
+          sellAmountRaw: "50000000",
+          buyAmountRaw: "49500000",
+          sellAmountDisplay: "50",
+          buyAmountDisplay: "49.5",
+          sellAmountUsd: "50.00",
+          buyAmountUsd: null,
+          minBuyAmountRaw: null,
+          estimatedGas: {
+            gasUsed: "180000",
+            gasUsd: "2.50",
+            feeNative: "0.0007"
+          },
+          allowanceTarget: null,
+          txTo: null,
+          txData: null,
+          priceImpactBps: 50,
+          slippageBps: 100,
+          txValue: "0",
+          usdPriceSource: "test",
+          usdPriceTimestamp: new Date("2026-01-01T00:00:00.000Z"),
+          quoteUsdSource: "test",
+          quotedAt: new Date("2026-01-01T00:00:00.000Z"),
+          quoteTimestamp: new Date("2026-01-01T00:00:00.000Z"),
+          expiresAt: new Date("2026-01-01T00:00:30.000Z"),
+          warnings: [],
+          rawResponse: null
+        }
+      },
+      new Date("2026-01-01T00:00:10.000Z")
+    );
+
+    expect(result.accepted).toBe(false);
+    expect(result.reasons).toContain(
+      "Price impact exceeds max price impact of 25 bps"
+    );
+  });
+
+  it("rejects stale quotes", () => {
+    const result = planDryRunTrade(
+      {
+        walletId: wallet.id,
+        pairId: pair.id,
+        sellAmountDisplay: "50",
+        mode: "DRY_RUN_ONLY"
+      },
+      {
+        wallet,
+        pair,
+        walletPairRule: rule,
+        tokenIn: token,
+        tokenOut: { ...token, id: "token-2", symbol: "WETH" },
+        routers: [router],
+        dailyWalletStats: stats,
+        dryRunEnabled: true,
+        quote: {
+          chainId: 8453,
+          provider: "mock",
+          routerName: "0x",
+          routerAddress: router.address,
+          spenderAddress: null,
+          sellToken: "USDC",
+          buyToken: "WETH",
+          sellTokenAddress: token.address,
+          buyTokenAddress: token.address,
+          sellAmountRaw: "50000000",
+          buyAmountRaw: "49500000",
+          sellAmountDisplay: "50",
+          buyAmountDisplay: "49.5",
+          sellAmountUsd: "50.00",
+          buyAmountUsd: null,
+          minBuyAmountRaw: null,
+          estimatedGas: {
+            gasUsed: "180000",
+            gasUsd: "2.50",
+            feeNative: "0.0007"
+          },
+          allowanceTarget: null,
+          txTo: null,
+          txData: null,
+          priceImpactBps: 50,
+          slippageBps: 100,
+          txValue: "0",
+          usdPriceSource: "test",
+          usdPriceTimestamp: new Date("2026-01-01T00:00:00.000Z"),
+          quoteUsdSource: "test",
+          quotedAt: new Date("2026-01-01T00:00:00.000Z"),
+          quoteTimestamp: new Date("2026-01-01T00:00:00.000Z"),
+          expiresAt: new Date("2026-01-01T00:00:30.000Z"),
+          warnings: [],
+          rawResponse: null
+        }
+      },
+      new Date("2026-01-01T00:00:31.000Z")
+    );
+
+    expect(result.accepted).toBe(false);
+    expect(result.reasons).toContain("Quote is stale or expired");
   });
 });

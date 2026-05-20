@@ -1,0 +1,15 @@
+node_modules
+**/node_modules
+**/.next
+**/dist
+test-results
+playwright-report
+coverage
+.git
+.env
+.env.*
+.local
+**/.local
+*.log
+VALIDATION_REPORT.md
+report_md

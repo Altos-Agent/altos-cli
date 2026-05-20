@@ -1,9 +1,11 @@
-export const isDemoMode = () => process.env.DEMO_MODE === "true";
+import { getRuntimeConfig } from "../config/runtime-config.js";
 
-export const isDryRunEnabled = () => process.env.DRY_RUN !== "false";
+export const isDemoMode = () => getRuntimeConfig().demoMode;
+
+export const isDryRunEnabled = () => getRuntimeConfig().dryRun;
 
 export const requireLiveConfirmation = () =>
-  process.env.REQUIRE_LIVE_CONFIRMATION !== "false";
+  getRuntimeConfig().requireLiveConfirmation;
 
 export const demoModeLiveRejectionReasons = () =>
   isDemoMode() ? ["Demo mode blocks live execution"] : [];

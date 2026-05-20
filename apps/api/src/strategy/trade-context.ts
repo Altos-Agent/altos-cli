@@ -1,4 +1,5 @@
 import { and, eq, gte } from "drizzle-orm";
+import { parseTokenAmount } from "@base-orchestrator/shared";
 import type { DbClient } from "../db/client.js";
 import {
   dailyWalletStats,
@@ -14,19 +15,13 @@ import type { DryRunPlanInput } from "./planner.js";
 
 export type TradeInput = Pick<
   DryRunPlanInput,
-  "walletId" | "pairId" | "amountIn" | "preferredRouter"
+  "walletId" | "pairId" | "sellAmountDisplay" | "preferredRouter"
 >;
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-export const amountToStorageUnits = (amountIn: string | number) => {
-  const amount = Number(amountIn);
-  if (!Number.isFinite(amount)) {
-    return "0";
-  }
-
-  return Math.round(amount * 1_000_000).toString();
-};
+export const amountToStorageUnits = (displayAmount: string, decimals: number) =>
+  parseTokenAmount(displayAmount, decimals).toString();
 
 export const loadTradeContext = async (db: DbClient, input: TradeInput) => {
   const [wallet] = await db
@@ -113,7 +108,11 @@ export const loadTradeContextAndQuote = async (
           wallet: context.wallet,
           sellToken: context.tokenIn,
           buyToken: context.tokenOut,
-          sellAmount: String(input.amountIn),
+          sellAmountDisplay: input.sellAmountDisplay,
+          sellAmountRaw: amountToStorageUnits(
+            input.sellAmountDisplay,
+            context.tokenIn.decimals
+          ),
           routerName: input.preferredRouter ?? context.pair.preferredRouter
         })
       : null;

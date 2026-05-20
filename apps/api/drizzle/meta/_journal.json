@@ -36,6 +36,90 @@
       "when": 1778227360390,
       "tag": "0004_lethal_omega_flight",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1778257800000,
+      "tag": "0005_global_emergency_pause",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1778344800000,
+      "tag": "0006_notification_deliveries",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1778346000000,
+      "tag": "0007_live_hardening_foundation",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1778347200000,
+      "tag": "0008_confirmation_finality",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1778413200000,
+      "tag": "0009_scheduler_hardening",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1778510400000,
+      "tag": "0010_phase_i_transaction_status",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1778705434574,
+      "tag": "0011_0011_verification_registry",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1778705914411,
+      "tag": "0012_0012_aggregate_risk_engine",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1779282000000,
+      "tag": "0013_usd_normalized_risk_accounting",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1779285600000,
+      "tag": "0014_verified_registry_targets",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1779360000000,
+      "tag": "0015_dead_letter_jobs",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1779446400000,
+      "tag": "0016_schedule_occurrences",
+      "breakpoints": true
     }
   ]
 }

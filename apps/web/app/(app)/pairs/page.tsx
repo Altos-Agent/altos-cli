@@ -1,6 +1,6 @@
-import { api } from "../../../lib/api";
+import { api, isApiError } from "../../../lib/api";
 import { PairsManagement } from "../../../components/pairs-management";
-import { Card, PageHeader, PrimaryButton } from "../../../components/ui";
+import { Card, ErrorState, PageHeader, PrimaryButton } from "../../../components/ui";
 
 export default async function PairsPage() {
   const pairs = await api.getPairs();
@@ -13,7 +13,11 @@ export default async function PairsPage() {
         action={<PrimaryButton>Add pair</PrimaryButton>}
       />
       <Card className="p-5">
-        <PairsManagement pairs={pairs} />
+        {isApiError(pairs) ? (
+          <ErrorState title="Pair API unavailable" description={pairs.message} />
+        ) : (
+          <PairsManagement pairs={pairs.data} />
+        )}
       </Card>
     </div>
   );

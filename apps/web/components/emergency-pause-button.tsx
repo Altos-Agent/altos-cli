@@ -12,7 +12,7 @@ export const EmergencyPauseButton = ({ walletId }: { walletId: string }) => {
   return (
     <div className="space-y-2">
       <button
-        className="h-10 rounded-md bg-rose-500 px-4 text-sm font-semibold text-white transition hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-60"
+        className="h-10 rounded-md border border-accent-red/40 bg-accent-red-soft px-4 text-sm font-medium text-accent-red transition hover:bg-accent-red/20 disabled:opacity-60"
         disabled={pending}
         type="button"
         onClick={async () => {
@@ -34,7 +34,7 @@ export const EmergencyPauseButton = ({ walletId }: { walletId: string }) => {
       >
         Emergency Pause
       </button>
-      {error && <p className="text-sm text-rose-200">{error}</p>}
+      {error && <p className="text-sm text-accent-red">{error}</p>}
     </div>
   );
 };

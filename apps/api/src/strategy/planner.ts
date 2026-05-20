@@ -1,4 +1,4 @@
-import { BASE_CHAIN_ID, DEFAULT_DRY_RUN } from "@base-orchestrator/shared";
+import { BASE_CHAIN_ID } from "@base-orchestrator/shared";
 import { buildBasescanAddressLink } from "../blockchain/basescan.js";
 import type {
   DailyWalletStats,
@@ -19,13 +19,15 @@ import {
   checkSlippage,
   estimatedDryRunSlippageBps
 } from "../risk/slippage.js";
+import { checkPriceImpact } from "../risk/price-impact.js";
+import { checkQuoteFreshness } from "../risk/quote-freshness.js";
 import { checkTokenWhitelist } from "../risk/tokenWhitelist.js";
 import { isWalletActive, isWalletPairRuleEnabled } from "./walletProfiles.js";
 
 export interface DryRunPlanInput {
   walletId: string;
   pairId: string;
-  amountIn: string | number;
+  sellAmountDisplay: string;
   preferredRouter?: string | null | undefined;
   mode: "DRY_RUN_ONLY";
 }
@@ -51,7 +53,8 @@ export interface DryRunPlanResult {
     router: string | null;
     tokenIn: string | null;
     tokenOut: string | null;
-    amountIn: string;
+    sellAmountDisplay: string;
+    sellAmountRaw: string | null;
   };
   estimatedGas: ReturnType<typeof estimateDryRunGas>;
   estimatedCost: {
@@ -68,14 +71,30 @@ export interface DryRunPlanResult {
   txHash: null;
 }
 
-const globalDryRunEnabled = () => process.env.DRY_RUN !== "false";
+const usdStableSymbols = new Set(["USDC", "USDbC", "DAI", "EURC"]);
 
-const toAmountUsd = (amountIn: string | number) => Number(amountIn);
+export const estimateTradeUsd = ({
+  sellAmountDisplay,
+  sellTokenSymbol,
+  quoteSellAmountUsd,
+}: {
+  sellAmountDisplay: string;
+  sellTokenSymbol?: string | null | undefined;
+  quoteSellAmountUsd?: string | null | undefined;
+}) => {
+  if (quoteSellAmountUsd !== null && quoteSellAmountUsd !== undefined) {
+    return Number(quoteSellAmountUsd);
+  }
+  if (sellTokenSymbol && usdStableSymbols.has(sellTokenSymbol)) {
+    return Number(sellAmountDisplay);
+  }
+  return Number.NaN;
+};
 
 const formatUsd = (value: number) => value.toFixed(2);
 
 export const evaluateTradeRisk = (
-  input: Pick<DryRunPlanInput, "amountIn" | "preferredRouter">,
+  input: Pick<DryRunPlanInput, "sellAmountDisplay" | "preferredRouter">,
   context: DryRunPlanContext
 ): {
   accepted: boolean;
@@ -85,7 +104,11 @@ export const evaluateTradeRisk = (
   router: string | null;
 } => {
   const reasons: string[] = [];
-  const amountUsd = toAmountUsd(input.amountIn);
+  const amountUsd = estimateTradeUsd({
+    sellAmountDisplay: input.sellAmountDisplay,
+    sellTokenSymbol: context.tokenIn?.symbol,
+    quoteSellAmountUsd: context.quote?.sellAmountUsd,
+  });
   const estimatedGas = context.quote?.estimatedGas ?? estimateDryRunGas();
   const routerResolution = resolveRouter({
     requestedRouter: context.quote?.routerName ?? input.preferredRouter,
@@ -141,6 +164,12 @@ export const evaluateTradeRisk = (
       maxSlippageBps: context.pair.maxSlippageBps
     })
   );
+  reasons.push(
+    ...checkPriceImpact({
+      priceImpactBps: context.quote?.priceImpactBps,
+      maxPriceImpactBps: context.pair.maxPriceImpactBps
+    })
+  );
 
   const accepted = reasons.length === 0;
 
@@ -155,20 +184,31 @@ export const evaluateTradeRisk = (
 
 export const planDryRunTrade = (
   input: DryRunPlanInput,
-  context: DryRunPlanContext
+  context: DryRunPlanContext,
+  now = new Date()
 ): DryRunPlanResult => {
   const dryRunReasons: string[] = [];
   if (input.mode !== "DRY_RUN_ONLY") {
     dryRunReasons.push("Only DRY_RUN_ONLY mode is supported");
   }
-  if (!(context.dryRunEnabled ?? DEFAULT_DRY_RUN) || !globalDryRunEnabled()) {
-    dryRunReasons.push("Global DRY_RUN mode is disabled");
+  if (context.quote) {
+    dryRunReasons.push(
+      ...checkQuoteFreshness({
+        quotedAt: context.quote.quotedAt,
+        expiresAt: context.quote.expiresAt,
+        now
+      })
+    );
   }
 
   const risk = evaluateTradeRisk(input, context);
   const reasons = [...dryRunReasons, ...risk.reasons];
   const accepted = reasons.length === 0;
-  const amountUsd = toAmountUsd(input.amountIn);
+  const amountUsd = estimateTradeUsd({
+    sellAmountDisplay: input.sellAmountDisplay,
+    sellTokenSymbol: context.tokenIn?.symbol,
+    quoteSellAmountUsd: context.quote?.sellAmountUsd,
+  });
   const estimatedGas = risk.estimatedGas;
   const estimatedTotalUsd = Number.isFinite(amountUsd)
     ? amountUsd + Number(estimatedGas.gasUsd)
@@ -183,7 +223,9 @@ export const planDryRunTrade = (
       router: risk.router,
       tokenIn: context.quote?.sellToken ?? context.tokenIn?.symbol ?? null,
       tokenOut: context.quote?.buyToken ?? context.tokenOut?.symbol ?? null,
-      amountIn: context.quote?.sellAmount ?? String(input.amountIn)
+      sellAmountDisplay:
+        context.quote?.sellAmountDisplay ?? input.sellAmountDisplay,
+      sellAmountRaw: context.quote?.sellAmountRaw ?? null
     },
     estimatedGas,
     estimatedCost: {

@@ -15,6 +15,8 @@ import {
   assertLocalRateLimit,
   isLocalRateLimitError
 } from "../http/rate-limit.js";
+import { requireRole } from "../auth/rbac.js";
+import type { AuthContext } from "../auth/auth-middleware.js";
 
 const handleError = (error: unknown) => {
   if (isTelegramError(error)) {
@@ -35,7 +37,8 @@ const handleError = (error: unknown) => {
 
 export const registerTelegramRoutes = async (
   server: FastifyInstance,
-  db: DbClient
+  db: DbClient,
+  _context: AuthContext,
 ) => {
   const telegram = createTelegramService(db);
 
@@ -45,6 +48,7 @@ export const registerTelegramRoutes = async (
     "/api/settings/telegram",
     async (request, reply) => {
       try {
+        await requireRole(_context, request, reply, "operator");
         const body = parseRequestBody(telegramSettingsSchema, request.body);
         return await telegram.updateSettings(body);
       } catch (error) {
@@ -58,6 +62,7 @@ export const registerTelegramRoutes = async (
 
   server.post("/api/settings/telegram/test", async (request, reply) => {
     try {
+      await requireRole(_context, request, reply, "operator");
       assertNoRequestBody(request.body);
       assertLocalRateLimit({
         key: `telegram:test:${request.ip}`,

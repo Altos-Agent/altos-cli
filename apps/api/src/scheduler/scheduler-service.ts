@@ -838,6 +838,7 @@ export class SchedulerService {
         maxDailyLossUsd: wallet.maxDailyLossUsd
           ? Number(wallet.maxDailyLossUsd)
           : null,
+        nonceStatus: wallet.nonceStatus,
       });
 
       if (reasons.length > 0) {

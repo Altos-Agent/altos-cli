@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   canScheduleWallet,
+  computeNextRunAt,
   nextRunDelayMs,
   shouldPauseWalletAfterFailure
 } from "./scheduler-policy.js";
@@ -12,10 +13,11 @@ describe("scheduler policy", () => {
         scheduleEnabled: false,
         emergencyPaused: false,
         walletStatus: "ACTIVE",
-        dailyTxCount: 0,
-        maxDailyTrades: 3,
+        dailyRunCount: 0,
+        maxDailyRuns: 3,
         dailyLossUsd: 0,
-        maxDailyLossUsd: 10
+        maxDailyLossUsd: 10,
+        nonceStatus: "CLEAN"
       })
     ).toContain("Wallet schedule is disabled");
 
@@ -24,10 +26,11 @@ describe("scheduler policy", () => {
         scheduleEnabled: true,
         emergencyPaused: true,
         walletStatus: "ACTIVE",
-        dailyTxCount: 0,
-        maxDailyTrades: 3,
+        dailyRunCount: 0,
+        maxDailyRuns: 3,
         dailyLossUsd: 0,
-        maxDailyLossUsd: 10
+        maxDailyLossUsd: 10,
+        nonceStatus: "CLEAN"
       })
     ).toContain("Wallet is emergency paused");
   });
@@ -37,18 +40,22 @@ describe("scheduler policy", () => {
       scheduleEnabled: true,
       emergencyPaused: false,
       walletStatus: "ACTIVE",
-      dailyTxCount: 3,
-      maxDailyTrades: 3,
+      dailyRunCount: 3,
+      maxDailyRuns: 3,
       dailyLossUsd: 10,
-      maxDailyLossUsd: 10
+      maxDailyLossUsd: 10,
+      nonceStatus: "CLEAN"
     });
 
-    expect(reasons).toContain("Wallet daily trade limit reached");
+    expect(reasons).toContain("Wallet daily run limit reached");
     expect(reasons).toContain("Wallet daily loss threshold reached");
   });
 
   it("computes deterministic interval delay without randomization", () => {
     expect(nextRunDelayMs(15)).toBe(15 * 60 * 1000);
+    expect(
+      computeNextRunAt(new Date("2026-01-01T00:00:00.000Z"), 15)
+    ).toEqual(new Date("2026-01-01T00:15:00.000Z"));
   });
 
   it("pauses after configured failed transaction threshold", () => {

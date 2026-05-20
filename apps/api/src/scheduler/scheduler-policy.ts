@@ -7,11 +7,12 @@ export type StrategyProfile =
 export interface SchedulePolicyInput {
   scheduleEnabled: boolean;
   emergencyPaused: boolean;
-  walletStatus: "ACTIVE" | "PAUSED" | "DISABLED";
-  dailyTxCount: number;
-  maxDailyTrades: number | null;
+  walletStatus: "ACTIVE" | "PAUSED" | "DISABLED" | "QUARANTINED";
+  dailyRunCount: number;
+  maxDailyRuns: number | null;
   dailyLossUsd: number;
   maxDailyLossUsd: number | null;
+  nonceStatus: "CLEAN" | "UNCERTAIN" | "QUARANTINED";
 }
 
 export const canScheduleWallet = (input: SchedulePolicyInput) => {
@@ -27,10 +28,10 @@ export const canScheduleWallet = (input: SchedulePolicyInput) => {
     reasons.push("Wallet status must be ACTIVE");
   }
   if (
-    input.maxDailyTrades !== null &&
-    input.dailyTxCount >= input.maxDailyTrades
+    input.maxDailyRuns !== null &&
+    input.dailyRunCount >= input.maxDailyRuns
   ) {
-    reasons.push("Wallet daily trade limit reached");
+    reasons.push("Wallet daily run limit reached");
   }
   if (
     input.maxDailyLossUsd !== null &&
@@ -38,12 +39,21 @@ export const canScheduleWallet = (input: SchedulePolicyInput) => {
   ) {
     reasons.push("Wallet daily loss threshold reached");
   }
+  if (input.nonceStatus === "QUARANTINED") {
+    reasons.push("Wallet is quarantined due to nonce/tx issue");
+  }
+  if (input.nonceStatus === "UNCERTAIN") {
+    reasons.push("Wallet nonce state is uncertain — requires operator review");
+  }
 
   return reasons;
 };
 
 export const nextRunDelayMs = (minIntervalMinutes: number) =>
   Math.max(1, minIntervalMinutes) * 60 * 1000;
+
+export const computeNextRunAt = (from: Date, minIntervalMinutes: number) =>
+  new Date(from.getTime() + nextRunDelayMs(minIntervalMinutes));
 
 export const shouldPauseWalletAfterFailure = ({
   recentFailedTxCount,

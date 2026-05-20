@@ -58,7 +58,7 @@ export const transactionRequestStatusEnum = pgEnum(
 
 export const pendingWalletLockStatusEnum = pgEnum(
   "pending_wallet_lock_status",
-  ["ACTIVE", "RELEASED", "EXPIRED"]
+  ["ACTIVE", "FINALIZED", "EXPIRED", "RELEASED", "REPLACED"]
 );
 
 export const walletNonceStatusEnum = pgEnum("wallet_nonce_status", [

@@ -99,7 +99,7 @@ export interface WalletProfile {
     tradeAmountUsd: string;
     minIntervalMinutes: number;
     maxDailyTrades: number;
-    strategyProfile: StrategyProfile;
+    strategyProfile: ScheduleStrategyProfile;
     failedTxPauseThreshold: number;
     emergencyPaused: boolean;
   };
@@ -552,11 +552,84 @@ export interface AggregateStats {
   failedTxCount: number;
 }
 
-export type StrategyProfile =
+export type ScheduleStrategyProfile =
   | "MANUAL_ONLY"
   | "STABLE_ONLY"
   | "LOW_FEE_ONLY"
   | "TOKEN_ROTATION_LIMITED";
+
+export interface WalletGroup {
+  id: string;
+  name: string;
+  description?: string;
+  status: "ACTIVE" | "PAUSED" | "QUARANTINED";
+  maxDailyTx?: number;
+  maxDailyTradeUsd?: string;
+  maxDailyGasUsd?: string;
+  maxConcurrentWallets?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface StrategyProfile {
+  id: string;
+  name: string;
+  description?: string;
+  mode: "DRY_RUN_ONLY" | "LIVE_ELIGIBLE_AFTER_GATES";
+  maxDailyTx?: number;
+  maxHourlyTx?: number;
+  minCooldownSeconds?: number;
+  maxTradeUsd?: string;
+  maxGasUsd?: string;
+  maxSlippageBps?: number;
+  maxPriceImpactBps?: number;
+  allowedHoursJson?: string;
+  pairRotationMode: "ROUND_ROBIN" | "WEIGHTED" | "CONSERVATIVE";
+  randomizationWindowSeconds?: number;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PreflightResult {
+  windowStart: string;
+  windowEnd: string;
+  mode: "DRY_RUN" | "LIVE";
+  summary: {
+    estimatedTxCount: number;
+    estimatedWalletsUsed: number;
+    estimatedPairsUsed: number;
+    estimatedGasEth: string;
+    estimatedGasUsd: string;
+    estimatedTradeUsd: string;
+    quoteRequestEstimate: number;
+  };
+  riskUtilization: {
+    dailyTradeUsed: string;
+    dailyTradeMax: string;
+    dailyTradePercent: number;
+    dailyGasUsed: string;
+    dailyGasMax: string;
+    dailyGasPercent: number;
+  };
+  wallets: Array<{
+    walletId: string;
+    walletName: string;
+    plannedTxCount: number;
+    status: "PLANNED" | "SKIPPED";
+    reason?: string;
+  }>;
+  pairs: Array<{
+    pairId: string;
+    pairLabel: string;
+    plannedTxCount: number;
+    weight: number;
+    skipped: boolean;
+    skipReason?: string;
+  }>;
+  hardBlockers: Array<{ code: string; message: string; entityId?: string }>;
+  safetyWarnings: Array<{ code: string; message: string }>;
+}
 
 export interface SchedulerStatus {
   started: boolean;
@@ -645,7 +718,7 @@ export interface WalletSchedule {
   minIntervalMinutes: number;
   maxDailyTrades: number | null;
   maxDailyRuns: number | null;
-  strategyProfile: StrategyProfile;
+  strategyProfile: ScheduleStrategyProfile;
   emergencyPaused: boolean;
   failedTxPauseThreshold: number;
   lastScheduledAt: string | null;
@@ -655,4 +728,69 @@ export interface WalletSchedule {
   failureCount: number;
   createdAt: string | null;
   updatedAt: string | null;
+}
+
+// ── Trace / Observability Types ─────────────────────────────────────────────
+
+export type TracePhase =
+  | "request"
+  | "validation"
+  | "quote"
+  | "risk"
+  | "job_queued"
+  | "occurrence_status"
+  | "tx_created"
+  | "tx_status"
+  | "notification_status"
+  | "alert_status"
+  | "dlq"
+  | "error";
+
+export interface TraceEvent {
+  traceId: string;
+  timestamp: string;
+  phase: TracePhase;
+  entityType: string;
+  entityId: string | null;
+  status: string;
+  message: string;
+  metadata: Record<string, string | number | boolean | null>;
+}
+
+export interface TraceTimeline {
+  traceId: string;
+  events: TraceEvent[];
+  createdAt: string;
+}
+
+export type OperatorRole = "viewer" | "operator" | "admin";
+
+export interface MfaSettings {
+  mfaEnabled: boolean;
+  totpSecretEncrypted: string | null;
+  mfaRecoveryCodesHashed: string[] | null;
+  mfaEnabledAt: string | null;
+}
+
+export interface ReauthStatus {
+  reauthenticated: boolean;
+  lastReauthAt: number;
+}
+
+export interface LoginResponse {
+  authenticated: boolean;
+  username: string;
+  requiresMfa?: boolean;
+  tempSessionId?: string;
+}
+
+export interface MfaSetupResponse {
+  otpauthUri: string;
+  qrCodeBase64: string;
+  recoveryCodes: string[];
+}
+
+export interface ConfirmationState {
+  required: boolean;
+  requiredPhrase: string | null;
 }

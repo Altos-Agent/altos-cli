@@ -1,37 +1,41 @@
 import type {
-  ChainStatus,
-  DashboardSummary,
-  Transaction,
-  TransactionRefreshResult,
-  Pair,
-  RouterConfig,
-  SchedulerStatus,
-  StrategyProfile,
-  Token,
-  Wallet,
-  EncryptedWalletBackup,
-  WalletBalances,
-  WalletBasescan,
-  WalletPairRule,
-  WalletSchedule,
-  WalletProfile,
+  AggregateRiskStatus,
+  AuthMe,
   ApprovalActionResult,
+  ChainStatus,
+  CsrfResult,
+  DashboardSummary,
   DryRunPlanResult,
+  EncryptedWalletBackup,
+  EmergencyPauseStatus,
   ExecuteOnceResult,
   LiveExecutionStatus,
-  QuoteResponse,
-  TelegramSettings,
-  WalletAllowance,
-  AuthMe,
   LoginResult,
-  CsrfResult,
-  VaultStatus,
-  EmergencyPauseStatus,
-  RuntimeStatus,
   OpsSummary,
+  Pair,
+  PreflightResult,
+  QuoteResponse,
+  RouterConfig,
+  RuntimeStatus,
+  ScheduleStrategyProfile,
+  SchedulerStatus,
+  StrategyProfile,
+  TelegramSettings,
+  Token,
+  Transaction,
+  TransactionRefreshResult,
   TransactionRequest,
+  VaultStatus,
+  Wallet,
+  WalletAllowance,
+  WalletBalances,
+  WalletBasescan,
+  WalletGroup,
   WalletPendingState,
-  AggregateRiskStatus
+  WalletProfile,
+  WalletSchedule,
+  WalletPairRule,
+  TraceTimeline,
 } from "./types";
 
 const browserApiBaseUrl =
@@ -407,6 +411,14 @@ export const api = {
     return await fetchJsonResult<SchedulerStatus>("/api/scheduler/status");
   },
 
+  async getTraceTimeline(traceId: string) {
+    return await fetchJsonResult<TraceTimeline>(`/api/traces/${traceId}`);
+  },
+
+  async getTransactionTrace(txId: string) {
+    return await fetchJsonResult<TraceTimeline>(`/api/transactions/${txId}/trace`);
+  },
+
   async startScheduler() {
     return await apiRequest<SchedulerStatus>("/api/scheduler/start", {
       method: "POST"
@@ -463,7 +475,7 @@ export const api = {
       tradeAmountUsd: string;
       minIntervalMinutes: number;
       maxDailyRuns: number | null;
-      strategyProfile: StrategyProfile;
+      strategyProfile: ScheduleStrategyProfile;
       failedTxPauseThreshold: number;
       emergencyPaused: boolean;
     }
@@ -656,5 +668,158 @@ export const api = {
 
   async getAggregateRisk() {
     return await fetchJsonResult<AggregateRiskStatus>("/api/risk/aggregate");
+  },
+
+  // ── Wallet Groups ────────────────────────────────────────────────────────────
+
+  async getWalletGroups() {
+    return await fetchJsonResult<WalletGroup[]>("/api/wallet-groups");
+  },
+
+  async createWalletGroup(input: {
+    name: string;
+    description?: string;
+    status?: "ACTIVE" | "PAUSED" | "QUARANTINED";
+    maxDailyTx?: number | null;
+    maxDailyTradeUsd?: string | null;
+    maxDailyGasUsd?: string | null;
+    maxConcurrentWallets?: number | null;
+  }) {
+    return await apiRequest<WalletGroup>("/api/wallet-groups", {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+  },
+
+  async updateWalletGroup(
+    id: string,
+    input: {
+      name?: string;
+      description?: string | null;
+      status?: "ACTIVE" | "PAUSED" | "QUARANTINED";
+      maxDailyTx?: number | null;
+      maxDailyTradeUsd?: string | null;
+      maxDailyGasUsd?: string | null;
+      maxConcurrentWallets?: number | null;
+    }
+  ) {
+    return await apiRequest<WalletGroup>(`/api/wallet-groups/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(input),
+    });
+  },
+
+  async deleteWalletGroup(id: string) {
+    return await apiRequest<WalletGroup>(`/api/wallet-groups/${id}`, {
+      method: "DELETE",
+    });
+  },
+
+  // ── Strategy Profiles ───────────────────────────────────────────────────────
+
+  async getStrategyProfiles() {
+    return await fetchJsonResult<StrategyProfile[]>("/api/strategy-profiles");
+  },
+
+  async createStrategyProfile(input: {
+    name: string;
+    description?: string;
+    mode?: "DRY_RUN_ONLY" | "LIVE_ELIGIBLE_AFTER_GATES";
+    maxDailyTx?: number | null;
+    maxHourlyTx?: number | null;
+    minCooldownSeconds?: number | null;
+    maxTradeUsd?: string | null;
+    maxGasUsd?: string | null;
+    maxSlippageBps?: number | null;
+    maxPriceImpactBps?: number | null;
+    allowedHoursJson?: string | null;
+    pairRotationMode?: "ROUND_ROBIN" | "WEIGHTED" | "CONSERVATIVE";
+    randomizationWindowSeconds?: number | null;
+    enabled?: boolean;
+  }) {
+    return await apiRequest<StrategyProfile>("/api/strategy-profiles", {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+  },
+
+  async updateStrategyProfile(
+    id: string,
+    input: {
+      name?: string;
+      description?: string | null;
+      mode?: "DRY_RUN_ONLY" | "LIVE_ELIGIBLE_AFTER_GATES";
+      maxDailyTx?: number | null;
+      maxHourlyTx?: number | null;
+      minCooldownSeconds?: number | null;
+      maxTradeUsd?: string | null;
+      maxGasUsd?: string | null;
+      maxSlippageBps?: number | null;
+      maxPriceImpactBps?: number | null;
+      allowedHoursJson?: string | null;
+      pairRotationMode?: "ROUND_ROBIN" | "WEIGHTED" | "CONSERVATIVE";
+      randomizationWindowSeconds?: number | null;
+      enabled?: boolean;
+    }
+  ) {
+    return await apiRequest<StrategyProfile>(`/api/strategy-profiles/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(input),
+    });
+  },
+
+  async deleteStrategyProfile(id: string) {
+    return await apiRequest<StrategyProfile>(`/api/strategy-profiles/${id}`, {
+      method: "DELETE",
+    });
+  },
+
+  // ── Pre-flight ───────────────────────────────────────────────────────────────
+
+  async runPreflightSimulation(input: {
+    profileId?: string;
+    windowHours?: number;
+    mode?: "DRY_RUN" | "LIVE";
+  }) {
+    return await apiRequest<PreflightResult>("/api/scheduler/preflight", {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+  },
+
+  // ── MFA / Auth ───────────────────────────────────────────────────────────────
+
+  async mfaSetup(): Promise<MfaSetupResponse> {
+    return await apiRequest<MfaSetupResponse>("/api/auth/mfa/setup", {
+      method: "POST",
+    });
+  },
+
+  async mfaVerifySetup(totpCode: string): Promise<{ mfaEnabled: boolean }> {
+    return await apiRequest<{ mfaEnabled: boolean }>("/api/auth/mfa/verify-setup", {
+      method: "POST",
+      body: JSON.stringify({ totpCode }),
+    });
+  },
+
+  async mfaVerify(tempSessionId: string, totpCode: string): Promise<LoginResponse> {
+    return await apiRequest<LoginResponse>("/api/auth/mfa/verify", {
+      method: "POST",
+      body: JSON.stringify({ tempSessionId, totpCode }),
+    });
+  },
+
+  async mfaDisable(totpCode: string, password: string): Promise<{ mfaEnabled: boolean }> {
+    return await apiRequest<{ mfaEnabled: boolean }>("/api/auth/mfa/disable", {
+      method: "POST",
+      body: JSON.stringify({ totpCode, password }),
+    });
+  },
+
+  async reauth(password: string): Promise<ReauthStatus> {
+    return await apiRequest<ReauthStatus>("/api/auth/reauth", {
+      method: "POST",
+      body: JSON.stringify({ password }),
+    });
   }
 };

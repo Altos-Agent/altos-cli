@@ -11,6 +11,7 @@ import {
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { BASE_CHAIN_ID } from "@base-orchestrator/shared";
+import { getRuntimeConfig } from "../config/runtime-config.js";
 import { buildBasescanTransactionLink } from "../blockchain/basescan.js";
 import { baseMainnet, basePublicClient } from "../blockchain/baseClient.js";
 import type { DbClient } from "../db/client.js";
@@ -32,6 +33,13 @@ import {
   parseApprovalAmount,
   validateApprovalAmount,
 } from "./approval-policy.js";
+import {
+  assertRouterVerifiedForLive,
+  assertSpenderVerifiedForLive,
+  assertTokenVerifiedForLive,
+  routerAllowanceTargetAddress,
+} from "../risk/verification.js";
+import { NonceReservationService, NonceReservationError } from "../nonce/nonce-reservation.js";
 
 export class ApprovalServiceError extends Error {
   constructor(
@@ -46,8 +54,9 @@ export class ApprovalServiceError extends Error {
 export interface ApprovalRequestInput {
   tokenId: string;
   routerId: string;
-  amount?: string;
-  confirmLiveExecution?: boolean;
+  amount?: string | undefined;
+  confirmLiveExecution?: boolean | undefined;
+  transactionRequestId?: string | undefined;
 }
 
 const liveWriteRejectionReasons = (confirmLiveExecution?: boolean) => [
@@ -98,6 +107,19 @@ const loadApprovalContext = async (
   if (!loadedRouter.enabled) {
     throw new ApprovalServiceError("Router is disabled");
   }
+  try {
+    assertTokenVerifiedForLive(loadedToken);
+    assertRouterVerifiedForLive(loadedRouter);
+    assertSpenderVerifiedForLive({
+      spenderAddress: routerAllowanceTargetAddress(loadedRouter),
+      router: loadedRouter,
+    });
+  } catch (error) {
+    throw new ApprovalServiceError(
+      error instanceof Error ? error.message : "Token/router verification failed",
+      400
+    );
+  }
 
   return {
     wallet: loadedWallet,
@@ -133,6 +155,7 @@ const storeApprovalTransaction = async ({
   basescanUrl,
   status,
   errorMessage,
+  requestId,
 }: {
   db: DbClient;
   walletId: string;
@@ -144,11 +167,13 @@ const storeApprovalTransaction = async ({
   basescanUrl: string | null;
   status: "SUBMITTED" | "FAILED" | "REJECTED";
   errorMessage: string | null;
+  requestId?: string | null;
 }) => {
   const [transaction] = await db
     .insert(transactions)
     .values({
       walletId,
+      requestId: requestId ?? null,
       pairId: null,
       chainId: BASE_CHAIN_ID,
       txHash,
@@ -158,7 +183,11 @@ const storeApprovalTransaction = async ({
       tokenIn: tokenSymbol,
       tokenOut: null,
       amountIn: rawAmount,
+      amountInRaw: rawAmount,
+      amountInUsd: null,
       amountOut: null,
+      amountOutRaw: null,
+      amountOutUsd: null,
       gasUsed: null,
       gasUsd: null,
       feeNative: null,
@@ -218,11 +247,13 @@ const signAndSubmitApproval = async ({
   tokenAddress,
   spender,
   rawAmount,
+  nonce,
 }: {
   wallet: typeof wallets.$inferSelect;
   tokenAddress: string;
   spender: string;
   rawAmount: string;
+  nonce?: number;
 }) => {
   const masterKey = await loadOrCreateMasterKey();
   const privateKey = decryptPrivateKey(wallet.encryptedPrivateKey, masterKey);
@@ -239,10 +270,17 @@ const signAndSubmitApproval = async ({
   const walletClient = createWalletClient({
     account,
     chain: baseMainnet,
-    transport: http(process.env.BASE_RPC_URL ?? "https://mainnet.base.org"),
+    transport: http(getRuntimeConfig().baseRpcUrl),
+    ...(nonce !== undefined ? { nonce } : {}),
   });
 
   return await walletClient.writeContract(simulation.request);
+};
+
+let _nonceReservation: NonceReservationService | null = null;
+const getNonceReservation = (db: DbClient) => {
+  if (!_nonceReservation) _nonceReservation = new NonceReservationService(db);
+  return _nonceReservation;
 };
 
 export const createApprovalService = (db: DbClient) => ({
@@ -272,11 +310,11 @@ export const createApprovalService = (db: DbClient) => ({
           const rawAllowance = isDemoMode()
             ? 0n
             : skippedReason
-              ? null
+            ? null
               : await getTokenAllowance({
                   tokenAddress: token.address as string,
                   owner: wallet.address,
-                  spender: router.address as string,
+                  spender: routerAllowanceTargetAddress(router) as string,
                 });
           const allowanceRaw = rawAllowance?.toString() ?? null;
           const isUnlimited = rawAllowance === maxUint256;
@@ -294,6 +332,7 @@ export const createApprovalService = (db: DbClient) => ({
               id: router.id,
               name: router.name,
               address: router.address,
+              allowanceTargetAddress: routerAllowanceTargetAddress(router),
               enabled: router.enabled,
             },
             allowanceRaw,
@@ -354,6 +393,7 @@ export const createApprovalService = (db: DbClient) => ({
         basescanUrl: null,
         status: "REJECTED",
         errorMessage: reasons.join("; "),
+        requestId: input.transactionRequestId ?? null,
       });
 
       return {
@@ -367,13 +407,79 @@ export const createApprovalService = (db: DbClient) => ({
       };
     }
 
+    // Check wallet can submit (no active lock) before signing
+    const canSubmit = await getNonceReservation(db).canWalletSubmit(walletId);
+    if (!canSubmit.canSubmit) {
+      const transaction = await storeApprovalTransaction({
+        db,
+        walletId,
+        action: "APPROVE",
+        routerName: context.router.name,
+        tokenSymbol: context.token.symbol,
+        rawAmount,
+        txHash: null,
+        basescanUrl: null,
+        status: "REJECTED",
+        errorMessage: canSubmit.reason ?? "Wallet cannot submit",
+        requestId: input.transactionRequestId ?? null,
+      });
+      return {
+        accepted: false,
+        rejected: true,
+        reasons: [canSubmit.reason ?? "Wallet cannot submit"],
+        status: "REJECTED" as const,
+        txHash: null,
+        basescanUrl: null,
+        transactionId: transaction?.id ?? null,
+      };
+    }
+
+    // Reserve nonce
+    let nonceReservationResult: { reservationId: string; nonce: number } | null = null;
+    try {
+      nonceReservationResult = await getNonceReservation(db).reserveNonceForWallet(
+        walletId,
+        BASE_CHAIN_ID,
+        "LIVE_APPROVE",
+        true,
+      );
+    } catch (err) {
+      if (err instanceof NonceReservationError) {
+        const transaction = await storeApprovalTransaction({
+          db,
+          walletId,
+          action: "APPROVE",
+          routerName: context.router.name,
+          tokenSymbol: context.token.symbol,
+          rawAmount,
+          txHash: null,
+          basescanUrl: null,
+          status: "REJECTED",
+          errorMessage: err.message,
+          requestId: input.transactionRequestId ?? null,
+        });
+        return {
+          accepted: false,
+          rejected: true,
+          reasons: [err.message],
+          status: "REJECTED" as const,
+          txHash: null,
+          basescanUrl: null,
+          transactionId: transaction?.id ?? null,
+        };
+      }
+      throw err;
+    }
+
     try {
       const txHash = await signAndSubmitApproval({
         wallet: context.wallet,
         tokenAddress: context.token.address as string,
-        spender: context.router.address as string,
+        spender: routerAllowanceTargetAddress(context.router) as string,
         rawAmount,
+        nonce: nonceReservationResult.nonce,
       });
+      await getNonceReservation(db).attachSubmittedTx(walletId, nonceReservationResult.reservationId, txHash);
       const basescanUrl = buildBasescanTransactionLink(txHash);
       const transaction = await storeApprovalTransaction({
         db,
@@ -386,6 +492,7 @@ export const createApprovalService = (db: DbClient) => ({
         basescanUrl,
         status: "SUBMITTED",
         errorMessage: null,
+        requestId: input.transactionRequestId ?? null,
       });
       await notifyApproval({
         db,
@@ -421,6 +528,7 @@ export const createApprovalService = (db: DbClient) => ({
         basescanUrl: null,
         status: "FAILED",
         errorMessage: "Approval signing or submission failed",
+        requestId: input.transactionRequestId ?? null,
       });
       await notifyApproval({
         db,
@@ -469,6 +577,7 @@ export const createApprovalService = (db: DbClient) => ({
         basescanUrl: null,
         status: "REJECTED",
         errorMessage: reasons.join("; "),
+        requestId: input.transactionRequestId ?? null,
       });
 
       return {
@@ -482,13 +591,79 @@ export const createApprovalService = (db: DbClient) => ({
       };
     }
 
+    // Check wallet can submit (no active lock) before signing
+    const canSubmit = await getNonceReservation(db).canWalletSubmit(walletId);
+    if (!canSubmit.canSubmit) {
+      const transaction = await storeApprovalTransaction({
+        db,
+        walletId,
+        action: "REVOKE",
+        routerName: context.router.name,
+        tokenSymbol: context.token.symbol,
+        rawAmount,
+        txHash: null,
+        basescanUrl: null,
+        status: "REJECTED",
+        errorMessage: canSubmit.reason ?? "Wallet cannot submit",
+        requestId: input.transactionRequestId ?? null,
+      });
+      return {
+        accepted: false,
+        rejected: true,
+        reasons: [canSubmit.reason ?? "Wallet cannot submit"],
+        status: "REJECTED" as const,
+        txHash: null,
+        basescanUrl: null,
+        transactionId: transaction?.id ?? null,
+      };
+    }
+
+    // Reserve nonce
+    let nonceReservationResult: { reservationId: string; nonce: number } | null = null;
+    try {
+      nonceReservationResult = await getNonceReservation(db).reserveNonceForWallet(
+        walletId,
+        BASE_CHAIN_ID,
+        "LIVE_REVOKE",
+        true,
+      );
+    } catch (err) {
+      if (err instanceof NonceReservationError) {
+        const transaction = await storeApprovalTransaction({
+          db,
+          walletId,
+          action: "REVOKE",
+          routerName: context.router.name,
+          tokenSymbol: context.token.symbol,
+          rawAmount,
+          txHash: null,
+          basescanUrl: null,
+          status: "REJECTED",
+          errorMessage: err.message,
+          requestId: input.transactionRequestId ?? null,
+        });
+        return {
+          accepted: false,
+          rejected: true,
+          reasons: [err.message],
+          status: "REJECTED" as const,
+          txHash: null,
+          basescanUrl: null,
+          transactionId: transaction?.id ?? null,
+        };
+      }
+      throw err;
+    }
+
     try {
       const txHash = await signAndSubmitApproval({
         wallet: context.wallet,
         tokenAddress: context.token.address as string,
-        spender: context.router.address as string,
+        spender: routerAllowanceTargetAddress(context.router) as string,
         rawAmount,
+        nonce: nonceReservationResult.nonce,
       });
+      await getNonceReservation(db).attachSubmittedTx(walletId, nonceReservationResult.reservationId, txHash);
       const basescanUrl = buildBasescanTransactionLink(txHash);
       const transaction = await storeApprovalTransaction({
         db,
@@ -501,6 +676,7 @@ export const createApprovalService = (db: DbClient) => ({
         basescanUrl,
         status: "SUBMITTED",
         errorMessage: null,
+        requestId: input.transactionRequestId ?? null,
       });
       await notifyApproval({
         db,
@@ -536,6 +712,7 @@ export const createApprovalService = (db: DbClient) => ({
         basescanUrl: null,
         status: "FAILED",
         errorMessage: "Revoke signing or submission failed",
+        requestId: input.transactionRequestId ?? null,
       });
       await notifyApproval({
         db,

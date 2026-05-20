@@ -9,6 +9,8 @@ import {
 } from "./risk/aggregate-risk.js";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { requireRole, requireReauth } from "./auth/rbac.js";
+import type { AuthContext } from "./auth/auth-middleware.js";
 
 const updateLimitsSchema = z.object({
   maxDailyTradeUsd: z.string().regex(/^\d+(\.\d+)?$/).optional(),
@@ -21,7 +23,8 @@ const updateLimitsSchema = z.object({
 
 export const registerRiskRoutes = async (
   server: FastifyInstance,
-  db: DbClient
+  db: DbClient,
+  _context: AuthContext,
 ) => {
   /* eslint-disable @typescript-eslint/no-unused-vars */
   server.get("/api/risk/aggregate", async (_req, _reply) => {
@@ -54,6 +57,16 @@ export const registerRiskRoutes = async (
   server.patch<{ Body: z.infer<typeof updateLimitsSchema> }>(
     "/api/risk/aggregate/limits",
     async (request, reply) => {
+      try {
+        await requireRole(_context, request, reply, "admin");
+        await requireReauth(_context, request, reply);
+        if (_context.rateLimitProvider) {
+          await _context.rateLimitProvider.assertLimit(
+            `risk:limits:${request.ip}`,
+            10,
+            60_000,
+          );
+        }
       const parsed = updateLimitsSchema.safeParse(request.body);
       if (!parsed.success) {
         return reply.code(400).send({

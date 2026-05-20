@@ -4,6 +4,7 @@ export interface RateLimitProvider {
   readonly name: "redis" | "memory";
   readonly isDistributed: boolean;
   assertLimit(key: string, limit: number, windowMs: number): Promise<void>;
+  assertLimitOrFailClosed(key: string, limit: number, windowMs: number): Promise<void>;
   getLimit(key: string, limit: number, windowMs: number): Promise<{
     consumed: number;
     remaining: number;
@@ -72,6 +73,10 @@ export const createInMemoryProvider = (): RateLimitProvider => {
       const resetAt =
         current.length > 0 ? (current[0] ?? 0) + windowMs : now + windowMs;
       return { consumed, remaining, resetAt };
+    },
+
+    async assertLimitOrFailClosed(key: string, limit: number, windowMs: number): Promise<void> {
+      return this.assertLimit(key, limit, windowMs);
     },
   };
 };
@@ -174,6 +179,15 @@ const createRedisProvider = (client: RedisClient): RateLimitProvider => {
       const remaining = Math.max(0, limit - consumed);
       const resetAt = consumed > 0 ? now + windowMs : now;
       return { consumed, remaining, resetAt };
+    },
+
+    async assertLimitOrFailClosed(key: string, limit: number, windowMs: number): Promise<void> {
+      try {
+        return await this.assertLimit(key, limit, windowMs);
+      } catch (error) {
+        if (error instanceof RateLimitExceeded) throw error;
+        throw new Error("Rate limit service unavailable");
+      }
     },
   };
 };

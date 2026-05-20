@@ -3,6 +3,7 @@ import type { Job } from "bullmq";
 import type { DbClient } from "../db/client.js";
 import { transactions, wallets, walletSchedules } from "../db/schema.js";
 import { refreshTransactionConfirmation } from "../transactions/confirmation.js";
+import { NonceReservationService } from "../nonce/nonce-reservation.js";
 import type { ConfirmationJob, SchedulerQueues } from "./queues.js";
 import { shouldPauseWalletAfterFailure } from "./scheduler-policy.js";
 
@@ -24,6 +25,10 @@ export const processConfirmationJob =
           job.data,
           { delay: 60_000 }
         );
+      }
+      if (refreshed?.transaction?.status === "FINALIZED" && refreshed?.transaction?.txHash) {
+        const nonceService = new NonceReservationService(db);
+        await nonceService.releaseWalletLockAfterFinality(job.data.walletId, refreshed.transaction.txHash);
       }
     }
 
@@ -76,7 +81,9 @@ export const processConfirmationJob =
           amount: "0",
           status: "PAUSED",
           txHash: null,
-          basescanUrl: null
+          basescanUrl: null,
+          walletId: job.data.walletId,
+          requestId: job.data.requestId ?? null
         });
       }
 

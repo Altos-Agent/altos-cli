@@ -46,6 +46,9 @@ const noopConfig = {
   alertWebhookToken: null,
   metricsToken: null,
   vaultProvider: "local-file" as const,
+  operatorRole: "admin" as const,
+  sessionTtlSeconds: 43200,
+  totpIssuer: "BaseOrchestrator",
 };
 
 describe("in-memory rate limit provider", () => {

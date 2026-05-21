@@ -4,8 +4,8 @@ import { isDemoMode, isDryRunEnabled } from "../runtime/mode.js";
 import { isGlobalEmergencyPaused } from "../security/emergency-pause.js";
 import { getAggregateLimits } from "../risk/aggregate-risk.js";
 import { getVaultStatus } from "../vault/vault-lock.js";
-import { tokens, routers, wallets } from "../db/schema.js";
-import { eq, and } from "drizzle-orm";
+import { tokens, routers, wallets, transactions } from "../db/schema.js";
+import { eq, or } from "drizzle-orm";
 import { loadAllArtifacts } from "./readiness-artifacts.js";
 import { ALL_CHECKS } from "./readiness-checks.js";
 import type {
@@ -75,8 +75,7 @@ async function buildContext(db: DbClient): Promise<ReadinessContext> {
 
   // Find TINY_LIVE wallet
   const allWallets = await db.select().from(wallets);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tinyLiveWalletArr = allWallets.filter((w) => (w as any).role === "TINY_LIVE");
+  const tinyLiveWalletArr = allWallets.filter((w) => (w.name ?? "").includes("TINY_LIVE"));
   const tinyLiveWallet =
     tinyLiveWalletArr.length > 0
       ? {
@@ -86,12 +85,11 @@ async function buildContext(db: DbClient): Promise<ReadinessContext> {
         }
       : null;
 
-  // Count stuck or dropped wallets
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const stuckOrDroppedWallets = allWallets.filter(
-    (w) => w.status === ("STUCK" as any) || w.status === ("DROPPED" as any)
+  // Count stuck or dropped wallets via transactions table
+  const stuckTxs = await db.select().from(transactions).where(
+    or(eq(transactions.status, "FAILED"), eq(transactions.status, "DROPPED"))
   );
-  const stuckOrDroppedWalletCount = stuckOrDroppedWallets.length;
+  const stuckOrDroppedWalletCount = stuckTxs.length;
 
   const artifacts = await loadAllArtifacts();
 

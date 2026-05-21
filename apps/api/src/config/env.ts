@@ -66,9 +66,17 @@ const envSchema = z
     QUOTE_PROVIDER: z.enum(["mock", "0x", "zeroX"]).default("mock"),
     QUOTE_MAX_AGE_SECONDS: integerEnv(30),
     VAULT_PROVIDER: z
-      .enum(["local-file", "kms", "external-signer"])
+      .enum(["local-file", "kms", "external-signer", "external-http-signer"])
       .default("local-file"),
     MASTER_KEY_FILE: z.string().min(1).default(".local/master.key"),
+    EXTERNAL_SIGNER_URL: z.string().url().optional(),
+    EXTERNAL_SIGNER_TOKEN: z.string().optional(),
+    EXTERNAL_SIGNER_MTLS: booleanEnv(false),
+    EXTERNAL_SIGNER_CLIENT_CERT: z.string().optional(),
+    EXTERNAL_SIGNER_CLIENT_KEY: z.string().optional(),
+    EXTERNAL_SIGNER_HEALTH_URL: z.string().url().optional(),
+    EXTERNAL_SIGNER_SIGN_TIMEOUT_MS: integerEnv(30000),
+    EXTERNAL_SIGNER_NONCE_STRATEGY: z.enum(["rpc", "managed"]).default("rpc"),
     TELEGRAM_ENABLED: booleanEnv(false),
     OPERATOR_USERNAME: z.string().min(1).default("operator"),
     OPERATOR_PASSWORD_HASH: operatorPasswordHashEnv,
@@ -229,6 +237,14 @@ export const parseRuntimeEnv = (env: Record<string, string | undefined>) => {
     alertWebhookToken: parsed.data.ALERT_WEBHOOK_TOKEN ?? null,
     metricsToken: parsed.data.METRICS_TOKEN ?? null,
     vaultProvider: parsed.data.VAULT_PROVIDER,
+    externalSignerUrl: parsed.data.EXTERNAL_SIGNER_URL ?? null,
+    externalSignerToken: parsed.data.EXTERNAL_SIGNER_TOKEN ?? null,
+    externalSignerMtls: parsed.data.EXTERNAL_SIGNER_MTLS,
+    externalSignerClientCert: parsed.data.EXTERNAL_SIGNER_CLIENT_CERT ?? null,
+    externalSignerClientKey: parsed.data.EXTERNAL_SIGNER_CLIENT_KEY ?? null,
+    externalSignerHealthUrl: parsed.data.EXTERNAL_SIGNER_HEALTH_URL ?? null,
+    externalSignerSignTimeoutMs: parsed.data.EXTERNAL_SIGNER_SIGN_TIMEOUT_MS,
+    externalSignerNonceStrategy: parsed.data.EXTERNAL_SIGNER_NONCE_STRATEGY,
   };
 };
 

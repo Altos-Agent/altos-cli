@@ -32,8 +32,9 @@ export async function loadLatestArtifact(
 
     if (matching.length === 0) return null;
 
+    const latestFile = matching[0]!;
     const content = await readFile(
-      join(ARTIFACTS_DIR, matching[0]),
+      join(ARTIFACTS_DIR, latestFile),
       "utf-8"
     );
     return JSON.parse(content) as Artifact;

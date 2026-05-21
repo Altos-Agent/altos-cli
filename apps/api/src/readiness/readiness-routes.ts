@@ -105,7 +105,6 @@ export const registerReadinessRoutes = async (
         name: "TINY_LIVE_WALLET",
         address,
         privateKey: randomPrivateKey.toString("hex"),
-        status: "PAUSED",
       });
 
       return reply.code(201).send({

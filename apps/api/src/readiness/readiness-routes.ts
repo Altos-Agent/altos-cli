@@ -7,7 +7,7 @@ import { requireRole } from "../auth/rbac.js";
 import { runReadinessChecks, getReadinessSummary } from "./readiness-service.js";
 import { storeArtifact } from "./readiness-artifacts.js";
 import type { Artifact, ArtifactType } from "./readiness-types.js";
-import { createWalletService } from "../wallets/wallet-service.js";
+import { createWalletService, isWalletError } from "../wallets/wallet-service.js";
 import { privateKeyToAccount } from "viem/accounts";
 import { type Hex } from "viem";
 import { getSessionIdFromRequest } from "../auth/auth-middleware.js";
@@ -80,7 +80,9 @@ export const registerReadinessRoutes = async (
           storedAt: artifact.createdAt,
         });
       } catch (error) {
-        return handleValidationError(error, reply);
+        const validation = handleValidationError(error, reply);
+        if (validation) return validation;
+        return reply.code(500).send({ error: "Internal server error" });
       }
     }
   );
@@ -90,28 +92,37 @@ export const registerReadinessRoutes = async (
     const allowed = await requireRole(authContext, request, reply, "admin");
     if (!allowed) return;
 
-    // Generate fresh keypair
-    const randomPrivateKey = randomBytes(32);
-    const hexKey = `0x${randomPrivateKey.toString("hex")}`;
-    const account = privateKeyToAccount(hexKey as Hex);
-    const address = account.address;
+    try {
+      // Generate fresh keypair
+      const randomPrivateKey = randomBytes(32);
+      const hexKey = `0x${randomPrivateKey.toString("hex")}`;
+      const account = privateKeyToAccount(hexKey as Hex);
+      const address = account.address;
 
-    // Import wallet - importWallet handles encryption internally
-    const walletService = createWalletService(db);
-    const importedWallet = await walletService.importWallet({
-      name: "TINY_LIVE_WALLET",
-      address,
-      privateKey: randomPrivateKey.toString("hex"),
-      status: "PAUSED",
-    });
+      // Import wallet - importWallet handles encryption internally
+      const walletService = createWalletService(db);
+      const importedWallet = await walletService.importWallet({
+        name: "TINY_LIVE_WALLET",
+        address,
+        privateKey: randomPrivateKey.toString("hex"),
+        status: "PAUSED",
+      });
 
-    return reply.code(201).send({
-      walletId: importedWallet.id,
-      address: importedWallet.address,
-      publicLabel: importedWallet.name,
-      instructions:
-        "Fund this wallet with ~0.001 BASE only. Then upload a Telegram test artifact and verify all other gates before enabling.",
-    });
+      return reply.code(201).send({
+        walletId: importedWallet.id,
+        address: importedWallet.address,
+        publicLabel: importedWallet.name,
+        instructions:
+          "Fund this wallet with ~0.001 BASE only. Then upload a Telegram test artifact and verify all other gates before enabling.",
+      });
+    } catch (error) {
+      if (isWalletError(error)) {
+        return reply.code(error.statusCode).send({ error: error.message });
+      }
+      const validation = handleValidationError(error, reply);
+      if (validation) return validation;
+      return reply.code(500).send({ error: "Internal server error" });
+    }
   });
 
   // POST /api/readiness/dismiss-blocker - admin only
@@ -136,7 +147,9 @@ export const registerReadinessRoutes = async (
           note: "session-only",
         });
       } catch (error) {
-        return handleValidationError(error, reply);
+        const validation = handleValidationError(error, reply);
+        if (validation) return validation;
+        return reply.code(500).send({ error: "Internal server error" });
       }
     }
   );

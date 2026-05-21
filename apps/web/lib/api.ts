@@ -11,10 +11,13 @@ import type {
   ExecuteOnceResult,
   LiveExecutionStatus,
   LoginResult,
+  LoginResponse,
+  MfaSetupResponse,
   OpsSummary,
   Pair,
   PreflightResult,
   QuoteResponse,
+  ReauthStatus,
   RouterConfig,
   RuntimeStatus,
   ScheduleStrategyProfile,
@@ -822,4 +825,65 @@ export const api = {
       body: JSON.stringify({ password }),
     });
   }
+};
+
+// ── Readiness ─────────────────────────────────────────────────────────────────
+
+export const getReadinessSummary = async (): Promise<ApiReadResult<{
+  state: string;
+  liveAutomationHardNoGo: boolean;
+  liveAutomationReady: boolean;
+  blockedChecks: Array<{ id: number; message: string; category: string }>;
+  passedCheckIds: number[];
+  lastCheckedAt: string | null;
+}>> => {
+  const res = await fetch(`${apiBaseUrl()}/api/readiness`, { credentials: "include" });
+  return res.json();
+};
+
+export const runReadinessChecks = async (): Promise<ApiReadResult<{
+  state: string;
+  checks: Array<{
+    id: number;
+    category: string;
+    name: string;
+    status: "PASS" | "FAIL" | "BLOCKED";
+    message: string;
+    evidence: string | null;
+  }>;
+  ranAt: string;
+}>> => {
+  const res = await fetch(`${apiBaseUrl()}/api/readiness/run-checks`, {
+    method: "POST",
+    credentials: "include",
+  });
+  return res.json();
+};
+
+export const uploadReadinessArtifact = async (input: {
+  type: "0x_quote_validation" | "backup_restore_drill" | "emergency_pause_drill" | "dry_run_load_test" | "telegram_test" | "tiny_live_operator_checklist";
+  passed: boolean;
+  evidence?: string | null;
+  notes?: string | null;
+}): Promise<ApiReadResult<{ artifactId: string; storedAt: string }>> => {
+  const res = await fetch(`${apiBaseUrl()}/api/readiness/artifacts`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  return res.json();
+};
+
+export const provisionTinyWallet = async (): Promise<ApiReadResult<{
+  walletId: string;
+  address: string;
+  publicLabel: string;
+  instructions: string;
+}>> => {
+  const res = await fetch(`${apiBaseUrl()}/api/readiness/tiny-wallet`, {
+    method: "POST",
+    credentials: "include",
+  });
+  return res.json();
 };

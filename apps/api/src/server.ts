@@ -14,6 +14,7 @@ import { registerProfileRoutes } from "./profiles/profile-routes.js";
 import { registerRuntimeRoutes } from "./runtime/runtime-routes.js";
 import { registerOpsRoutes } from "./ops/ops-routes.js";
 import { registerMetricsRoutes } from "./ops/metrics-routes.js";
+import { registerReadinessRoutes } from "./readiness/readiness-routes.js";
 import { getHealthStatus } from "./ops/health.js";
 import { createSchedulerRoutes } from "./scheduler/scheduler-routes.js";
 import { createPreflightRoutes } from "./scheduler/preflight.routes.js";
@@ -84,6 +85,7 @@ export const buildServer = async (options: BuildServerOptions = {}) => {
   await registerRuntimeRoutes(server, dbClient);
   await registerOpsRoutes(server, dbClient);
   await registerMetricsRoutes(server, dbClient);
+  await registerReadinessRoutes(server, dbClient, authContext);
   await registerTelegramRoutes(server, dbClient, authContext);
   await createSchedulerRoutes(dbClient, authContext)(server);
   await createPreflightRoutes(dbClient)(server);

@@ -120,7 +120,7 @@ async function buildContext(db: DbClient): Promise<ReadinessContext> {
 // computeState
 // =============================================================================
 
-function computeState(results: CheckResult[]): ReadinessState {
+export function computeState(results: CheckResult[]): ReadinessState {
   const failedIds = results.filter((r) => r.status === "FAIL").map((r) => r.id);
 
   if (failedIds.includes(1)) return "DEMO_READY";

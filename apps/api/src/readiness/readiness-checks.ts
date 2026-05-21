@@ -337,4 +337,11 @@ const ALL_CHECKS = [
   check23_revokeFlowAvailable,
 ];
 
-export { ALL_CHECKS };
+export {
+  ALL_CHECKS,
+  check7_tokenRecordsVerified,
+  check8_routerRecordsVerified,
+  check11_backupDrillArtifact,
+  check12_emergencyDrillArtifact,
+  check20_schedulerLiveDisabled,
+};

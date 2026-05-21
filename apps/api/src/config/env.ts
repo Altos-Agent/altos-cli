@@ -143,6 +143,28 @@ const envSchema = z
           "Use kms or external-signer. See docs/CUSTODY_HARDENING_ROADMAP.md.",
       });
     }
+    // SCHEDULER_LIVE_EXECUTION + local-file is always forbidden
+    if (env.SCHEDULER_LIVE_EXECUTION && env.VAULT_PROVIDER === "local-file") {
+      context.addIssue({
+        code: "custom",
+        path: ["VAULT_PROVIDER"],
+        message:
+          "SCHEDULER_LIVE_EXECUTION=true requires a production custody provider. " +
+          "VAULT_PROVIDER=local-file is not permitted with live scheduler. " +
+          "Set VAULT_PROVIDER=external-http-signer and configure EXTERNAL_SIGNER_URL/TOKEN. " +
+          "See docs/LOCAL_FILE_VAULT_LIMITATIONS.md.",
+      });
+    }
+    // external-http-signer must be configured if selected
+    if (env.VAULT_PROVIDER === "external-http-signer" && !env.EXTERNAL_SIGNER_URL) {
+      context.addIssue({
+        code: "custom",
+        path: ["EXTERNAL_SIGNER_URL"],
+        message:
+          "VAULT_PROVIDER=external-http-signer requires EXTERNAL_SIGNER_URL to be set. " +
+          "See docs/EXTERNAL_SIGNER_SETUP.md.",
+      });
+    }
     if (env.NODE_ENV === "production") {
       if (!env.OPERATOR_PASSWORD_HASH) {
         context.addIssue({

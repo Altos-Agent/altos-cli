@@ -102,6 +102,7 @@ export const registerReadinessRoutes = async (
       name: "TINY_LIVE_WALLET",
       address,
       privateKey: randomPrivateKey.toString("hex"),
+      status: "PAUSED",
     });
 
     return reply.code(201).send({
@@ -109,7 +110,7 @@ export const registerReadinessRoutes = async (
       address: importedWallet.address,
       publicLabel: importedWallet.name,
       instructions:
-        "Wallet created and encrypted. Set status to ACTIVE when ready for trading.",
+        "Fund this wallet with ~0.001 BASE only. Then upload a Telegram test artifact and verify all other gates before enabling.",
     });
   });
 

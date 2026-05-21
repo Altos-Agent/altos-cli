@@ -55,14 +55,14 @@ export interface ApprovalRequestInput {
   tokenId: string;
   routerId: string;
   amount?: string | undefined;
-  confirmLiveExecution?: boolean | undefined;
+  confirmLiveExecution?: boolean | "TINY_LIVE" | undefined;
   transactionRequestId?: string | undefined;
 }
 
-const liveWriteRejectionReasons = (confirmLiveExecution?: boolean) => [
+const liveWriteRejectionReasons = (confirmLiveExecution?: boolean | "TINY_LIVE") => [
   ...demoModeLiveRejectionReasons(),
   ...(isDryRunEnabled() ? ["Global DRY_RUN must be false"] : []),
-  ...(requireLiveConfirmation() && confirmLiveExecution !== true
+  ...(requireLiveConfirmation() && confirmLiveExecution !== true && confirmLiveExecution !== "TINY_LIVE"
     ? ["Live execution confirmation is required"]
     : []),
 ];

@@ -49,7 +49,9 @@ import {
 import {
   assertGlobalEmergencyNotPaused,
   isEmergencyPauseError,
+  isGlobalEmergencyPaused,
 } from "../security/emergency-pause.js";
+import { getReadinessState } from "../readiness/readiness-state.js";
 import {
   assertVaultUnlocked,
   requiresVaultForLiveSigning,
@@ -69,12 +71,39 @@ import { NonceReservationService, NonceReservationError } from "../nonce/nonce-r
 import { requireRole, requireReauth, requireConfirmation } from "../auth/rbac.js";
 import type { AuthContext } from "../auth/auth-middleware.js";
 
+export const assertTinyLiveGates = async (db: DbClient, confirmLiveExecution: unknown) => {
+  const state = getReadinessState();
+  if (state !== "TINY_MANUAL_LIVE_READY_FOR_OPERATOR_REVIEW") {
+    const error = new Error(
+      `Tiny live execution is not ready. Current state: ${state}. Run POST /api/readiness/run-checks to see blocking gates.`
+    );
+    (error as any).statusCode = 423;
+    (error as any).code = "LIVE_NOT_READY";
+    throw error;
+  }
+
+  if (confirmLiveExecution !== "TINY_LIVE") {
+    const error = new Error(
+      "confirmLiveExecution must be 'TINY_LIVE' for tiny manual live trades."
+    );
+    (error as any).statusCode = 400;
+    (error as any).code = "INVALID_CONFIRMATION_TYPE";
+    throw error;
+  }
+
+  if (await isGlobalEmergencyPaused(db)) {
+    const error = new Error("Emergency pause is active. Live execution blocked.");
+    (error as any).statusCode = 423;
+    throw error;
+  }
+};
+
 interface ExecuteOnceInput {
   walletId: string;
   pairId: string;
   sellAmountDisplay: string;
   preferredRouter?: string | null | undefined;
-  confirmLiveExecution?: boolean | undefined;
+  confirmLiveExecution?: boolean | "TINY_LIVE" | undefined;
   autoApprove?: boolean | undefined;
   transactionRequestId?: string | undefined;
 }
@@ -244,6 +273,10 @@ export const registerTradeRoutes = async (
         await assertGlobalEmergencyNotPaused(db);
         if (requiresVaultForLiveSigning()) {
           assertVaultUnlocked();
+        }
+        // TINY_LIVE gates
+        if (input.confirmLiveExecution === "TINY_LIVE") {
+          await assertTinyLiveGates(db, input.confirmLiveExecution);
         }
       } catch (error) {
         if (error instanceof VaultLockedError) {

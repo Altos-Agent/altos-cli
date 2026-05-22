@@ -168,7 +168,7 @@ describe("readiness checks", () => {
   describe("check10_0xQuoteArtifact expiration", () => {
     it("FAIL when artifact is missing", () => {
       const ctx = makeCtx({ artifacts: {} });
-      const result = ALL_CHECKS[9](ctx); // check10 is index 9
+      const result = ALL_CHECKS[9]!(ctx); // check10 is index 9
       expect(result.status).toBe("FAIL");
       expect(result.message).toContain("No 0x quote validation artifact");
     });
@@ -189,7 +189,7 @@ describe("readiness checks", () => {
           },
         },
       });
-      const result = ALL_CHECKS[9](ctx);
+      const result = ALL_CHECKS[9]!(ctx);
       expect(result.status).toBe("FAIL");
       expect(result.message).toContain("expired");
     });
@@ -198,14 +198,14 @@ describe("readiness checks", () => {
   describe("check20_schedulerLiveDisabled", () => {
     it("FAIL when isLiveSchedulerEnabled is true", () => {
       const ctx = makeCtx({ isLiveSchedulerEnabled: true });
-      const result = ALL_CHECKS[19](ctx); // check20 is index 19
+      const result = ALL_CHECKS[19]!(ctx); // check20 is index 19
       expect(result.status).toBe("FAIL");
       expect(result.message).toContain("HARD NO-GO");
     });
 
     it("PASS when isLiveSchedulerEnabled is false", () => {
       const ctx = makeCtx({ isLiveSchedulerEnabled: false });
-      const result = ALL_CHECKS[19](ctx);
+      const result = ALL_CHECKS[19]!(ctx);
       expect(result.status).toBe("PASS");
     });
   });
@@ -268,14 +268,14 @@ describe("readiness checks", () => {
   describe("check21_custodyProviderHealthy", () => {
     it("BLOCKED when custodyProviderHealthy is false (provider unreachable)", () => {
       const ctx = makeCtx({ custodyProviderHealthy: false });
-      const result = ALL_CHECKS[20](ctx); // check21 is index 20
+      const result = ALL_CHECKS[20]!(ctx); // check21 is index 20
       expect(result.status).toBe("BLOCKED");
       expect(result.message).toContain("unreachable");
     });
 
     it("PASS when custodyProviderHealthy is true", () => {
       const ctx = makeCtx({ custodyProviderHealthy: true });
-      const result = ALL_CHECKS[20](ctx);
+      const result = ALL_CHECKS[20]!(ctx);
       expect(result.status).toBe("PASS");
     });
   });
@@ -283,7 +283,7 @@ describe("readiness checks", () => {
   describe("check22_exactApprovalFlowAvailable", () => {
     it("FAIL when exactApprovalFlowAvailable is false", () => {
       const ctx = makeCtx({ exactApprovalFlowAvailable: false });
-      const result = ALL_CHECKS[21](ctx); // check22 is index 21
+      const result = ALL_CHECKS[21]!(ctx); // check22 is index 21
       expect(result.status).toBe("FAIL");
       expect(result.message).toContain("not available");
     });
@@ -292,7 +292,7 @@ describe("readiness checks", () => {
   describe("check23_revokeFlowAvailable", () => {
     it("FAIL when revokeFlowAvailable is false", () => {
       const ctx = makeCtx({ revokeFlowAvailable: false });
-      const result = ALL_CHECKS[22](ctx); // check23 is index 22
+      const result = ALL_CHECKS[22]!(ctx); // check23 is index 22
       expect(result.status).toBe("FAIL");
       expect(result.message).toContain("not available");
     });

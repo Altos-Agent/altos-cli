@@ -58,7 +58,19 @@ export const transactionRequestStatusEnum = pgEnum(
 
 export const pendingWalletLockStatusEnum = pgEnum(
   "pending_wallet_lock_status",
-  ["ACTIVE", "FINALIZED", "EXPIRED", "RELEASED", "REPLACED"]
+  [
+    "ACTIVE",
+    "RESERVED",
+    "SIGNING",
+    "SUBMITTED",
+    "CONFIRMED_PENDING_FINALITY",
+    "FINALIZED",
+    "STUCK",
+    "DROPPED",
+    "EXPIRED",
+    "RELEASED",
+    "REPLACED"
+  ]
 );
 
 export const walletNonceStatusEnum = pgEnum("wallet_nonce_status", [
@@ -81,6 +93,23 @@ export const strategyProfileEnum = pgEnum("strategy_profile", [
   "TOKEN_ROTATION_LIMITED"
 ]);
 
+export const pairRotationModeEnum = pgEnum("pair_rotation_mode", [
+  "ROUND_ROBIN",
+  "WEIGHTED",
+  "CONSERVATIVE"
+]);
+
+export const walletGroupStatusEnum = pgEnum("wallet_group_status", [
+  "ACTIVE",
+  "PAUSED",
+  "QUARANTINED"
+]);
+
+export const strategyProfileModeEnum = pgEnum("strategy_profile_mode", [
+  "DRY_RUN_ONLY",
+  "LIVE_ELIGIBLE_AFTER_GATES"
+]);
+
 export const scheduleOccurrenceStatusEnum = pgEnum(
   "schedule_occurrence_status",
   [
@@ -98,7 +127,7 @@ export const scheduleOccurrenceStatusEnum = pgEnum(
 
 export const scheduleOccurrenceModeEnum = pgEnum(
   "schedule_occurrence_mode",
-  ["DRY_RUN", "LIVE"]
+  ["DRY_RUN", "LIVE", "LIVE_CANARY"]
 );
 
 const id = uuid("id").defaultRandom().primaryKey();
@@ -122,6 +151,56 @@ export const localSettings = pgTable("local_settings", {
   updatedAt
 });
 
+export const walletGroups = pgTable(
+  "wallet_groups",
+  {
+    id,
+    name: text("name").notNull(),
+    description: text("description"),
+    status: walletGroupStatusEnum("status").notNull().default("ACTIVE"),
+    maxDailyTx: integer("max_daily_tx"),
+    maxDailyTradeUsd: numeric("max_daily_trade_usd", {
+      precision: 18,
+      scale: 2
+    }),
+    maxDailyGasUsd: numeric("max_daily_gas_usd", {
+      precision: 18,
+      scale: 2
+    }),
+    maxConcurrentWallets: integer("max_concurrent_wallets"),
+    createdAt,
+    updatedAt
+  },
+  (table) => [
+    index("wallet_groups_status_idx").on(table.status)
+  ]
+);
+
+export const strategyProfiles = pgTable(
+  "strategy_profiles",
+  {
+    id,
+    name: text("name").notNull(),
+    description: text("description"),
+    mode: strategyProfileModeEnum("mode").notNull().default("DRY_RUN_ONLY"),
+    maxDailyTx: integer("max_daily_tx"),
+    maxHourlyTx: integer("max_hourly_tx"),
+    minCooldownSeconds: integer("min_cooldown_seconds"),
+    maxTradeUsd: numeric("max_trade_usd", { precision: 18, scale: 2 }),
+    maxGasUsd: numeric("max_gas_usd", { precision: 18, scale: 2 }),
+    maxSlippageBps: integer("max_slippage_bps"),
+    maxPriceImpactBps: integer("max_price_impact_bps"),
+    allowedHoursJson: text("allowed_hours_json"),
+    pairRotationMode: pairRotationModeEnum("pair_rotation_mode")
+      .notNull()
+      .default("ROUND_ROBIN"),
+    randomizationWindowSeconds: integer("randomization_window_seconds"),
+    enabled: boolean("enabled").notNull().default(false),
+    createdAt,
+    updatedAt
+  }
+);
+
 export const wallets = pgTable(
   "wallets",
   {
@@ -131,6 +210,10 @@ export const wallets = pgTable(
     encryptedPrivateKey: text("encrypted_private_key").notNull(),
     encryptionVersion: integer("encryption_version").notNull(),
     status: walletStatusEnum("status").notNull().default("PAUSED"),
+    walletGroupId: uuid("wallet_group_id").references(
+      () => walletGroups.id,
+      { onDelete: "set null" }
+    ),
     maxTradeUsd: numeric("max_trade_usd", { precision: 18, scale: 2 }),
     maxDailyTrades: integer("max_daily_trades"),
     maxDailyLossUsd: numeric("max_daily_loss_usd", {
@@ -229,6 +312,8 @@ export const walletPairRules = pgTable(
     enabled: boolean("enabled").notNull().default(false),
     maxTradeUsd: numeric("max_trade_usd", { precision: 18, scale: 2 }),
     maxDailyTrades: integer("max_daily_trades"),
+    cooldownSeconds: integer("cooldown_seconds"),
+    weight: numeric("weight", { precision: 5, scale: 2 }).default("1.00"),
     createdAt,
     updatedAt
   },
@@ -317,11 +402,13 @@ export const transactions = pgTable(
     occurrenceId: uuid("occurrence_id").references(() => scheduleOccurrences.id, {
       onDelete: "set null",
     }),
+    traceId: text("trace_id"),
     createdAt,
     updatedAt
   },
   (table) => [
-    uniqueIndex("transactions_chain_tx_hash_idx").on(table.chainId, table.txHash)
+    uniqueIndex("transactions_chain_tx_hash_idx").on(table.chainId, table.txHash),
+    index("transactions_trace_id_idx").on(table.traceId),
   ]
 );
 
@@ -347,13 +434,15 @@ export const transactionRequests = pgTable(
     sellAmountRaw: numeric("sell_amount_raw", { precision: 78, scale: 0 }),
     quoteHash: text("quote_hash"),
     simulationHash: text("simulation_hash"),
+    traceId: text("trace_id"),
     createdAt,
     updatedAt
   },
   (table) => [
     uniqueIndex("transaction_requests_idempotency_key_idx").on(
       table.idempotencyKey
-    )
+    ),
+    index("transaction_requests_trace_id_idx").on(table.traceId),
   ]
 );
 
@@ -377,6 +466,12 @@ export const pendingWalletLocks = pgTable(
     operatorReviewedAt: timestamp("operator_reviewed_at", { withTimezone: true }),
     operatorReviewedBy: text("operator_reviewed_by"),
     recoveryNotes: text("recovery_notes"),
+    occurrenceId: uuid("occurrence_id").references(
+      () => scheduleOccurrences.id,
+      { onDelete: "set null" }
+    ),
+    traceId: text("trace_id"),
+    riskReservationId: uuid("risk_reservation_id"),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     createdAt,
     updatedAt
@@ -414,12 +509,15 @@ export const notificationDeliveries = pgTable("notification_deliveries", {
   transactionId: uuid("transaction_id").references(() => transactions.id, {
     onDelete: "set null"
   }),
+  traceId: text("trace_id"),
   destinationPreview: text("destination_preview"),
   errorCode: text("error_code"),
   errorMessage: text("error_message"),
   createdAt,
   updatedAt
-});
+}, (table) => [
+  index("notification_deliveries_trace_id_idx").on(table.traceId),
+]);
 
 export const auditLogs = pgTable("audit_logs", {
   id,
@@ -496,7 +594,10 @@ export const scheduleOccurrences = pgTable(
     pairId: uuid("pair_id")
       .notNull()
       .references(() => pairs.id, { onDelete: "restrict" }),
-    strategyProfileId: uuid("strategy_profile_id"),
+    strategyProfileId: uuid("strategy_profile_id").references(
+      () => strategyProfiles.id,
+      { onDelete: "set null" }
+    ),
     mode: scheduleOccurrenceModeEnum("mode").notNull(),
     scheduledFor: timestamp("scheduled_for", { withTimezone: true }).notNull(),
     occurrenceKey: text("occurrence_key").notNull(),
@@ -511,6 +612,8 @@ export const scheduleOccurrences = pgTable(
     attemptCount: integer("attempt_count").notNull().default(0),
     lastErrorCode: text("last_error_code"),
     lastErrorMessage: text("last_error_message"),
+    riskReservationId: uuid("risk_reservation_id"),
+    nonceReservationId: uuid("nonce_reservation_id"),
     createdAt,
     updatedAt,
   },
@@ -544,9 +647,10 @@ export const walletSchedules = pgTable(
     minIntervalMinutes: integer("min_interval_minutes").notNull().default(60),
     maxDailyTrades: integer("max_daily_trades"),
     maxDailyRuns: integer("max_daily_runs"),
-    strategyProfile: strategyProfileEnum("strategy_profile")
-      .notNull()
-      .default("MANUAL_ONLY"),
+    strategyProfileId: uuid("strategy_profile_id").references(
+      () => strategyProfiles.id,
+      { onDelete: "set null" }
+    ),
     emergencyPaused: boolean("emergency_paused").notNull().default(false),
     failedTxPauseThreshold: integer("failed_tx_pause_threshold")
       .notNull()
@@ -571,6 +675,7 @@ export const schedulerJobs = pgTable("scheduler_jobs", {
     onDelete: "set null"
   }),
   jobType: text("job_type").notNull(),
+  traceId: text("trace_id"),
   status: text("status").notNull(),
   reason: text("reason"),
   createdAt,
@@ -621,6 +726,37 @@ export const aggregateRiskStats = pgTable("aggregate_risk_stats", {
     table.date
   )
 ]);
+
+export const aggregateRiskReservations = pgTable(
+  "aggregate_risk_reservations",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    traceId: text("trace_id").notNull(),
+    walletId: uuid("wallet_id")
+      .notNull()
+      .references(() => wallets.id, { onDelete: "cascade" }),
+    pairId: uuid("pair_id")
+      .notNull()
+      .references(() => pairs.id, { onDelete: "cascade" }),
+    occurrenceId: uuid("occurrence_id").references(
+      () => scheduleOccurrences.id,
+      { onDelete: "set null" }
+    ),
+    amountUsd: numeric("amount_usd", { precision: 18, scale: 2 }).notNull(),
+    gasUsd: numeric("gas_usd", { precision: 18, scale: 2 }).notNull(),
+    status: text("status").notNull().default("RESERVED"),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    consumedAt: timestamp("consumed_at", { withTimezone: true }),
+    releasedAt: timestamp("released_at", { withTimezone: true }),
+  },
+  (table) => [
+    index("arr_status_expires_idx").on(table.status, table.expiresAt),
+    index("arr_wallet_pair_idx").on(table.walletId, table.pairId),
+  ]
+);
 
 export const deadLetterJobs = pgTable("dead_letter_jobs", {
   id,
@@ -692,3 +828,7 @@ export type AggregateRiskStat = typeof aggregateRiskStats.$inferSelect;
 export type NewAggregateRiskStat = typeof aggregateRiskStats.$inferInsert;
 export type DeadLetterJob = typeof deadLetterJobs.$inferSelect;
 export type NewDeadLetterJob = typeof deadLetterJobs.$inferInsert;
+export type WalletGroup = typeof walletGroups.$inferSelect;
+export type NewWalletGroup = typeof walletGroups.$inferInsert;
+export type StrategyProfile = typeof strategyProfiles.$inferSelect;
+export type NewStrategyProfile = typeof strategyProfiles.$inferInsert;

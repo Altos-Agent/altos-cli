@@ -6,6 +6,35 @@ The Live Readiness Center definitively answers whether the system is ready for o
 
 **Important:** This is NOT live automation. The live scheduler remains disabled. This center only gates a single, tiny, manual live test.
 
+## Check Statuses
+
+Each of the 23 readiness checks returns one of three statuses:
+
+| Status | Meaning | Blocks Readiness? |
+|--------|---------|-------------------|
+| `PASS` | Check passed; evidence available and valid | No |
+| `FAIL` | Check failed; criteria not met | Yes |
+| `BLOCKED` | Evidence source was unreachable; cannot determine status | Yes (same as FAIL) |
+
+**BLOCKED** means the system could not reach the evidence source (e.g., custody provider health endpoint, live scheduler config). Because the evidence cannot be verified, BLOCKED is treated as a readiness blocker the same as FAIL. All 23 checks must return PASS for the system to reach `TINY_MANUAL_LIVE_READY_FOR_OPERATOR_REVIEW`.
+
+## Checks 20-23: Real Runtime State
+
+Checks 20-23 read actual runtime and configuration state:
+
+- **Check 20** — Live scheduler enabled: Reads `isLiveSchedulerEnabled` from the scheduler service. If true, immediately transitions to `LIVE_AUTOMATION_HARD_NO_GO`.
+- **Check 21** — Custody provider health: Reads `custodyProviderHealthy` from the custody layer.
+- **Check 22** — Exact approval flow availability: Reads `exactApprovalFlowAvailable` from the custody layer.
+- **Check 23** — Revoke flow availability: Reads `revokeFlowAvailable` from the custody layer.
+
+These checks query live state and return BLOCKED if the source is unreachable.
+
+## Artifact Expiration
+
+Artifacts have an optional `expiresAt` field (ISO datetime). If set, the artifact is considered **missing** after that time — the associated check will fail until a fresh artifact is uploaded. Artifacts with `expiresAt: null` never expire.
+
+When an artifact expires, its check transitions from PASS to FAIL (or BLOCKED if the check itself cannot run). Always refresh drill artifacts before they expire.
+
 ## State Machine
 
 | State | Meaning |

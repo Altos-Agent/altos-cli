@@ -7,8 +7,9 @@ All conditions that block live execution, ranked by severity.
 | ID | Condition | Description |
 |----|-----------|-------------|
 | N1 | Live scheduler enabled | Live scheduler must remain disabled at all times |
-| N2 | Emergency pause active | All live execution blocked until emergency pause cleared |
+| N2 | Live scheduler check fails | Check 20 detected live scheduler is enabled — immediately transitions to `LIVE_AUTOMATION_HARD_NO_GO` |
 | N3 | Vault locked | Private keys not accessible for signing |
+| N19 | Custody provider health BLOCKED | Custody provider unreachable; provider health is unknown — treated as hard no-go |
 
 ## Operator-Gated (Require Acknowledgment)
 

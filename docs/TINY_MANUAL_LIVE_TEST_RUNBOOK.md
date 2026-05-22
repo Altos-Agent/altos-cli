@@ -25,28 +25,33 @@
    - Use the quote interface in dry-run mode
    - Verify quote returns a valid response
 
-5. **Execute exact approval**
+5. **Upload artifacts**
+   - After completing drill validations, upload artifacts via `POST /api/readiness/artifacts`
+   - Include the `expiresAt` field to set an expiration (leave null for no expiration)
+   - Artifacts can expire — monitor their `expiresAt` and refresh before expiration to avoid check failures
+
+6. **Execute exact approval**
    - Navigate to the tiny wallet's approval panel
    - Set exact amount (not unlimited)
    - Submit approval transaction
 
-6. **Execute once**
+7. **Execute once**
    - With tiny wallet selected and vault unlocked
    - Use the tiny manual live button (enabled only when all gates pass)
    - Confirm with MFA
 
-7. **Wait for finality**
+8. **Wait for finality**
    - Monitor Basescan for the transaction
    - Wait ~15 seconds for Base finality
 
-8. **Revoke approval**
+9. **Revoke approval**
    - Use the revoke flow immediately after finality
 
-9. **Lock vault**
+10. **Lock vault**
 
-10. **Return to dry-run mode**
+11. **Return to dry-run mode**
 
-11. **Record tx hash + Basescan verification**
+12. **Record tx hash + Basescan verification**
     - Save the tx hash
     - Take Basescan screenshot
     - Complete the Tiny Live Operator Checklist artifact

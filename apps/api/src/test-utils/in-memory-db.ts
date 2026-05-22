@@ -290,6 +290,15 @@ const conditionMatches = (condition: SQL | undefined, row: Row) => {
     }
   }
 
+  for (const match of sql.matchAll(/"[^"]+"\."([^"]+)" != \$(\d+)/g)) {
+    const [, columnName, paramIndex] = match;
+    const field = fieldName(columnName ?? "");
+    const expected = query.params[Number(paramIndex) - 1];
+    if (row[field] === expected) {
+      return false;
+    }
+  }
+
   for (const match of sql.matchAll(/"[^"]+"\."([^"]+)" >= \$(\d+)/g)) {
     const [, columnName, paramIndex] = match;
     const field = fieldName(columnName ?? "");
@@ -322,6 +331,18 @@ const conditionMatches = (condition: SQL | undefined, row: Row) => {
     }
   }
 
+  for (const match of sql.matchAll(/"[^"]+"\."([^"]+)" not in \(([^)]+)\)/g)) {
+    const [, columnName, paramsSql] = match;
+    const field = fieldName(columnName ?? "");
+    const paramIndexes = [...(paramsSql ?? "").matchAll(/\$(\d+)/g)].map(
+      (paramMatch) => Number(paramMatch[1]) - 1,
+    );
+    const excludedValues = paramIndexes.map((index) => query.params[index]);
+    if (excludedValues.includes(row[field])) {
+      return false;
+    }
+  }
+
   return true;
 };
 
@@ -342,6 +363,8 @@ const projectRows = (rows: Row[], projection?: Projection) => {
 
 class SelectBuilder {
   private tableName: keyof InMemoryTables | null = null;
+  private _limit: number | undefined;
+  private _condition: SQL | undefined;
 
   constructor(
     private readonly tables: InMemoryTables,
@@ -358,7 +381,18 @@ class SelectBuilder {
   }
 
   where(condition: SQL) {
-    return this.execute(condition);
+    this._condition = condition;
+    return this;
+  }
+
+  limit(n: number) {
+    this._limit = n;
+    return this;
+  }
+
+  for(_mode: string) {
+    // no-op: locking not applicable in in-memory
+    return this;
   }
 
   then<TResult1 = Row[], TResult2 = never>(
@@ -368,17 +402,18 @@ class SelectBuilder {
     return this.execute().then(onfulfilled, onrejected);
   }
 
-  private async execute(condition?: SQL) {
+  private async execute(): Promise<Row[]> {
     if (!this.tableName) {
       throw new Error("Select table is required");
     }
 
-    return projectRows(
-      this.tables[this.tableName].filter((row) =>
-        conditionMatches(condition, row),
-      ),
-      this.projection,
+    let rows = this.tables[this.tableName].filter((row) =>
+      conditionMatches(this._condition, row),
     );
+    if (this._limit != null) {
+      rows = rows.slice(0, this._limit);
+    }
+    return projectRows(rows, this.projection);
   }
 }
 

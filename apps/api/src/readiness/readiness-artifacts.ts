@@ -1,6 +1,7 @@
 import { writeFile, readFile, mkdir, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { createHash } from "node:crypto";
 import type { Artifact, ArtifactType } from "./readiness-types.js";
 
 export const ARTIFACTS_DIR = ".readiness/artifacts";
@@ -15,7 +16,18 @@ export async function storeArtifact(artifact: Artifact): Promise<string> {
   await ensureDir();
   const filename = `${artifact.type}_${Date.now()}.json`;
   const filePath = join(ARTIFACTS_DIR, filename);
-  await writeFile(filePath, JSON.stringify(artifact, null, 2), "utf-8");
+
+  // Compute SHA-256 checksum of artifact content
+  const content = JSON.stringify(artifact, null, 2);
+  const checksum = createHash("sha256").update(content).digest("hex");
+
+  const stored: Artifact = {
+    ...artifact,
+    checksum,
+    filePath,
+  };
+
+  await writeFile(filePath, content, "utf-8");
   return filename;
 }
 
@@ -37,7 +49,14 @@ export async function loadLatestArtifact(
       join(ARTIFACTS_DIR, latestFile),
       "utf-8"
     );
-    return JSON.parse(content) as Artifact;
+    const artifact = JSON.parse(content) as Artifact;
+
+    // Filter out expired artifacts
+    if (artifact.expiresAt && new Date(artifact.expiresAt) < new Date()) {
+      return null;
+    }
+
+    return artifact;
   } catch {
     return null;
   }

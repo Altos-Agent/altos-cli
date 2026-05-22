@@ -108,12 +108,59 @@ export const processTradeJob =
         throw new Error("Live scheduled execution is not implemented");
       }
 
+      // LIVE_CANARY: evaluate pre-sign gates before any signing
+      if (job.data.mode === "LIVE_CANARY") {
+        const { evaluatePreSignGates } = await import("./scheduler-gate.js");
+        const { getOccurrenceById } = await import("./occurrence.service.js");
+        const occurrence = job.data.occurrenceId
+          ? await getOccurrenceById(db, job.data.occurrenceId)
+          : null;
+
+        if (occurrence) {
+          const gateResult = await evaluatePreSignGates(occurrence, db);
+          if (!gateResult.allowed) {
+            const firstBlock = gateResult.blockedReasons[0];
+            if (!firstBlock) {
+              await markSchedulerJobFinished({
+                db,
+                schedulerJobId: job.data.schedulerJobId,
+                scheduleId: job.data.scheduleId,
+                status: "COMPLETED",
+                reason: "LIVE_CANARY_BLOCKED: no reasons returned",
+                finishedAt: new Date(),
+              });
+              return { status: "LIVE_CANARY_BLOCKED", blockedReasons: [] };
+            }
+            await markLiveBlocked(
+              db,
+              job.data.occurrenceId,
+              firstBlock.code,
+              gateResult.blockedReasons.map((r) => r.message).join("; "),
+            ).catch(() => undefined);
+            await markSchedulerJobFinished({
+              db,
+              schedulerJobId: job.data.schedulerJobId,
+              scheduleId: job.data.scheduleId,
+              status: "COMPLETED",
+              reason: `LIVE_CANARY_BLOCKED: ${firstBlock.code}`,
+              finishedAt: new Date(),
+            });
+            return {
+              status: "LIVE_CANARY_BLOCKED",
+              blockedReasons: gateResult.blockedReasons,
+            };
+          }
+          // Gates passed — fall through to continue with normal execution
+        }
+      }
+
       const scheduled = await createScheduledDryRun({
         db,
         walletId: job.data.walletId,
         pairId: job.data.pairId,
         amountIn: job.data.amountIn,
         occurrenceId: job.data.occurrenceId,
+        traceId: job.data.traceId ?? null,
       });
 
       // Update occurrence with transaction link and status
@@ -235,6 +282,10 @@ export const processTradeJob =
         throw error;
       }
       // Non-retryable or live mode - job is done, DLQ recorded
+      // For LIVE mode, always rethrow since live execution is never retryable
+      if (job.data.mode === "LIVE") {
+        throw error;
+      }
       // Return a normal result (don't rethrow to prevent retries)
       return {
         transactionId: null,

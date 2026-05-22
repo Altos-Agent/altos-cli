@@ -31,7 +31,7 @@ import { processConfirmationJob } from "./confirmation.worker.js";
 import { processNotificationJob } from "./notification.worker.js";
 import { processQuoteJob } from "./quote.worker.js";
 import { processTradeJob } from "./trade.worker.js";
-import { processReconciliationJob, type ReconciliationJob } from "../reconciliation/reconciliation-worker.js";
+import { processReconciliationJob } from "../reconciliation/reconciliation-worker.js";
 import {
   canScheduleWallet,
   type StrategyProfile,
@@ -39,7 +39,7 @@ import {
 import { isDemoMode } from "../runtime/mode.js";
 import { getRuntimeConfig } from "../config/runtime-config.js";
 import { assertGlobalEmergencyNotPaused } from "../security/emergency-pause.js";
-import { getCurrentRequestId } from "../http/request-context.js";
+import { getCurrentRequestId, getCurrentTraceId } from "../http/request-context.js";
 import { getCircuitBreaker } from "../quote/provider-circuit-breaker.js";
 import { getDlqStats } from "./dlq.service.js";
 import {
@@ -47,6 +47,7 @@ import {
   generateIdempotencyKey,
   reconcileStaleOccurrences,
 } from "./occurrence.service.js";
+import { expireStaleRiskReservations } from "./aggregate-risk-reservations.js";
 
 export interface WalletScheduleInput {
   enabled?: boolean;
@@ -54,7 +55,7 @@ export interface WalletScheduleInput {
   minIntervalMinutes?: number;
   maxDailyRuns?: number | null;
   maxDailyTrades?: number | null | undefined;
-  strategyProfile?: StrategyProfile;
+  strategyProfileId?: string | null | undefined;
   failedTxPauseThreshold?: number;
   emergencyPaused?: boolean;
 }
@@ -324,6 +325,16 @@ export class SchedulerService {
       console.info(`[scheduler] reconciled ${reconciledCount} stale occurrences`);
     }
 
+    // Expire stale risk reservations from previous runs
+    try {
+      const expiredRiskCount = await expireStaleRiskReservations(this.db);
+      if (expiredRiskCount > 0) {
+        console.info(`[scheduler] expired ${expiredRiskCount} stale risk reservations`);
+      }
+    } catch (err) {
+      console.error("[scheduler] failed to expire stale risk reservations", err);
+    }
+
     await this.runSchedulerTick();
     await this.enqueueSubmittedTransactions();
     if (this.autoLoop) {
@@ -415,7 +426,7 @@ export class SchedulerService {
         minIntervalMinutes: 60,
         maxDailyTrades: wallet.maxDailyTrades,
         maxDailyRuns: wallet.maxDailyTrades,
-        strategyProfile: "MANUAL_ONLY" as const,
+        strategyProfileId: null,
         emergencyPaused: false,
         failedTxPauseThreshold: 3,
         lastScheduledAt: null,
@@ -464,9 +475,9 @@ export class SchedulerService {
       ...(maxDailyRuns === undefined
         ? {}
         : { maxDailyRuns, maxDailyTrades: maxDailyRuns }),
-      ...(input.strategyProfile === undefined
+      ...(input.strategyProfileId === undefined
         ? {}
-        : { strategyProfile: input.strategyProfile }),
+        : { strategyProfileId: input.strategyProfileId }),
       ...(input.emergencyPaused === undefined
         ? {}
         : { emergencyPaused: input.emergencyPaused }),
@@ -491,7 +502,7 @@ export class SchedulerService {
             minIntervalMinutes: minIntervalMinutes ?? 60,
             maxDailyTrades: maxDailyRuns ?? null,
             maxDailyRuns: maxDailyRuns ?? null,
-            strategyProfile: input.strategyProfile ?? "MANUAL_ONLY",
+            strategyProfileId: input.strategyProfileId ?? null,
             emergencyPaused: input.emergencyPaused ?? false,
             failedTxPauseThreshold: failedTxPauseThreshold ?? 3,
             nextRunAt: input.enabled ? this.now() : null,
@@ -509,7 +520,7 @@ export class SchedulerService {
       entityId: walletId,
       metadataJson: {
         enabled: schedule.enabled,
-        strategyProfile: schedule.strategyProfile,
+        strategyProfileId: schedule.strategyProfileId,
         requestId: getCurrentRequestId(),
       },
     });
@@ -807,7 +818,7 @@ export class SchedulerService {
 
     for (const schedule of scheduleRows) {
       const wallet = walletMap.get(schedule.walletId);
-      if (!wallet || !schedulerAllowsProfile(schedule.strategyProfile)) {
+      if (!wallet || !schedulerAllowsProfile(((schedule as { strategyProfile?: string }).strategyProfile ?? "MANUAL_ONLY") as StrategyProfile)) {
         continue;
       }
       if (schedule.nextRunAt && schedule.nextRunAt.getTime() > now.getTime()) {
@@ -859,7 +870,7 @@ export class SchedulerService {
           return false;
         }
         if (
-          schedule.strategyProfile === "STABLE_ONLY" &&
+          schedule.strategyProfileId === "STABLE_ONLY" &&
           !["USDC", "EURC", "DAI", "WETH"].includes(tokenOut.symbol)
         ) {
           return false;
@@ -874,7 +885,8 @@ export class SchedulerService {
 
       // Create or get occurrence (idempotent — duplicate scheduler ticks create same occurrence)
       const scheduledFor = schedule.nextRunAt ?? this.now();
-      const { occurrence, created } = await createOrGetOccurrence(this.db, {
+      const traceId = getCurrentTraceId() ?? crypto.randomUUID();
+      const { occurrence } = await createOrGetOccurrence(this.db, {
         scheduleId: schedule.id,
         walletId: schedule.walletId,
         pairId: allowedRule.pairId,
@@ -882,7 +894,7 @@ export class SchedulerService {
         mode: "DRY_RUN",
         scheduledFor,
         requestId: getCurrentRequestId(),
-        traceId: null,
+        traceId,
       });
 
       // Skip if occurrence is already past PLANNED/QUEUED state (already processed or in-flight)
@@ -908,6 +920,7 @@ export class SchedulerService {
           walletId: schedule.walletId,
           scheduleId: schedule.id,
           jobType: "DRY_RUN",
+          traceId: occurrence.traceId,
           status: "PENDING",
           reason: "schedule due",
         })

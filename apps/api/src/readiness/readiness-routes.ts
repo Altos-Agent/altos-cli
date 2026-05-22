@@ -25,6 +25,7 @@ const artifactUploadSchema = z.object({
   passed: z.boolean(),
   evidence: z.string().url().nullable(),
   notes: z.string().nullable(),
+  expiresAt: z.string().datetime().nullable().optional(), // ISO datetime, null = never expires
 });
 
 const acknowledgeBlockerSchema = z.object({
@@ -72,6 +73,9 @@ export const registerReadinessRoutes = async (
           notes: data.notes,
           createdAt: new Date().toISOString(),
           createdBy,
+          expiresAt: data.expiresAt ?? null,
+          checksum: null,
+          filePath: null,
         };
 
         const artifactId = await storeArtifact(artifact);

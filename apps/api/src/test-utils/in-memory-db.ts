@@ -1,6 +1,7 @@
 import type { SQL } from "drizzle-orm";
 import {
   aggregateRiskLimits,
+  aggregateRiskReservations,
   aggregateRiskStats,
   auditLogs,
   dailyWalletStats,
@@ -37,6 +38,7 @@ const conditionQueryConfig = {
 
 const tableNames = new Map<Table, keyof InMemoryTables>([
   [aggregateRiskLimits, "aggregateRiskLimits"],
+  [aggregateRiskReservations, "aggregateRiskReservations"],
   [aggregateRiskStats, "aggregateRiskStats"],
   [auditLogs, "auditLogs"],
   [dailyWalletStats, "dailyWalletStats"],
@@ -298,6 +300,16 @@ const conditionMatches = (condition: SQL | undefined, row: Row) => {
     }
   }
 
+  for (const match of sql.matchAll(/"[^"]+"\."([^"]+)" < \$(\d+)/g)) {
+    const [, columnName, paramIndex] = match;
+    const field = fieldName(columnName ?? "");
+    const expected = query.params[Number(paramIndex) - 1];
+    const { leftValue, rightValue } = compare(row[field], expected);
+    if (!((leftValue as string | number) < (rightValue as string | number))) {
+      return false;
+    }
+  }
+
   for (const match of sql.matchAll(/"[^"]+"\."([^"]+)" in \(([^)]+)\)/g)) {
     const [, columnName, paramsSql] = match;
     const field = fieldName(columnName ?? "");
@@ -471,6 +483,7 @@ class UpdateBuilder {
 
 export interface InMemoryTables {
   aggregateRiskLimits: Row[];
+  aggregateRiskReservations: Row[];
   aggregateRiskStats: Row[];
   auditLogs: Row[];
   dailyWalletStats: Row[];
@@ -494,6 +507,7 @@ export interface InMemoryTables {
 export const createInMemoryDb = (seed?: Partial<InMemoryTables>) => {
   const tables: InMemoryTables = {
     aggregateRiskLimits: [],
+    aggregateRiskReservations: [],
     aggregateRiskStats: [],
     auditLogs: [],
     dailyWalletStats: [],
@@ -533,6 +547,9 @@ export const createInMemoryDb = (seed?: Partial<InMemoryTables>) => {
         throw new Error("Unknown table");
       }
       return new UpdateBuilder(tables[tableName]);
+    },
+    transaction: async <T>(fn: (tx: typeof db) => Promise<T>): Promise<T> => {
+      return fn(db);
     },
   };
 

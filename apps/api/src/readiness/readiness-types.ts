@@ -64,6 +64,9 @@ interface Artifact {
   notes: string | null;
   createdAt: string; // ISO datetime
   createdBy: string;
+  expiresAt: string | null; // ISO datetime; null = never expires
+  checksum: string | null; // SHA-256 of file content
+  filePath: string | null; // absolute path to stored artifact
 }
 
 // =============================================================================
@@ -97,24 +100,24 @@ interface ReadinessContext {
   isEmergencyPaused: boolean;
   aggregateRiskEnabled: boolean;
   aggregateRiskUsdNormalized: boolean;
-  tokens: Array<{
+  tokens: {
     id: string;
     symbol: string;
     verificationStatus: string;
     enabled: boolean;
-  }>;
-  routers: Array<{
+  }[];
+  routers: {
     id: string;
     name: string;
     verificationStatus: string;
     enabled: boolean;
-  }>;
-  spenders: Array<{
+  }[];
+  spenders: {
     id: string;
     name: string;
     verificationStatus: string;
     enabled: boolean;
-  }>;
+  }[];
   tinyLiveWallet: { id: string; address: string; status: string } | null;
   stuckOrDroppedWalletCount: number;
   isLiveSchedulerEnabled: boolean;

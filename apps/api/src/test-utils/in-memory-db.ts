@@ -13,6 +13,7 @@ import {
   schedulerJobs,
   schedulerLocks,
   schedulerRuns,
+  scheduleOccurrences,
   telegramSettings,
   tokens,
   transactions,
@@ -50,6 +51,7 @@ const tableNames = new Map<Table, keyof InMemoryTables>([
   [schedulerJobs, "schedulerJobs"],
   [schedulerLocks, "schedulerLocks"],
   [schedulerRuns, "schedulerRuns"],
+  [scheduleOccurrences, "scheduleOccurrences"],
   [telegramSettings, "telegramSettings"],
   [tokens, "tokens"],
   [transactions, "transactions"],
@@ -176,6 +178,10 @@ const fieldNames: Record<string, string> = {
   total_pending_usd: "totalPendingUsd",
   active_wallet_count: "activeWalletCount",
   failed_tx_count: "failedTxCount",
+  mode: "mode",
+  occurrence_key: "occurrenceKey",
+  scheduled_for: "scheduledFor",
+  status: "status",
 };
 
 const fieldName = (columnName: string) => fieldNames[columnName] ?? columnName;
@@ -391,7 +397,6 @@ class SelectBuilder {
   }
 
   for(_mode: string) {
-    // no-op: locking not applicable in in-memory
     return this;
   }
 
@@ -417,55 +422,61 @@ class SelectBuilder {
   }
 }
 
+type InsertResult = Row[];
+
 class InsertValuesBuilder {
+  private _executed = false;
+  private _result: InsertResult = [];
+
   constructor(
     private readonly rows: Row[],
     private readonly tableName: keyof InMemoryTables,
     private readonly valuesInput: Row | Row[],
+    private readonly uniqueKey?: string,
   ) {}
 
-  async returning() {
-    return this.insert();
+  returning(): InsertValuesBuilder {
+    return this;
   }
 
-  async onConflictDoUpdate({ set }: { target: unknown; set: Row }) {
-    const values = Array.isArray(this.valuesInput)
-      ? this.valuesInput
-      : [this.valuesInput];
-
-    for (const value of values) {
-      const existing = this.rows.find((row) => {
-        if ("walletId" in value && "pairId" in value) {
-          return row.walletId === value.walletId && row.pairId === value.pairId;
-        }
-        if ("id" in value) {
-          return row.id === value.id;
-        }
-        return false;
-      });
-
-      if (existing) {
-        Object.assign(existing, set);
-      } else {
-        this.rows.push(defaultRow(this.tableName, value));
-      }
-    }
+  onConflictDoNothing(): InsertValuesBuilder {
+    return this;
   }
 
   then<TResult1 = Row[], TResult2 = never>(
     onfulfilled?: ((value: Row[]) => TResult1 | PromiseLike<TResult1>) | null,
     onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
   ) {
-    return this.insert().then(onfulfilled, onrejected);
+    return Promise.resolve(this.execute()).then(onfulfilled, onrejected);
   }
 
-  private async insert() {
+  execute(): InsertResult {
+    if (this._executed) {
+      return this._result;
+    }
+    this._executed = true;
+
     const values = Array.isArray(this.valuesInput)
       ? this.valuesInput
       : [this.valuesInput];
-    const inserted = values.map((value) => defaultRow(this.tableName, value));
-    this.rows.push(...inserted);
-    return inserted;
+
+    for (const value of values) {
+      // Check for existing row by unique key (for onConflictDoNothing semantics)
+      if (this.uniqueKey) {
+        const existing = this.rows.find((row) => row[this.uniqueKey!] === value[this.uniqueKey!]);
+        if (existing) {
+          this._result = [existing];
+          return this._result;
+        }
+      }
+
+      // No conflict found - insert new row
+      const inserted = defaultRow(this.tableName, value);
+      this.rows.push(inserted);
+      this._result.push(inserted);
+    }
+
+    return this._result;
   }
 }
 
@@ -473,13 +484,15 @@ class InsertBuilder {
   constructor(
     private readonly tables: InMemoryTables,
     private readonly tableName: keyof InMemoryTables,
+    private readonly uniqueKey?: string,
   ) {}
 
-  values(values: Row | Row[]) {
+  values(values: Row | Row[]): InsertValuesBuilder {
     return new InsertValuesBuilder(
       this.tables[this.tableName],
       this.tableName,
       values,
+      this.uniqueKey,
     );
   }
 }
@@ -496,11 +509,12 @@ class UpdateWhereBuilder {
     return this;
   }
 
-  async returning() {
+  async returning(): Promise<Row[]> {
     const updated: Row[] = [];
     for (const row of this.rows) {
       if (conditionMatches(this.condition, row)) {
-        Object.assign(row, this.updates);
+        const now = new Date();
+        Object.assign(row, { ...this.updates, updatedAt: now });
         updated.push(row);
       }
     }
@@ -511,7 +525,7 @@ class UpdateWhereBuilder {
 class UpdateBuilder {
   constructor(private readonly rows: Row[]) {}
 
-  set(updates: Row) {
+  set(updates: Row): UpdateWhereBuilder {
     return new UpdateWhereBuilder(this.rows, updates);
   }
 }
@@ -530,6 +544,7 @@ export interface InMemoryTables {
   schedulerJobs: Row[];
   schedulerLocks: Row[];
   schedulerRuns: Row[];
+  scheduleOccurrences: Row[];
   telegramSettings: Row[];
   tokens: Row[];
   transactions: Row[];
@@ -554,6 +569,7 @@ export const createInMemoryDb = (seed?: Partial<InMemoryTables>) => {
     schedulerJobs: [],
     schedulerLocks: [],
     schedulerRuns: [],
+    scheduleOccurrences: [],
     telegramSettings: [],
     tokens: [],
     transactions: [],
@@ -574,7 +590,9 @@ export const createInMemoryDb = (seed?: Partial<InMemoryTables>) => {
       if (!tableName) {
         throw new Error("Unknown table");
       }
-      return new InsertBuilder(tables, tableName);
+      // Use occurrenceKey as unique key for scheduleOccurrences table
+      const uniqueKey = tableName === "scheduleOccurrences" ? "occurrenceKey" : undefined;
+      return new InsertBuilder(tables, tableName, uniqueKey);
     },
     update: (table: Table) => {
       const tableName = tableNames.get(table);

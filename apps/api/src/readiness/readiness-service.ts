@@ -1,5 +1,4 @@
 import type { DbClient } from "../db/client.js";
-import { getRuntimeConfig } from "../config/runtime-config.js";
 import { isDemoMode, isDryRunEnabled } from "../runtime/mode.js";
 import { isGlobalEmergencyPaused } from "../security/emergency-pause.js";
 import { getAggregateLimits } from "../risk/aggregate-risk.js";
@@ -15,6 +14,8 @@ import type {
   ReadinessSummary,
   ReadinessDetailedResult,
 } from "./readiness-types.js";
+import { getRuntimeConfig } from "../config/runtime-config.js";
+import { getActiveCustodyProvider } from "../custody/providers/registry.js";
 import {
   getReadinessState,
   setReadinessState,
@@ -76,12 +77,12 @@ async function buildContext(db: DbClient): Promise<ReadinessContext> {
   // Find TINY_LIVE wallet
   const allWallets = await db.select().from(wallets);
   const tinyLiveWalletArr = allWallets.filter((w) => (w.name ?? "").includes("TINY_LIVE"));
-  const tinyLiveWallet =
-    tinyLiveWalletArr.length > 0
+  const firstWallet = tinyLiveWalletArr[0];
+  const tinyLiveWallet = firstWallet
       ? {
-          id: tinyLiveWalletArr[0]!.id,
-          address: tinyLiveWalletArr[0]!.address,
-          status: tinyLiveWalletArr[0]!.status,
+          id: firstWallet.id,
+          address: firstWallet.address,
+          status: firstWallet.status,
         }
       : null;
 
@@ -106,12 +107,43 @@ async function buildContext(db: DbClient): Promise<ReadinessContext> {
     spenders,
     tinyLiveWallet,
     stuckOrDroppedWalletCount,
-    isLiveSchedulerEnabled: false,
-    custodyProviderHealthy: true,
-    exactApprovalFlowAvailable: true,
-    revokeFlowAvailable: true,
+    isLiveSchedulerEnabled: (() => {
+      try {
+        return getRuntimeConfig().schedulerLiveExecution;
+      } catch {
+        return false; // treat as disabled (safe default)
+      }
+    })(),
+
+    custodyProviderHealthy: (() => {
+      try {
+        const provider = getActiveCustodyProvider();
+        return provider.isConfigured();
+      } catch {
+        return false;
+      }
+    })(),
+
+    exactApprovalFlowAvailable: (() => {
+      try {
+        const provider = getActiveCustodyProvider();
+        return provider.supportsPolicy();
+      } catch {
+        return false;
+      }
+    })(),
+
+    revokeFlowAvailable: (() => {
+      try {
+        const provider = getActiveCustodyProvider();
+        return provider.isConfigured();
+      } catch {
+        return false;
+      }
+    })(),
+
     artifacts,
-    ciGreen: !process.env.CI_STATUS_URL,
+    ciGreen: false,  // No CI artifact signal in this repo — always fail until real artifact uploaded
     metricsTokenConfigured: Boolean(process.env.METRICS_TOKEN),
   };
 }
@@ -122,17 +154,27 @@ async function buildContext(db: DbClient): Promise<ReadinessContext> {
 
 export function computeState(results: CheckResult[]): ReadinessState {
   const failedIds = results.filter((r) => r.status === "FAIL").map((r) => r.id);
+  const blockedIds = results.filter((r) => r.status === "BLOCKED").map((r) => r.id);
+  const allBlocking = [...failedIds, ...blockedIds];
 
-  if (failedIds.includes(1)) return "DEMO_READY";
-  if (failedIds.includes(2)) return "DRY_RUN_READY";
-  if ([3, 4].some((id) => failedIds.includes(id))) return "DRY_RUN_READY";
-  if ([5, 6, 7, 8, 9].some((id) => failedIds.includes(id))) return "DRY_RUN_READY";
+  // HARD OVERRIDE: check 20 (scheduler live enabled) is the top safety gate.
+  // If live scheduler is unexpectedly enabled, immediately return NO-GO.
+  // This overrides all other checks — even if everything else passes.
+  if (allBlocking.includes(20)) {
+    return "LIVE_AUTOMATION_HARD_NO_GO";
+  }
 
-  const checks1to16Pass = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].every(
-    (id) => !failedIds.includes(id)
+  // Cascade: per-gate progression
+  if (allBlocking.includes(1)) return "DEMO_READY";
+  if (allBlocking.includes(2)) return "DRY_RUN_READY";
+  if ([3, 4].some((id) => allBlocking.includes(id))) return "DRY_RUN_READY";
+  if ([5, 6, 7, 8, 9].some((id) => allBlocking.includes(id))) return "DRY_RUN_READY";
+
+  const checks1to16Pass = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16].every(
+    (id) => !allBlocking.includes(id)
   );
-  const checks17to23Pass = [17, 18, 19, 20, 21, 22, 23].every(
-    (id) => !failedIds.includes(id)
+  const checks17to23Pass = [17,18,19,20,21,22,23].every(
+    (id) => !allBlocking.includes(id)
   );
 
   if (checks1to16Pass && checks17to23Pass)
@@ -169,6 +211,7 @@ export async function runReadinessChecks(
 export async function getReadinessSummary(
   _db: DbClient
 ): Promise<ReadinessSummary> {
+  void _db;
   const state = getReadinessState();
   const lastResults = getLastCheckResults();
   const lastCheckedAt = getLastCheckedAt();

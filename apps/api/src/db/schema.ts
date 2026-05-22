@@ -769,6 +769,8 @@ export const deadLetterJobs = pgTable("dead_letter_jobs", {
   occurrenceId: uuid("occurrence_id"),
   requestId: text("request_id"),
   traceId: text("trace_id"),
+  riskReservationId: uuid("risk_reservation_id"),
+  nonceReservationId: uuid("nonce_reservation_id"),
   errorCode: text("error_code").notNull(),
   errorMessage: text("error_message").notNull(),
   retryable: boolean("retryable").notNull().default(false),

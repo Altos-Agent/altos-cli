@@ -1,6 +1,6 @@
-import { eq, desc, and, inArray, isNull, or } from "drizzle-orm";
+import { eq, desc, and, isNull } from "drizzle-orm";
 import type { DbClient } from "../db/client.js";
-import { deadLetterJobs, type NewDeadLetterJob } from "../db/schema.js";
+import { deadLetterJobs } from "../db/schema.js";
 import { getCurrentRequestId } from "../http/request-context.js";
 import type { ProviderError } from "../errors/provider.errors.js";
 
@@ -30,6 +30,8 @@ export interface RecordDeadLetterJobParams {
   occurrenceId?: string | null;
   requestId?: string | null;
   traceId?: string | null;
+  riskReservationId?: string | null;
+  nonceReservationId?: string | null;
   error: ProviderError | Error;
   payload?: Record<string, unknown>;
 }
@@ -71,6 +73,8 @@ export const recordDeadLetterJob = async (
       occurrenceId: params.occurrenceId ?? null,
       requestId: params.requestId ?? getCurrentRequestId() ?? null,
       traceId: params.traceId ?? getCurrentRequestId() ?? null,
+      riskReservationId: params.riskReservationId ?? null,
+      nonceReservationId: params.nonceReservationId ?? null,
       errorCode,
       errorMessage,
       retryable,
@@ -102,6 +106,8 @@ export interface DeadLetterJobEntry {
   scheduleId: string | null;
   requestId: string | null;
   traceId: string | null;
+  riskReservationId: string | null;
+  nonceReservationId: string | null;
   errorCode: string;
   errorMessage: string;
   retryable: boolean;

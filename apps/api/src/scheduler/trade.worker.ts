@@ -249,6 +249,8 @@ export const processTradeJob =
         occurrenceId: job.data.occurrenceId ?? null,
         requestId: job.data.requestId ?? null,
         traceId: job.data.traceId ?? null,
+        riskReservationId: job.data.riskReservationId ?? null,
+        nonceReservationId: job.data.nonceReservationId ?? null,
         error: error instanceof Error ? error : new Error(String(error)),
         payload: job.data as unknown as Record<string, unknown>,
       });

@@ -20,8 +20,10 @@ export interface ScheduledTradeJob {
   idempotencyKey: string;
   traceId?: string | null;
   amountIn: string;
-  mode: "DRY_RUN" | "LIVE";
+  mode: "DRY_RUN" | "LIVE" | "LIVE_CANARY";
   requestId?: string | null;
+  riskReservationId?: string | null;
+  nonceReservationId?: string | null;
 }
 
 export interface ConfirmationJob {

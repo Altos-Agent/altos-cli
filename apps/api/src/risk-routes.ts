@@ -11,6 +11,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { requireRole, requireReauth } from "./auth/rbac.js";
 import type { AuthContext } from "./auth/auth-middleware.js";
+import { registerRiskReservationRoutes } from "./risk/risk-reservation-routes.js";
 
 const updateLimitsSchema = z.object({
   maxDailyTradeUsd: z.string().regex(/^\d+(\.\d+)?$/).optional(),
@@ -26,6 +27,7 @@ export const registerRiskRoutes = async (
   db: DbClient,
   _context: AuthContext,
 ) => {
+  await registerRiskReservationRoutes(server, db);
   /* eslint-disable @typescript-eslint/no-unused-vars */
   server.get("/api/risk/aggregate", async (_req, _reply) => {
     const today = new Date().toISOString().slice(0, 10);

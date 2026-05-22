@@ -18,6 +18,7 @@ import {
   getOccurrencesForSchedule,
   getOccurrencesForWallet,
 } from "./occurrence.service.js";
+import { registerOccurrenceRoutes } from "./occurrence-routes.js";
 import { requireRole } from "../auth/rbac.js";
 import type { AuthContext } from "../auth/auth-middleware.js";
 
@@ -50,6 +51,7 @@ export const createSchedulerRoutes = (db: DbClient, _context: AuthContext) => {
   const scheduler = new SchedulerService(db);
 
   return async (server: FastifyInstance) => {
+    await registerOccurrenceRoutes(server, db);
     server.get("/api/scheduler/status", async () => await scheduler.status());
 
     server.post("/api/scheduler/start", async (request, reply) => {
@@ -74,6 +76,15 @@ export const createSchedulerRoutes = (db: DbClient, _context: AuthContext) => {
 
     server.post("/api/scheduler/pause", async (request, reply) => {
       try {
+        const roleOk = await requireRole(_context, request, reply, "operator");
+        if (!roleOk) return;
+        if (_context.rateLimitProvider) {
+          await _context.rateLimitProvider.assertLimit(
+            `scheduler:pause:${request.ip}`,
+            20,
+            60_000,
+          );
+        }
         assertNoRequestBody(request.body);
         return await scheduler.pause();
       } catch (error) {
@@ -83,6 +94,15 @@ export const createSchedulerRoutes = (db: DbClient, _context: AuthContext) => {
 
     server.post("/api/scheduler/stop", async (request, reply) => {
       try {
+        const roleOk = await requireRole(_context, request, reply, "operator");
+        if (!roleOk) return;
+        if (_context.rateLimitProvider) {
+          await _context.rateLimitProvider.assertLimit(
+            `scheduler:stop:${request.ip}`,
+            20,
+            60_000,
+          );
+        }
         assertNoRequestBody(request.body);
         return await scheduler.stop();
       } catch (error) {
@@ -114,6 +134,8 @@ export const createSchedulerRoutes = (db: DbClient, _context: AuthContext) => {
       "/api/wallets/:id/schedule",
       async (request, reply) => {
         try {
+          const roleOk = await requireRole(_context, request, reply, "viewer");
+          if (!roleOk) return;
           const params = parseIdParams(request.params);
           return await scheduler.getWalletSchedule(params.id);
         } catch (error) {
@@ -129,6 +151,8 @@ export const createSchedulerRoutes = (db: DbClient, _context: AuthContext) => {
       "/api/wallets/:id/schedule",
       async (request, reply) => {
         try {
+          const roleOk = await requireRole(_context, request, reply, "operator");
+          if (!roleOk) return;
           const params = parseIdParams(request.params);
           const body = parseRequestBody(walletScheduleSchema, request.body);
           return await scheduler.updateWalletSchedule(
@@ -148,6 +172,8 @@ export const createSchedulerRoutes = (db: DbClient, _context: AuthContext) => {
       "/api/wallets/:id/emergency-pause",
       async (request, reply) => {
         try {
+          const roleOk = await requireRole(_context, request, reply, "operator");
+          if (!roleOk) return;
           const params = parseIdParams(request.params);
           assertNoRequestBody(request.body);
           return await scheduler.emergencyPause(params.id);
@@ -165,6 +191,8 @@ export const createSchedulerRoutes = (db: DbClient, _context: AuthContext) => {
       "/api/wallets/:id/occurrences",
       async (request, reply) => {
         try {
+          const roleOk = await requireRole(_context, request, reply, "viewer");
+          if (!roleOk) return;
           const params = parseIdParams(request.params);
           return await getOccurrencesForWallet(db, params.id, 50);
         } catch (error) {
@@ -179,6 +207,8 @@ export const createSchedulerRoutes = (db: DbClient, _context: AuthContext) => {
       "/api/schedules/:id/occurrences",
       async (request, reply) => {
         try {
+          const roleOk = await requireRole(_context, request, reply, "viewer");
+          if (!roleOk) return;
           const params = parseIdParams(request.params);
           return await getOccurrencesForSchedule(db, params.id, 50);
         } catch (error) {

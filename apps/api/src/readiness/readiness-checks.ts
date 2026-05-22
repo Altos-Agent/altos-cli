@@ -34,6 +34,21 @@ const fail = (
   evidence: null,
 });
 
+const blocked = (
+  id: number,
+  category: string,
+  name: string,
+  ctx: ReadinessContext,
+  msg: string,
+): CheckResult => ({
+  id,
+  category: category as CheckCategory,
+  name,
+  status: "BLOCKED",
+  message: msg,
+  evidence: null,
+});
+
 // =============================================================================
 // Category 1: Core Gating (checks 1-4)
 // =============================================================================
@@ -150,6 +165,12 @@ const check10_0xQuoteArtifact = (ctx: ReadinessContext): CheckResult => {
       "No 0x quote validation artifact found. Run a dry-run quote and upload the result.",
     );
   }
+  if (artifact.expiresAt && new Date(artifact.expiresAt) < new Date()) {
+    return fail(
+      10, "Artifacts & Drills", "0xQuoteArtifact", ctx,
+      `Artifact expired at ${artifact.expiresAt}. Re-run the drill and upload a fresh result.`,
+    );
+  }
   return pass(10, "Artifacts & Drills", "0xQuoteArtifact", ctx);
 };
 
@@ -162,6 +183,12 @@ const check11_backupDrillArtifact = (ctx: ReadinessContext): CheckResult => {
       "backupDrillArtifact",
       ctx,
       "No backup/restore drill artifact found. Complete the drill and upload the result.",
+    );
+  }
+  if (artifact.expiresAt && new Date(artifact.expiresAt) < new Date()) {
+    return fail(
+      11, "Artifacts & Drills", "backupDrillArtifact", ctx,
+      `Artifact expired at ${artifact.expiresAt}. Re-run the drill and upload a fresh result.`,
     );
   }
   return pass(11, "Artifacts & Drills", "backupDrillArtifact", ctx);
@@ -178,6 +205,12 @@ const check12_emergencyDrillArtifact = (ctx: ReadinessContext): CheckResult => {
       "No emergency pause drill artifact found. Complete the drill and upload the result.",
     );
   }
+  if (artifact.expiresAt && new Date(artifact.expiresAt) < new Date()) {
+    return fail(
+      12, "Artifacts & Drills", "emergencyDrillArtifact", ctx,
+      `Artifact expired at ${artifact.expiresAt}. Re-run the drill and upload a fresh result.`,
+    );
+  }
   return pass(12, "Artifacts & Drills", "emergencyDrillArtifact", ctx);
 };
 
@@ -192,6 +225,12 @@ const check13_dryRunLoadTestArtifact = (ctx: ReadinessContext): CheckResult => {
       "No dry-run load test artifact found.",
     );
   }
+  if (artifact.expiresAt && new Date(artifact.expiresAt) < new Date()) {
+    return fail(
+      13, "Artifacts & Drills", "dryRunLoadTestArtifact", ctx,
+      `Artifact expired at ${artifact.expiresAt}. Re-run the drill and upload a fresh result.`,
+    );
+  }
   return pass(13, "Artifacts & Drills", "dryRunLoadTestArtifact", ctx);
 };
 
@@ -204,6 +243,12 @@ const check14_telegramTestArtifact = (ctx: ReadinessContext): CheckResult => {
       "telegramTestArtifact",
       ctx,
       "No Telegram test artifact found. Send a test alert and upload the result.",
+    );
+  }
+  if (artifact.expiresAt && new Date(artifact.expiresAt) < new Date()) {
+    return fail(
+      14, "Artifacts & Drills", "telegramTestArtifact", ctx,
+      `Artifact expired at ${artifact.expiresAt}. Re-run the drill and upload a fresh result.`,
     );
   }
   return pass(14, "Artifacts & Drills", "telegramTestArtifact", ctx);
@@ -288,7 +333,13 @@ const check20_schedulerLiveDisabled = (ctx: ReadinessContext): CheckResult => {
 
 const check21_custodyProviderHealthy = (ctx: ReadinessContext): CheckResult => {
   if (ctx.custodyProviderHealthy === false) {
-    return fail(21, "Scheduler & Custody", "custodyProviderHealthy", ctx, "Custody provider is unhealthy");
+    return blocked(
+      21,
+      "Scheduler & Custody",
+      "custodyProviderHealthy",
+      ctx,
+      "Custody provider unhealthy or unreachable",
+    );
   }
   return pass(21, "Scheduler & Custody", "custodyProviderHealthy", ctx);
 };

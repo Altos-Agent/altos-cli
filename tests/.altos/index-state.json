@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "root": "/home/oguz/Masaüstü/AltosAgent/tests",
+  "files": {
+    "fixtures/ts-multi/src/lib/helpers.ts": {
+      "mtime": 1781902582166.0486,
+      "size": 158,
+      "symbolHash": "1c9ba831f604"
+    },
+    "fixtures/ts-multi/src/main.ts": {
+      "mtime": 1781902581105.0374,
+      "size": 218,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "fixtures/ts-multi/src/utils/format.ts": {
+      "mtime": 1781902583175.0593,
+      "size": 261,
+      "symbolHash": "255ea2901446"
+    },
+    "fixtures/ts-simple/src/calculator.test.ts": {
+      "mtime": 1781902577733.0017,
+      "size": 725,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "fixtures/ts-simple/src/index.ts": {
+      "mtime": 1781902574771.9702,
+      "size": 354,
+      "symbolHash": "69c6baf6fda2"
+    }
+  },
+  "indexedAt": 1781949232066
+}

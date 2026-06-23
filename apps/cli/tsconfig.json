@@ -1,0 +1,52 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "paths": {
+      "@altos/ai": ["../../packages/ai/dist"],
+      "@altos/ai/*": ["../../packages/ai/dist/*"],
+      "@altos/cloud": ["../../packages/cloud/dist"],
+      "@altos/cloud/*": ["../../packages/cloud/dist/*"],
+      "@altos/code-index": ["../../packages/code-index/dist"],
+      "@altos/code-index/*": ["../../packages/code-index/dist/*"],
+      "@altos/config": ["../../packages/config/dist"],
+      "@altos/core": ["../../packages/core/dist"],
+      "@altos/core/*": ["../../packages/core/dist/*"],
+      "@altos/evals": ["../../packages/evals/dist"],
+      "@altos/evals/*": ["../../packages/evals/dist/*"],
+      "@altos/mcp": ["../../packages/mcp/dist"],
+      "@altos/mcp/*": ["../../packages/mcp/dist/*"],
+      "@altos/memory": ["../../packages/memory/dist"],
+      "@altos/packages": ["../../packages/packages/dist"],
+      "@altos/packages/*": ["../../packages/packages/dist/*"],
+      "@altos/plugins": ["../../packages/plugins/dist"],
+      "@altos/plugins/*": ["../../packages/plugins/dist/*"],
+      "@altos/sandbox": ["../../packages/sandbox/dist"],
+      "@altos/sandbox/*": ["../../packages/sandbox/dist/*"],
+      "@altos/skills": ["../../packages/skills/dist"],
+      "@altos/skills/*": ["../../packages/skills/dist/*"],
+      "@altos/tools": ["../../packages/tools/dist"],
+      "@altos/tools/*": ["../../packages/tools/dist/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", ".turbo", "src/**/*.test.ts"],
+  "references": [
+    { "path": "../../packages/core" },
+    { "path": "../../packages/ai" },
+    { "path": "../../packages/tools" },
+    { "path": "../../packages/code-index" },
+    { "path": "../../packages/config" },
+    { "path": "../../packages/sandbox" },
+    { "path": "../../packages/evals" },
+    { "path": "../../packages/mcp" },
+    { "path": "../../packages/memory" },
+    { "path": "../../packages/packages" },
+    { "path": "../../packages/plugins" },
+    { "path": "../../packages/skills" },
+    { "path": "../../packages/cloud" }
+  ]
+}

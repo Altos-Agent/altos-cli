@@ -1,0 +1,332 @@
+{
+  "version": 1,
+  "root": "/home/oguz/Masaüstü/AltosAgent/packages/code-index",
+  "files": {
+    "fixtures/multi-package/packages/pkg-a/src/index.ts": {
+      "mtime": 1781873069141.1987,
+      "size": 60,
+      "symbolHash": "ee85a74656b2"
+    },
+    "fixtures/multi-package/packages/pkg-b/src/index.ts": {
+      "mtime": 1781873071139.149,
+      "size": 103,
+      "symbolHash": "a3c1008fcf34"
+    },
+    "fixtures/simple-ts/src/bar.ts": {
+      "mtime": 1781873060811.4072,
+      "size": 181,
+      "symbolHash": "9cdf597e7316"
+    },
+    "fixtures/simple-ts/src/foo.ts": {
+      "mtime": 1781873060157.4236,
+      "size": 275,
+      "symbolHash": "8ed427476e2c"
+    },
+    "fixtures/simple-ts/src/index.ts": {
+      "mtime": 1781873084791.8108,
+      "size": 84,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "fixtures/simple-ts/src/utils/math.ts": {
+      "mtime": 1781873062404.3672,
+      "size": 146,
+      "symbolHash": "aa2354a71e9c"
+    },
+    "fixtures/simple-ts/src/utils/strings.ts": {
+      "mtime": 1781873063658.3357,
+      "size": 198,
+      "symbolHash": "2ac42136fe44"
+    },
+    "fixtures/simple-ts/test/foo.test.ts": {
+      "mtime": 1781873065996.2773,
+      "size": 459,
+      "symbolHash": "938f929f9d0b"
+    },
+    "fixtures/with-git/src/index.ts": {
+      "mtime": 1781873073300.0952,
+      "size": 60,
+      "symbolHash": "c53e1ff55117"
+    },
+    "src/bench/fixtures.ts": {
+      "mtime": 1781959686885.8687,
+      "size": 11997,
+      "symbolHash": "458ce16020da"
+    },
+    "src/bench/repo-map-bench.test.ts": {
+      "mtime": 1781954336771.961,
+      "size": 6042,
+      "symbolHash": "afc4302f1d1e"
+    },
+    "src/cli/commands/context-cmd.ts": {
+      "mtime": 1781958669374.6738,
+      "size": 11740,
+      "symbolHash": "0517d2a41877"
+    },
+    "src/cli/commands/index-cmd.ts": {
+      "mtime": 1781951584375.2253,
+      "size": 9666,
+      "symbolHash": "c014e5a61666"
+    },
+    "src/cli/commands/index.ts": {
+      "mtime": 1781958089722.3179,
+      "size": 803,
+      "symbolHash": "913b685ed42e"
+    },
+    "src/cli/commands/map-cmd.ts": {
+      "mtime": 1781938665400.269,
+      "size": 2765,
+      "symbolHash": "ebdae8ede4ef"
+    },
+    "src/cli/commands/search-cmd.ts": {
+      "mtime": 1781938665397.2688,
+      "size": 3104,
+      "symbolHash": "f1c9683322dd"
+    },
+    "src/cli/index.ts": {
+      "mtime": 1781958146085.3425,
+      "size": 539,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/codegraph/codegraph-adapter.ts": {
+      "mtime": 1781938665396.2688,
+      "size": 673,
+      "symbolHash": "effdf8fcdba9"
+    },
+    "src/codegraph/codegraph-integration.test.ts": {
+      "mtime": 1781951674891.096,
+      "size": 4411,
+      "symbolHash": "fb65ea7204c4"
+    },
+    "src/codegraph/index.ts": {
+      "mtime": 1781938665399.269,
+      "size": 40,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/context/context-builder.test.ts": {
+      "mtime": 1781956876450.3792,
+      "size": 4444,
+      "symbolHash": "806ec70f555d"
+    },
+    "src/context/context-builder.ts": {
+      "mtime": 1781956092846.546,
+      "size": 6292,
+      "symbolHash": "e6a63e3edaf2"
+    },
+    "src/context/index.ts": {
+      "mtime": 1781938665397.2688,
+      "size": 38,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/git/git-context-provider.test.ts": {
+      "mtime": 1781870942638.5156,
+      "size": 3238,
+      "symbolHash": "a9e39405a90e"
+    },
+    "src/git/git-context-provider.ts": {
+      "mtime": 1781938665400.269,
+      "size": 5226,
+      "symbolHash": "54206af24968"
+    },
+    "src/git/index.ts": {
+      "mtime": 1781938665397.2688,
+      "size": 43,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/index.test.ts": {
+      "mtime": 1781814036454.0254,
+      "size": 1297,
+      "symbolHash": "2038e3fe39cd"
+    },
+    "src/index.ts": {
+      "mtime": 1781938665400.269,
+      "size": 1972,
+      "symbolHash": "6ecdc0f9bdaa"
+    },
+    "src/indexer/index-state.test.ts": {
+      "mtime": 1781953489442.123,
+      "size": 9393,
+      "symbolHash": "0211a981cc6c"
+    },
+    "src/indexer/index-state.ts": {
+      "mtime": 1781952871673.6973,
+      "size": 6105,
+      "symbolHash": "e95f1a192433"
+    },
+    "src/indexer/index.test.ts": {
+      "mtime": 1781953562079.6917,
+      "size": 7481,
+      "symbolHash": "0473ea4618a1"
+    },
+    "src/indexer/index.ts": {
+      "mtime": 1781953616372.8254,
+      "size": 8014,
+      "symbolHash": "feb55a3925b2"
+    },
+    "src/indexer/watch.test.ts": {
+      "mtime": 1781952738538.3042,
+      "size": 5526,
+      "symbolHash": "020ef1775e88"
+    },
+    "src/indexer/watch.ts": {
+      "mtime": 1781952871673.6973,
+      "size": 5869,
+      "symbolHash": "67f1ddfbefd3"
+    },
+    "src/lsp/index.ts": {
+      "mtime": 1781938665400.269,
+      "size": 34,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/lsp/lsp-adapter.test.ts": {
+      "mtime": 1781938665400.269,
+      "size": 1359,
+      "symbolHash": "e69df8076874"
+    },
+    "src/lsp/lsp-adapter.ts": {
+      "mtime": 1781938665399.269,
+      "size": 1159,
+      "symbolHash": "0c1b67c51f98"
+    },
+    "src/parsers/go-parser.ts": {
+      "mtime": 1781947068085.7913,
+      "size": 2018,
+      "symbolHash": "c29cb744b44c"
+    },
+    "src/parsers/index.ts": {
+      "mtime": 1781947070265.8035,
+      "size": 346,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/parsers/python-parser.ts": {
+      "mtime": 1781951687702.085,
+      "size": 2203,
+      "symbolHash": "7025562b7fde"
+    },
+    "src/parsers/registry.ts": {
+      "mtime": 1781947053667.7146,
+      "size": 2697,
+      "symbolHash": "3790c9292eee"
+    },
+    "src/parsers/rust-parser.ts": {
+      "mtime": 1781947070154.8027,
+      "size": 2097,
+      "symbolHash": "ecbf10691847"
+    },
+    "src/repo-map/index.ts": {
+      "mtime": 1781938665400.269,
+      "size": 39,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/repo-map/repo-map-builder.test.ts": {
+      "mtime": 1781956397036.0945,
+      "size": 19368,
+      "symbolHash": "f61fb5de882d"
+    },
+    "src/repo-map/repo-map-builder.ts": {
+      "mtime": 1781956755258.829,
+      "size": 20056,
+      "symbolHash": "b24b36569511"
+    },
+    "src/scanner/index.ts": {
+      "mtime": 1781938665400.269,
+      "size": 40,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/scanner/workspace-scanner.test.ts": {
+      "mtime": 1781938665403.2693,
+      "size": 4066,
+      "symbolHash": "5db804dd2469"
+    },
+    "src/scanner/workspace-scanner.ts": {
+      "mtime": 1781938665406.2693,
+      "size": 8183,
+      "symbolHash": "845009c35e40"
+    },
+    "src/search/index.ts": {
+      "mtime": 1781812963011.8809,
+      "size": 43,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/selection/index.ts": {
+      "mtime": 1781938665404.2693,
+      "size": 45,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/selection/relevant-file-selector.test.ts": {
+      "mtime": 1781957404771.7256,
+      "size": 18837,
+      "symbolHash": "8b3a271744b8"
+    },
+    "src/selection/relevant-file-selector.ts": {
+      "mtime": 1781957255045.468,
+      "size": 28556,
+      "symbolHash": "11067df8bb51"
+    },
+    "src/symbols/index.ts": {
+      "mtime": 1781938665401.269,
+      "size": 76,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/symbols/symbol-index.test.ts": {
+      "mtime": 1781951214535.0789,
+      "size": 8544,
+      "symbolHash": "53a883cc1057"
+    },
+    "src/symbols/symbol-index.ts": {
+      "mtime": 1781951066644.7083,
+      "size": 7399,
+      "symbolHash": "f568b1924693"
+    },
+    "src/symbols/tree-sitter-parser.ts": {
+      "mtime": 1781938665406.2693,
+      "size": 10751,
+      "symbolHash": "0c92ddc8bd28"
+    },
+    "src/tree/file-tree-index.test.ts": {
+      "mtime": 1781938665403.2693,
+      "size": 3829,
+      "symbolHash": "8f8c511e1566"
+    },
+    "src/tree/file-tree-index.ts": {
+      "mtime": 1781938665403.2693,
+      "size": 2622,
+      "symbolHash": "d0816a0fc117"
+    },
+    "src/tree/index.ts": {
+      "mtime": 1781938665403.2693,
+      "size": 38,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/types/tree-sitter-typescript.d.ts": {
+      "mtime": 1781938665404.2693,
+      "size": 279,
+      "symbolHash": "e8d3e41230c8"
+    },
+    "src/types.ts": {
+      "mtime": 1781956632023.1218,
+      "size": 9880,
+      "symbolHash": "207c49b63efd"
+    },
+    "vitest.config.ts": {
+      "mtime": 1781812364534.8599,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "perf-bench.ts": {
+      "mtime": 1781953795031.3638,
+      "size": 5289,
+      "symbolHash": "e5fd326ea63a"
+    },
+    "src/bench/runner.ts": {
+      "mtime": 1781959872158.6956,
+      "size": 17379,
+      "symbolHash": "53a8e720da4e"
+    },
+    "src/cli/commands/context-cmd.test.ts": {
+      "mtime": 1781958995686.895,
+      "size": 8742,
+      "symbolHash": "b4a8dc67ce56"
+    }
+  },
+  "indexedAt": 1781967616145
+}

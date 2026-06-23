@@ -1,0 +1,137 @@
+{
+  "version": 1,
+  "root": "/home/oguz/Masaüstü/AltosAgent/packages/core",
+  "files": {
+    "src/adapters/fake.ts": {
+      "mtime": 1781938665408.2695,
+      "size": 4881,
+      "symbolHash": "621925bf1a3c"
+    },
+    "src/adapters/index.ts": {
+      "mtime": 1781814980718.2747,
+      "size": 61,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/config/index.ts": {
+      "mtime": 1781812962965.3948,
+      "size": 97,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/context/auto-compactor.ts": {
+      "mtime": 1781945408787.702,
+      "size": 12865,
+      "symbolHash": "0b1be48b939d"
+    },
+    "src/context/context-budget.test.ts": {
+      "mtime": 1781945845227.64,
+      "size": 9910,
+      "symbolHash": "fa5047630e92"
+    },
+    "src/context/context-budget.ts": {
+      "mtime": 1781945389705.1963,
+      "size": 12763,
+      "symbolHash": "d492f0ff8638"
+    },
+    "src/context/index.ts": {
+      "mtime": 1781945124585.4607,
+      "size": 445,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/events/events.test.ts": {
+      "mtime": 1781938665417.2698,
+      "size": 15259,
+      "symbolHash": "6d4b78dce836"
+    },
+    "src/events/factory.ts": {
+      "mtime": 1781945178460.5505,
+      "size": 9019,
+      "symbolHash": "d79dd95db78a"
+    },
+    "src/events/index.ts": {
+      "mtime": 1781814869688.6816,
+      "size": 90,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/events/types.ts": {
+      "mtime": 1781945157903.8977,
+      "size": 5490,
+      "symbolHash": "5598111e00fd"
+    },
+    "src/index.test.ts": {
+      "mtime": 1781938665407.2693,
+      "size": 2276,
+      "symbolHash": "feac453e5e8a"
+    },
+    "src/index.ts": {
+      "mtime": 1781945135787.2715,
+      "size": 3828,
+      "symbolHash": "01ba11bec787"
+    },
+    "src/logger/index.ts": {
+      "mtime": 1781812962967.7773,
+      "size": 85,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/runtime/builtin-subagents.ts": {
+      "mtime": 1781938665408.2695,
+      "size": 10088,
+      "symbolHash": "ab8a8e18ac7c"
+    },
+    "src/runtime/index.ts": {
+      "mtime": 1781885723080.5369,
+      "size": 142,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/runtime/runtime.test.ts": {
+      "mtime": 1781938665413.2698,
+      "size": 17975,
+      "symbolHash": "bba94bd430e2"
+    },
+    "src/runtime/runtime.ts": {
+      "mtime": 1781945500099.7976,
+      "size": 24549,
+      "symbolHash": "9bd9acdbdfca"
+    },
+    "src/runtime/subagent-manager.test.ts": {
+      "mtime": 1781938665411.2695,
+      "size": 13379,
+      "symbolHash": "c97da41af61a"
+    },
+    "src/runtime/subagent-manager.ts": {
+      "mtime": 1781938665409.2695,
+      "size": 8418,
+      "symbolHash": "ba76de6fa765"
+    },
+    "src/session/index.ts": {
+      "mtime": 1781814928522.8994,
+      "size": 63,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/session/session.ts": {
+      "mtime": 1781945275050.657,
+      "size": 4163,
+      "symbolHash": "33f0af0f408c"
+    },
+    "src/store/index.ts": {
+      "mtime": 1781938665409.2695,
+      "size": 3333,
+      "symbolHash": "0f32a736ee5c"
+    },
+    "src/types/index.ts": {
+      "mtime": 1781885515740.1738,
+      "size": 172,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/types/subagent.ts": {
+      "mtime": 1781938665409.2695,
+      "size": 2160,
+      "symbolHash": "7d7fd6f23dcc"
+    },
+    "vitest.config.ts": {
+      "mtime": 1781812275467.482,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    }
+  },
+  "indexedAt": 1781949164953
+}

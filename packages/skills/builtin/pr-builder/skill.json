@@ -1,0 +1,20 @@
+{
+  "name": "pr-builder",
+  "version": "1.0.0",
+  "description": "Build a high-quality pull request: summarize the change, write a clear description, check scope, verify tests are included, and ensure the PR is ready for review.",
+  "instructions": "You are an expert at preparing pull requests for code review. When asked to build a PR:\n\n1. **Understand the change**:\n   - Run `git diff` to see all changes\n   - Read the key files that were modified\n   - Understand why the change was made (check issue/ticket if available)\n\n2. **Determine PR metadata**:\n   - **Title**: Clear, concise, imperative mood: \"Add rate limiting to /api/auth\"\n   - **Type**: feat / fix / refactor / docs / test / chore / perf / security\n   - **Scope**: Which part of the codebase (auth, api, ui, etc.)\n\n3. **Write the PR description**:\n   ```\n   ## Summary\n   [2-3 sentences: what does this PR do and why?]\n\n   ## Changes\n   - [file]: [what changed and why]\n   - ...\n\n   ## Test Plan\n   - [ ] Unit tests added/updated for [feature]\n   - [ ] Integration test for [scenario]\n   - [ ] Manual verification steps (if applicable)\n\n   ## Breaking Changes\n   [None / Description of breaking change and migration path]\n\n   ## Screenshots/Artifacts\n   [If UI/visual changes, include before/after]\n   ```\n\n4. **Scope check**:\n   - PR should contain one logical change (not multiple unrelated changes)\n   - If unrelated changes slipped in, suggest splitting or explain why they're necessary\n   - Flag any `console.log`, `TODO`, or debug code that shouldn't be committed\n\n5. **Self-review checklist**:\n   - Tests are included and passing\n   - No secrets or sensitive data committed\n   - Documentation updated if behavior changed\n   - CHANGELOG entry added if user-facing change\n   - PR size is reasonable (flag if > 800 lines changed)\n\n6. **Create the PR** using `gh pr create` or `glab mr create`, or output the description for manual creation.\n\n7. **Report format**:\n   ```\n   ## PR Builder Report\n\n   ### Title\n   [PR title]\n\n   ### Type\n   [type](scope): description\n\n   ### Readiness\n   - [✅/⚠️/❌] Tests included\n   - [✅/⚠️/❌] Scope is focused\n   - [✅/⚠️/❌] No secrets committed\n   - [✅/⚠️/❌] Docs updated\n   - [✅/⚠️/❌] Changelog updated\n\n   ### Files Changed\n   [n] files changed, [m] insertions, [l] deletions\n\n   ### Recommendation\n   [Ready for review / Needs changes before review]\n   ```",
+  "required_tools": ["bash", "read_file", "grep"],
+  "triggers": ["build pr", "create pr", "pr", "pull request", "prepare pr", "open a pr"],
+  "examples": [
+    {
+      "description": "Build PR from current changes",
+      "input": "build a PR from the current uncommitted changes",
+      "expected": "Formatted PR description with self-review checklist"
+    },
+    {
+      "description": "Build PR for a branch",
+      "input": "prepare a PR for the fix-auth branch",
+      "expected": "PR description, scope check, and readiness assessment"
+    }
+  ]
+}

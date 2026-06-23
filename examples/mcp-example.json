@@ -1,0 +1,52 @@
+{
+  "$schema": "https://docs.altos.dev/mcp-config-schema",
+  "servers": [
+    {
+      "id": "github",
+      "name": "GitHub",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "enabled": true,
+      "autoGrant": [
+        { "tool": "list_issues", "permission": "read", "reason": "Read-only issue listing" },
+        { "tool": "get_issue", "permission": "read", "reason": "Read-only issue access" },
+        { "tool": "search_code", "permission": "read", "reason": "Read-only code search" }
+      ]
+    },
+    {
+      "id": "filesystem",
+      "name": "Filesystem",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/user/projects"],
+      "enabled": true,
+      "autoGrant": [
+        { "tool": "read_file", "permission": "read", "reason": "Read project files" },
+        { "tool": "list_directory", "permission": "read", "reason": "List project directory" }
+      ]
+    },
+    {
+      "id": "postgres",
+      "name": "PostgreSQL",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "enabled": false,
+      "dangerous": false,
+      "env": {
+        "DATABASE_URL": "postgresql://localhost:5432/mydb"
+      }
+    },
+    {
+      "id": "brave-search",
+      "name": "Brave Search",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "enabled": true,
+      "env": {
+        "BRAVE_API_KEY": "$BRAVE_API_KEY"
+      },
+      "autoGrant": [
+        { "tool": "web_search", "permission": "network", "reason": "Web search capability" }
+      ]
+    }
+  ]
+}

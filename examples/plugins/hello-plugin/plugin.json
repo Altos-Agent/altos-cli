@@ -1,0 +1,33 @@
+{
+  "name": "hello-plugin",
+  "version": "0.1.0",
+  "description": "A minimal example plugin demonstrating the plugin API",
+  "entry": "index.js",
+  "permissions": [
+    {
+      "scope": "config:read",
+      "reason": "Read plugin config on startup"
+    },
+    {
+      "scope": "config:write",
+      "reason": "Persist greeting preference"
+    }
+  ],
+  "hooks": [
+    {
+      "event": "session_start",
+      "handler": "index.onSessionStart"
+    },
+    {
+      "event": "user_prompt",
+      "handler": "index.onUserPrompt"
+    }
+  ],
+  "commands": [
+    {
+      "name": "hello",
+      "description": "Print a greeting",
+      "handler": "index.onHelloCommand"
+    }
+  ]
+}

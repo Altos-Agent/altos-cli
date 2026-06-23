@@ -1,0 +1,30 @@
+{
+  "name": "@altos/core",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Altos core types, interfaces, and utilities",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./events": "./dist/events/index.js",
+    "./events/*": "./dist/events/*",
+    "./session": "./dist/session/index.js",
+    "./runtime": "./dist/runtime/index.js",
+    "./store": "./dist/store/index.js",
+    "./types": "./dist/types/index.js",
+    "./config": "./dist/config/index.js",
+    "./logger": "./dist/logger/index.js"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "dev": "tsc --build --watch",
+    "test": "vitest run",
+    "lint": "biome lint .",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}

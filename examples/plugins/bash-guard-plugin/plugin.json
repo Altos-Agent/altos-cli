@@ -1,0 +1,30 @@
+{
+  "name": "bash-guard-plugin",
+  "version": "0.1.0",
+  "description": "Guard against dangerous bash commands by validating and logging all shell executions",
+  "entry": "index.js",
+  "permissions": [
+    {
+      "scope": "hook:before_tool_call",
+      "reason": "Intercept and validate all tool calls before execution"
+    },
+    {
+      "scope": "hook:after_tool_call",
+      "reason": "Log tool execution results"
+    },
+    {
+      "scope": "config:write",
+      "reason": "Store guard configuration and blocklists"
+    }
+  ],
+  "hooks": [
+    {
+      "event": "before_tool_call",
+      "handler": "index.onBeforeToolCall"
+    },
+    {
+      "event": "after_tool_call",
+      "handler": "index.onAfterToolCall"
+    }
+  ]
+}

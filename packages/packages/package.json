@@ -1,0 +1,26 @@
+{
+  "name": "@altos/packages",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Altos package registry - publish, discover, install agent packages",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./registry": "./dist/registry/index.js",
+    "./publisher": "./dist/publisher/index.js",
+    "./loader": "./dist/loader/index.js",
+    "./manifest": "./dist/manifest.js"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "dev": "tsc --build --watch",
+    "test": "vitest run",
+    "lint": "biome lint .",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}

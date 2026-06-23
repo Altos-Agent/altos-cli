@@ -1,0 +1,227 @@
+{
+  "version": 1,
+  "root": "/home/oguz/Masaüstü/AltosAgent/apps",
+  "files": {
+    "cli/bin/altos.js": {
+      "mtime": 1781812456895.078,
+      "size": 152,
+      "symbolHash": "bb436ff2e356"
+    },
+    "cli/src/commands/agents.ts": {
+      "mtime": 1781938665379.268,
+      "size": 5905,
+      "symbolHash": "6fce0769d804"
+    },
+    "cli/src/commands/cloud.ts": {
+      "mtime": 1781938665379.268,
+      "size": 2673,
+      "symbolHash": "5dc08cda9fa1"
+    },
+    "cli/src/commands/config.ts": {
+      "mtime": 1781943538112.354,
+      "size": 3170,
+      "symbolHash": "f1bc1f788a76"
+    },
+    "cli/src/commands/doctor.ts": {
+      "mtime": 1781943521011.6465,
+      "size": 3047,
+      "symbolHash": "cc805132d295"
+    },
+    "cli/src/commands/evals.ts": {
+      "mtime": 1781938665374.2678,
+      "size": 1506,
+      "symbolHash": "f6ebf7353f2b"
+    },
+    "cli/src/commands/index.ts": {
+      "mtime": 1781943545046.2354,
+      "size": 501,
+      "symbolHash": "3f38d73673e5"
+    },
+    "cli/src/commands/interactive.ts": {
+      "mtime": 1781945544207.307,
+      "size": 10735,
+      "symbolHash": "65183a7c400b"
+    },
+    "cli/src/commands/map.ts": {
+      "mtime": 1781943547478.1938,
+      "size": 642,
+      "symbolHash": "dd59a1268ef3"
+    },
+    "cli/src/commands/mcp.ts": {
+      "mtime": 1781938665380.268,
+      "size": 15386,
+      "symbolHash": "312a1c8212bf"
+    },
+    "cli/src/commands/memory.ts": {
+      "mtime": 1781943543193.267,
+      "size": 1287,
+      "symbolHash": "191896ab6a88"
+    },
+    "cli/src/commands/models.ts": {
+      "mtime": 1781943527648.533,
+      "size": 1887,
+      "symbolHash": "bbb535156fe7"
+    },
+    "cli/src/commands/packages.ts": {
+      "mtime": 1781938665380.268,
+      "size": 8305,
+      "symbolHash": "ab27b39603fa"
+    },
+    "cli/src/commands/perf.ts": {
+      "mtime": 1781943990805.6445,
+      "size": 5318,
+      "symbolHash": "c0671b405170"
+    },
+    "cli/src/commands/plugins.ts": {
+      "mtime": 1781938665388.2686,
+      "size": 13841,
+      "symbolHash": "62c633f03f16"
+    },
+    "cli/src/commands/print.ts": {
+      "mtime": 1781943976853.8813,
+      "size": 2417,
+      "symbolHash": "9444e6dd235f"
+    },
+    "cli/src/commands/replay.ts": {
+      "mtime": 1781903067434.561,
+      "size": 1230,
+      "symbolHash": "602881ca19c6"
+    },
+    "cli/src/commands/run.ts": {
+      "mtime": 1781943983173.7742,
+      "size": 2986,
+      "symbolHash": "0026e0e9f1db"
+    },
+    "cli/src/commands/sandbox.ts": {
+      "mtime": 1781938665380.268,
+      "size": 5545,
+      "symbolHash": "d2309487c56a"
+    },
+    "cli/src/commands/search.ts": {
+      "mtime": 1781943550176.1477,
+      "size": 748,
+      "symbolHash": "288cb8961504"
+    },
+    "cli/src/commands/serve.ts": {
+      "mtime": 1781889806132.9565,
+      "size": 1966,
+      "symbolHash": "4db12d198b82"
+    },
+    "cli/src/commands/session-helpers.ts": {
+      "mtime": 1781943655669.346,
+      "size": 1721,
+      "symbolHash": "fb7670247021"
+    },
+    "cli/src/commands/skills.ts": {
+      "mtime": 1781938665380.268,
+      "size": 8152,
+      "symbolHash": "d20c6b3dbbe0"
+    },
+    "cli/src/commands/tools.ts": {
+      "mtime": 1781938665380.268,
+      "size": 4098,
+      "symbolHash": "9c113d80e792"
+    },
+    "cli/src/index.test.ts": {
+      "mtime": 1781865220493.0828,
+      "size": 12099,
+      "symbolHash": "199d5e6345ed"
+    },
+    "cli/src/index.ts": {
+      "mtime": 1781944071990.2668,
+      "size": 15918,
+      "symbolHash": "0f39527e65d0"
+    },
+    "cli/vitest.config.ts": {
+      "mtime": 1781812456894.4043,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "cloud-worker/bin/worker.js": {
+      "mtime": 1781889617726.1462,
+      "size": 200,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "cloud-worker/src/index.ts": {
+      "mtime": 1781938665388.2686,
+      "size": 9420,
+      "symbolHash": "73ad2aab9f5d"
+    },
+    "cloud-worker/vitest.config.ts": {
+      "mtime": 1781812474441.486,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "local-api/bin/server.js": {
+      "mtime": 1781889759329.4402,
+      "size": 209,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "local-api/src/index.test.ts": {
+      "mtime": 1781942882657.714,
+      "size": 11845,
+      "symbolHash": "67ba28205b9e"
+    },
+    "local-api/src/index.ts": {
+      "mtime": 1781938665391.2686,
+      "size": 17401,
+      "symbolHash": "771a5afb1ad2"
+    },
+    "local-api/vitest.config.ts": {
+      "mtime": 1781812474439.0886,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "web-dashboard/e2e/dashboard.spec.ts": {
+      "mtime": 1781938665382.2683,
+      "size": 4694,
+      "symbolHash": "d688677500b4"
+    },
+    "web-dashboard/playwright.config.ts": {
+      "mtime": 1781938665381.268,
+      "size": 429,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "web-dashboard/src/api.ts": {
+      "mtime": 1781938665382.2683,
+      "size": 3261,
+      "symbolHash": "a3cb02df4a7a"
+    },
+    "web-dashboard/src/app.ts": {
+      "mtime": 1781938665389.2686,
+      "size": 30888,
+      "symbolHash": "94c00a4337cd"
+    },
+    "web-dashboard/src/index.ts": {
+      "mtime": 1781938665381.268,
+      "size": 545,
+      "symbolHash": "c494a2e75e63"
+    },
+    "web-dashboard/src/router.ts": {
+      "mtime": 1781938665382.2683,
+      "size": 1928,
+      "symbolHash": "d001ff16f185"
+    },
+    "web-dashboard/src/types.ts": {
+      "mtime": 1781938665384.2683,
+      "size": 2899,
+      "symbolHash": "7a4dd899b531"
+    },
+    "web-dashboard/src/ui.ts": {
+      "mtime": 1781938665389.2686,
+      "size": 12896,
+      "symbolHash": "ed155e7f875e"
+    },
+    "web-dashboard/vite.config.ts": {
+      "mtime": 1781938665385.2683,
+      "size": 328,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "web-dashboard/vitest.config.ts": {
+      "mtime": 1781812474440.0886,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    }
+  },
+  "indexedAt": 1781949197180
+}

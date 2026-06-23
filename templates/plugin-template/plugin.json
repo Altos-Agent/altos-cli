@@ -1,0 +1,14 @@
+{
+  "name": "{{name}}",
+  "version": "0.1.0",
+  "description": "{{description}}",
+  "entry": "dist/index.js",
+  "permissions": [],
+  "tools": [],
+  "commands": [],
+  "hooks": [],
+  "memory_providers": [],
+  "model_providers": [],
+  "mcp_servers": [],
+  "skills": []
+}

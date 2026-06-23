@@ -1,0 +1,33 @@
+{
+  "name": "@altos/mcp",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Altos MCP client and server - Model Context Protocol integration",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./client": "./dist/client/index.js",
+    "./server": "./dist/server/index.js",
+    "./protocol": "./dist/protocol/index.js",
+    "./config": "./dist/config.js",
+    "./transport": "./dist/transport.js",
+    "./types": "./dist/types.js"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "dev": "tsc --build --watch",
+    "test": "vitest run",
+    "lint": "biome lint .",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@altos/core": "workspace:*",
+    "@altos/permissions": "workspace:*",
+    "@altos/tools": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}

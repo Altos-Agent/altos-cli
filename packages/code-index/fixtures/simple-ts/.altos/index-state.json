@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "root": "/home/oguz/Masaüstü/AltosAgent/packages/code-index/fixtures/simple-ts",
+  "files": {
+    "src/bar.ts": {
+      "mtime": 1781873060811.4072,
+      "size": 181,
+      "symbolHash": "9cdf597e7316"
+    },
+    "src/foo.ts": {
+      "mtime": 1781873060157.4236,
+      "size": 275,
+      "symbolHash": "8ed427476e2c"
+    },
+    "src/index.ts": {
+      "mtime": 1781873084791.8108,
+      "size": 84,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "src/utils/math.ts": {
+      "mtime": 1781873062404.3672,
+      "size": 146,
+      "symbolHash": "aa2354a71e9c"
+    },
+    "src/utils/strings.ts": {
+      "mtime": 1781873063658.3357,
+      "size": 198,
+      "symbolHash": "2ac42136fe44"
+    },
+    "test/foo.test.ts": {
+      "mtime": 1781873065996.2773,
+      "size": 459,
+      "symbolHash": "938f929f9d0b"
+    }
+  },
+  "indexedAt": 1781967271099
+}

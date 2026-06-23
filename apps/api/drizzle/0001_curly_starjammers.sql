@@ -1,1 +1,0 @@
-ALTER TABLE "tokens" ADD COLUMN "max_trade_usd" numeric(18, 2);

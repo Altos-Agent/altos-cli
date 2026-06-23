@@ -1,1 +1,0 @@
-ALTER TABLE "wallet_schedules" ADD COLUMN "trade_amount_usd" numeric(18, 2) DEFAULT '1' NOT NULL;

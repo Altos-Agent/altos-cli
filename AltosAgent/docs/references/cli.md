@@ -1,15 +1,12 @@
 # CLI Reference
 
-## Commands
+## Quick Reference
 
-### `altos --version`
+| Option | Description |
+|--------|-------------|
+| `--version`, `-v` | Print version and exit |
+| `--help`, `-h` | Print help and exit |
+| `--config=<path>` | Use alternate config file |
+| `--json` | Output JSON format (where supported) |
 
-Print the installed version.
-
-### `altos --help`
-
-Print help information.
-
-### `altos --config=<path>`
-
-Use a specific config file.
+For the full command reference, see [Commands](../cli/commands.md).

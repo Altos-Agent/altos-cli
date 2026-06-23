@@ -1,62 +1,52 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "composite": true,
-    "incremental": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
     "paths": {
+      "@altos/ai": ["../../packages/ai/dist"],
+      "@altos/ai/*": ["../../packages/ai/dist/*"],
+      "@altos/cloud": ["../../packages/cloud/dist"],
+      "@altos/cloud/*": ["../../packages/cloud/dist/*"],
+      "@altos/code-index": ["../../packages/code-index/dist"],
+      "@altos/code-index/*": ["../../packages/code-index/dist/*"],
+      "@altos/config": ["../../packages/config/dist"],
+      "@altos/core": ["../../packages/core/dist"],
+      "@altos/core/*": ["../../packages/core/dist/*"],
       "@altos/evals": ["../../packages/evals/dist"],
-      "@altos/evals/*": ["../../packages/evals/dist/*"]
+      "@altos/evals/*": ["../../packages/evals/dist/*"],
+      "@altos/mcp": ["../../packages/mcp/dist"],
+      "@altos/mcp/*": ["../../packages/mcp/dist/*"],
+      "@altos/memory": ["../../packages/memory/dist"],
+      "@altos/packages": ["../../packages/packages/dist"],
+      "@altos/packages/*": ["../../packages/packages/dist/*"],
+      "@altos/plugins": ["../../packages/plugins/dist"],
+      "@altos/plugins/*": ["../../packages/plugins/dist/*"],
+      "@altos/sandbox": ["../../packages/sandbox/dist"],
+      "@altos/sandbox/*": ["../../packages/sandbox/dist/*"],
+      "@altos/skills": ["../../packages/skills/dist"],
+      "@altos/skills/*": ["../../packages/skills/dist/*"],
+      "@altos/tools": ["../../packages/tools/dist"],
+      "@altos/tools/*": ["../../packages/tools/dist/*"]
     }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", ".turbo", "src/**/*.test.ts"],
   "references": [
-    {
-      "path": "../../packages/skills"
-    },
-    {
-      "path": "../../packages/packages"
-    },
-    {
-      "path": "../../packages/plugins"
-    },
-    {
-      "path": "../../packages/core"
-    },
-    {
-      "path": "../../packages/ai"
-    },
-    {
-      "path": "../../packages/tools"
-    },
-    {
-      "path": "../../packages/code-index"
-    },
-    {
-      "path": "../../packages/config"
-    },
-    {
-      "path": "../../packages/sandbox"
-    },
-    {
-      "path": "../../packages/evals"
-    }
+    { "path": "../../packages/core" },
+    { "path": "../../packages/ai" },
+    { "path": "../../packages/tools" },
+    { "path": "../../packages/code-index" },
+    { "path": "../../packages/config" },
+    { "path": "../../packages/sandbox" },
+    { "path": "../../packages/evals" },
+    { "path": "../../packages/mcp" },
+    { "path": "../../packages/memory" },
+    { "path": "../../packages/packages" },
+    { "path": "../../packages/plugins" },
+    { "path": "../../packages/skills" },
+    { "path": "../../packages/cloud" }
   ]
 }

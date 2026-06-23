@@ -1,50 +1,48 @@
-# Altos Agent Platform
+# 🎵 Altos Agent Platform
 
-<!-- Badges -->
-<div align="center">
+> **Altos** — where agents sing in harmony. A professional-grade, modular, plugin-first CLI agent platform built for developers who demand power, control, and extensibility.
 
-![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)
-![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)
-![pnpm](https://img.shields.io/badge/pnpm-9.0%2B-orange)
-![Vitest](https://img.shields.io/badge/Vitest-2.1-green)
-
-<!-- Social Badges -->
-![GitHub Stars](https://img.shields.io/github/stars/Altos-Agent/altos-cli?style=flat&logo=github)
-![GitHub Forks](https://img.shields.io/github/forks/Altos-Agent/altos-cli?style=flat&logo=github)
-![GitHub Issues](https://img.shields.io/github/issues/Altos-Agent/altos-cli)
-
-<!-- Build Status -->
-![CI](https://github.com/Altos-Agent/altos-cli/actions/workflows/ci.yml/badge.svg)
-![Build](https://img.shields.io/badge/build-passing-brightgreen)
-![Tests](https://img.shields.io/badge/tests-100%25-brightgreen)
-
-</div>
+```
+         ♪━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━♫
+    ╭──────────────────────────────────────────────────────────────────────────╮
+    │   __    __    __    __    __    __    __    __    __    __    __    __   │
+    │  │  │──│  │──│  │──│  │──│  │──│  │──│  │──│  │──│  │──│  │──│  │  │
+    │  │🌀│  │🌀│  │🌀│  │🌀│  │🌀│  │🌀│  │🌀│  │🌀│  │🌀│  │🌀│  │🌀│  │
+    │  │__│  │__│  │__│  │__│  │__│  │__│  │__│  │__│  │__│  │__│  │__│  │__│  │
+    │    │    │    │    │    │    │    │    │    │    │    │    │    │    │    │
+    │  ──┴──────────────────────────────────────────────────────────────└──   │
+    │                                                                            │
+    │   ◠ ◡ ◠   Your AI coding assistant that you OWN, EXTEND, and CONTROL   ◠ ◡ ◠   │
+    ╰──────────────────────────────────────────────────────────────────────────╯
+         ♪━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━♫
+```
 
 ---
 
-## 🚀 What is Altos?
+## ✨ What is Altos?
 
-**Altos** is a professional-grade, modular, plugin-first CLI agent platform built for developers who demand power, control, and extensibility. It combines the best ideas from modern AI coding assistants with a unique architecture that puts you in the driver's seat.
+Altos is a professional-grade, modular, **plugin-first CLI agent platform** built for developers who demand power, control, and extensibility. It combines the best ideas from modern AI coding assistants with a unique architecture that puts you in the driver's seat.
 
-> 💡 *"Altos gives you an AI coding assistant that you own, extend, and control — running locally by default, scaling to the cloud when you need it."*
-
-### Key Features
-
-| Feature | Description |
-|---------|-------------|
-| 🔌 **Plugin-First Architecture** | Extend everything — tools, skills, memory adapters, AI providers, MCP servers |
-| 🛡️ **Safe by Default** | Permission engine, sandbox isolation, audit logging, secret masking — all built-in |
-| 🧠 **Memory That Persists** | Session history, cross-session context, and pluggable memory backends |
-| 🔍 **Repository Intelligence** | Code indexing, symbol maps, semantic search — understand your codebase deeply |
-| 🧩 **MCP Integration** | Full Model Context Protocol support for additional tools and resources |
-| ☁️ **Cloud-Ready** | Run locally or deploy to cloud workers — same experience everywhere |
-| 🎯 **Skill System** | Reusable, composable agent behaviors and workflows |
-| 📦 **Monorepo-Ready** | Built with pnpm workspaces for managing packages and apps |
+> *"Altos gives you an AI coding assistant that you own, extend, and control — running locally by default, scaling to the cloud when you need it."*
 
 ---
 
-## ⚡ Quick Start
+## 🎯 Key Features
+
+| | | |
+|---|---|---|
+| 🔌 **Plugin-First Architecture** | Extend everything — tools, skills, memory adapters, AI providers, MCP servers | ♻️ |
+| 🛡️ **Safe by Default** | Permission engine, sandbox isolation, audit logging, secret masking — all built-in | 🔒 |
+| 🧠 **Memory That Persists** | Session history, cross-session context, and pluggable memory backends | 💾 |
+| 🔍 **Repository Intelligence** | Code indexing, symbol maps, semantic search — understand your codebase deeply | 🔎 |
+| 🧩 **MCP Integration** | Full Model Context Protocol support for additional tools and resources | 🔗 |
+| ☁️ **Cloud-Ready** | Run locally or deploy to cloud workers — same experience everywhere | ☁️ |
+| 🎯 **Skill System** | Reusable, composable agent behaviors and workflows | 🛠️ |
+| 📦 **Monorepo-Ready** | Built with pnpm workspaces for managing packages and apps | 📦 |
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
@@ -52,7 +50,7 @@
 - **pnpm** 9.0.0 or higher
 - **Git**
 
-### Installation
+### Install
 
 ```bash
 # Clone the repository
@@ -134,9 +132,7 @@ altos-cli/
 
 ---
 
-## 🎨 Architecture Highlights
-
-### Permission Engine
+## 🛡️ Permission Engine
 
 Every tool call is gated by an explicit permission check:
 
@@ -146,7 +142,9 @@ altos "Read the contents of src/auth.ts"
 # → "Allow Read to access src/auth.ts? [y/N]"
 ```
 
-### Sandbox Isolation
+---
+
+## 📦 Sandbox Isolation
 
 Run untrusted code in isolated environments:
 
@@ -158,7 +156,9 @@ altos --sandbox docker "Execute this code"
 altos --sandbox podman "Execute this code"
 ```
 
-### Plugin System
+---
+
+## 🔌 Plugin System
 
 ```bash
 # Create a new plugin
@@ -218,6 +218,14 @@ pnpm format
 
 ---
 
+## 🎵 Nightingales Sing
+
+Altos is named after the **nightingale** (bülbül) — a bird celebrated across cultures for its powerful song. Much like the nightingale fills the silence with music, Altos fills your development workflow with intelligent, orchestrated automation.
+
+> *"In every codebase, there is a song to be sung. Altos is your nightingale."*
+
+---
+
 ## 📄 License
 
 Apache License 2.0 — see [LICENSE](LICENSE)
@@ -236,8 +244,11 @@ Contributions are welcome! Please read our contributing guidelines before submit
 
 <div align="center">
 
-**Built with ❤️ by developers, for developers**
+**Built with 🎵 by developers, for developers**
 
 *Star us on GitHub if you find Altos useful!*
+
+[![GitHub Stars](https://img.shields.io/github/stars/Altos-Agent/altos-cli?style=flat&logo=github)](https://github.com/Altos-Agent/altos-cli)
+[![GitHub Forks](https://img.shields.io/github/forks/Altos-Agent/altos-cli?style=flat&logo=github)](https://github.com/Altos-Agent/altos-cli)
 
 </div>

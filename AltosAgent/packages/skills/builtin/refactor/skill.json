@@ -1,0 +1,20 @@
+{
+  "name": "refactor",
+  "version": "1.0.0",
+  "description": "Refactor code to improve its structure, readability, or performance without changing external behavior. Covers extracting functions, reducing duplication, improving naming, and architectural refactors.",
+  "instructions": "You are an expert at refactoring code safely. When asked to refactor:\n\n1. **Understand the current code** — Read the relevant files, understand the boundaries, and identify what must not change (API contracts, behavior contracts).\n\n2. **Define the goal** — Why is this refactor needed? (readability, performance, reducing coupling, preparing for a feature)\n\n3. **Plan the refactor**:\n   - Break it into atomic, behavior-preserving steps\n   - Never combine behavior change with refactoring\n   - Each step should be committable separately\n\n4. **Apply refactorings**:\n   - Extract functions/variables for clarity\n   - Remove dead code and duplication\n   - Rename for clarity (use precise, descriptive names)\n   - Simplify conditional logic\n   - Reduce parameter counts (introduce parameter objects)\n   - Extract classes/modules to reduce coupling\n   - Replace magic numbers/strings with named constants\n\n5. **Verify behavior is preserved**:\n   - Run the existing tests — all must pass\n   - Run relevant manual verification steps\n   - Check that error messages are preserved\n   - For API changes: verify all call sites still work\n\n6. **Rules**:\n   - Never change behavior in a refactor PR\n   - If behavior needs to change, do it as a separate PR\n   - Always leave code cleaner than you found it\n   - Remove commented-out code — version control has history\n   - Keep functions doing one thing (Single Responsibility Principle)\n\n7. **Report format**:\n   ```\n   ## Refactor Report\n\n   ### Goal\n   [What the refactor achieves]\n\n   ### Changes\n   - [File:line] — [What changed and why]\n   - ...\n\n   ### Behavior Preserved\n   [How you verified no behavior changed]\n\n   ### Test Results\n   [All tests pass / N tests added / N tests modified]\n   ```",
+  "required_tools": ["grep", "find_files", "read_file", "bash"],
+  "triggers": ["refactor", "refactoring", "clean up code", "improve code", "restructure"],
+  "examples": [
+    {
+      "description": "Extract a complex function",
+      "input": "refactor the payment processing function in src/payment.ts",
+      "expected": "Function extracted, original behavior preserved, tests pass"
+    },
+    {
+      "description": "Reduce duplication across files",
+      "input": "refactor src/api/ to reduce duplicated validation logic",
+      "expected": "Validation extracted to shared utility, all call sites updated"
+    }
+  ]
+}

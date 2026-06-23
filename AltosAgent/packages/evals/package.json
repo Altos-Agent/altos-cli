@@ -1,0 +1,37 @@
+{
+  "name": "@altos/evals",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Altos evaluation framework - benchmark agent performance",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./runner": "./dist/runner/index.js",
+    "./runner/eval-runner": "./dist/runner/eval-runner.js",
+    "./runner/session-replay-runner": "./dist/runner/session-replay-runner.js",
+    "./metrics": "./dist/metrics/index.js",
+    "./core/types": "./dist/core/types.js",
+    "./core/score": "./dist/core/score.js",
+    "./session/recorder": "./dist/session/recorder.js",
+    "./session/store": "./dist/session/store.js",
+    "./reports/reporter": "./dist/reports/reporter.js",
+    "./scenarios": "./dist/scenarios/index.js",
+    "./runtime/factory": "./dist/runtime/factory.js"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "dev": "tsc --build --watch",
+    "test": "vitest run",
+    "lint": "biome lint .",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@altos/core": "workspace:*",
+    "@altos/tools": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}

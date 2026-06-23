@@ -1,0 +1,352 @@
+{
+  "version": 1,
+  "runAt": "2026-06-20T17:05:54.543Z",
+  "repos": [
+    {
+      "name": "AltosAgent",
+      "path": "/home/oguz/Masaüstü/AltosAgent",
+      "discovered": 1017,
+      "indexed": 973,
+      "coldIndexMs": 4271,
+      "warmIndexMs": 686,
+      "incrementalIndexMs": 399,
+      "selectionMs": 8,
+      "memoryMb": 663,
+      "tokenEstimate": 25901,
+      "actualTokens": 25924,
+      "tokenAccuracy": 0.0008872087640796173,
+      "selections": [
+        {
+          "category": "CLI command routing",
+          "query": "command",
+          "selectedFiles": [
+            "apps/cli/src/commands/index.ts",
+            "apps/cli/src/commands/tools.ts",
+            "apps/cli/src/commands/skills.ts",
+            "apps/cli/src/commands/sandbox.ts",
+            "apps/cli/src/commands/replay.ts",
+            "apps/cli/src/commands/plugins.ts",
+            "apps/cli/src/commands/packages.ts",
+            "apps/cli/src/commands/mcp.ts",
+            "apps/cli/src/commands/evals.ts",
+            "apps/cli/src/commands/agents.ts"
+          ],
+          "scores": [
+            0.5477012187215599,
+            0.46308217816975544,
+            0.46306436312912486,
+            0.4630109337134304,
+            0.4629754568931614,
+            0.4629400766303082,
+            0.46290479266206985,
+            0.462852014258356,
+            0.4627996737119527,
+            0.4627125
+          ],
+          "qualityNote": "GOOD: High score with symbol match"
+        },
+        {
+          "category": "Memory redaction",
+          "query": "memory",
+          "selectedFiles": [
+            "packages/memory/src/providers/LocalMemoryProvider.ts",
+            "packages/memory/src/providers/HermesMemoryProvider.ts",
+            "packages/memory/src/providers/CodeGraphMemoryProvider.ts",
+            "packages/memory/src/index.ts",
+            "packages/core/src/store/index.ts",
+            "apps/cli/src/commands/memory.ts",
+            "apps/cli/src/commands/interactive.ts",
+            "apps/web-dashboard/src/app.ts",
+            "packages/code-index/src/bench/runner.ts",
+            "packages/config/src/index.ts"
+          ],
+          "scores": [
+            0.497401068286825,
+            0.49727828543249997,
+            0.49715671824999996,
+            0.49134364999999997,
+            0.485,
+            0.426038125,
+            0.425875,
+            0.415,
+            0.415,
+            0.37999999999999995
+          ],
+          "qualityNote": "GOOD: High score with symbol match"
+        },
+        {
+          "category": "Auto compact",
+          "query": "compact",
+          "selectedFiles": [
+            "packages/core/src/context/auto-compactor.ts",
+            "packages/core/src/events/types.ts",
+            "packages/memory/src/compaction.ts",
+            "packages/plugins/src/index.ts",
+            "repository_reference/pi/packages/agent/src/harness/compaction/compaction.ts",
+            "packages/core/src/events/factory.ts",
+            "packages/core/src/context/context-budget.ts",
+            "packages/core/src/runtime/runtime.ts",
+            "packages/evals/src/runtime/fake-runtime.ts",
+            "packages/core/src/context/context-budget.test.ts"
+          ],
+          "scores": [
+            0.49624999999999997,
+            0.462855,
+            0.45,
+            0.45,
+            0.45,
+            0.4285,
+            0.42767378125,
+            0.415,
+            0.415,
+            0.34866874999999997
+          ],
+          "qualityNote": "GOOD: High score with symbol match"
+        },
+        {
+          "category": "Repo indexing",
+          "query": "index",
+          "selectedFiles": [
+            "apps/cli/src/commands/index.ts",
+            "packages/code-index/src/index.ts",
+            "packages/code-index/src/cli/commands/index.ts",
+            "packages/code-index/src/indexer/index.ts",
+            "packages/code-index/src/indexer/index-state.ts",
+            "packages/code-index/src/cli/commands/index-cmd.ts",
+            "packages/code-index/src/cli/commands/context-cmd.ts",
+            "packages/code-index/src/bench/runner.ts",
+            "packages/code-index/src/context/context-builder.ts",
+            "packages/code-index/src/index.test.ts"
+          ],
+          "scores": [
+            0.5700000000000001,
+            0.491684606084542,
+            0.4598416427556,
+            0.4594220110759928,
+            0.45927588232277056,
+            0.42499169259999997,
+            0.4249321,
+            0.422886,
+            0.42167499999999997,
+            0.41188401332093943
+          ],
+          "qualityNote": "GOOD: High score with symbol match"
+        },
+        {
+          "category": "MCP integration",
+          "query": "mcp",
+          "selectedFiles": [
+            "packages/mcp/src/server.ts",
+            "packages/mcp/src/client-manager.ts",
+            "packages/mcp/src/server/stdio-server.ts",
+            "packages/mcp/src/client-manager.test.ts",
+            "packages/mcp/src/config.ts",
+            "apps/cli/src/commands/mcp.ts",
+            "apps/cli/src/index.ts",
+            "apps/web-dashboard/src/app.ts",
+            "examples/mcp/example-plugin-mcp.ts"
+          ],
+          "scores": [
+            0.4977044257601315,
+            0.497487265625,
+            0.4922479978840332,
+            0.48746874999999995,
+            0.4628434201171875,
+            0.456225,
+            0.42184337499999996,
+            0.415,
+            0.415
+          ],
+          "qualityNote": "GOOD: High score with symbol match"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "PolyLSP",
+      "path": "/home/oguz/Masaüstü/PolyLSP",
+      "discovered": 136,
+      "indexed": 132,
+      "coldIndexMs": 2500,
+      "warmIndexMs": 1168,
+      "incrementalIndexMs": 1142,
+      "selectionMs": 2,
+      "memoryMb": 5,
+      "tokenEstimate": 3594,
+      "actualTokens": 3616,
+      "tokenAccuracy": 0.006084070796460177,
+      "selections": [
+        {
+          "category": "CLI command routing",
+          "query": "command",
+          "selectedFiles": [
+            "packages/config/src/resolve.ts",
+            "packages/config/src/project-config.ts",
+            "scripts/dogfood.ts",
+            "packages/core/src/lsp/lsp-process-manager.ts",
+            "packages/memory/src/index.ts",
+            "tests/adapters/integration-harness.ts",
+            "packages/context/src/benchmark.ts",
+            "packages/config/src/schemas.ts",
+            "tests/graph/codegraph-provider.test.ts",
+            "scripts/generate-agent-policy.ts"
+          ],
+          "scores": [
+            0.461578875,
+            0.426925,
+            0.42429999999999995,
+            0.415,
+            0.415,
+            0.40499999999999997,
+            0.37999999999999995,
+            0.358327558125,
+            0.33499999999999996,
+            0.322729
+          ],
+          "qualityNote": "GOOD: High score with symbol match"
+        },
+        {
+          "category": "Memory redaction",
+          "query": "memory",
+          "selectedFiles": [
+            "packages/memory/src/index.ts",
+            "packages/context/src/benchmark.ts",
+            "packages/config/src/schemas.ts",
+            "packages/config/src/project-config.ts"
+          ],
+          "scores": [
+            0.485,
+            0.415,
+            0.37999999999999995,
+            0.14639999999999997
+          ],
+          "qualityNote": "GOOD: High score with symbol match"
+        },
+        {
+          "category": "Auto compact",
+          "query": "compact",
+          "selectedFiles": [],
+          "scores": []
+        },
+        {
+          "category": "Repo indexing",
+          "query": "index",
+          "selectedFiles": [
+            "packages/core/src/cache/index.ts",
+            "tests/core/workspace-detection-service.test.ts"
+          ],
+          "scores": [
+            0.45,
+            0.40499999999999997
+          ],
+          "qualityNote": "GOOD: High score with symbol match"
+        },
+        {
+          "category": "MCP integration",
+          "query": "mcp",
+          "selectedFiles": [
+            "apps/mcp-server/src/tools.ts",
+            "apps/mcp-server/src/server.ts",
+            "scripts/dogfood.ts",
+            "packages/protocol/src/tools.ts",
+            "packages/memory/src/index.ts"
+          ],
+          "scores": [
+            0.463905,
+            0.4635,
+            0.45,
+            0.37999999999999995,
+            0.135
+          ],
+          "qualityNote": "GOOD: High score with symbol match"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "Base-Auto-Trader",
+      "path": "/home/oguz/Masaüstü/Base-Auto-Trader",
+      "discovered": 289,
+      "indexed": 288,
+      "coldIndexMs": 1041,
+      "warmIndexMs": 143,
+      "incrementalIndexMs": 93,
+      "selectionMs": 5,
+      "memoryMb": 0,
+      "tokenEstimate": 6335,
+      "actualTokens": 6356,
+      "tokenAccuracy": 0.003303964757709251,
+      "selections": [
+        {
+          "category": "CLI command routing",
+          "query": "command",
+          "selectedFiles": [
+            "apps/web/components/ui/index.tsx"
+          ],
+          "scores": [
+            0.415
+          ],
+          "qualityNote": "GOOD: High score with symbol match"
+        },
+        {
+          "category": "Memory redaction",
+          "query": "memory",
+          "selectedFiles": [
+            "apps/api/src/test-utils/in-memory-db.ts",
+            "apps/api/src/auth/session-store-factory.ts",
+            "apps/api/src/http/rate-limit-provider.ts",
+            "apps/api/src/e2e-server.ts",
+            "apps/api/src/notifications/telegram.integration.test.ts",
+            "apps/api/src/trades/idempotency-routes.integration.test.ts",
+            "apps/api/src/auth/security.integration.test.ts",
+            "apps/api/src/notifications/telegram-routes.integration.test.ts",
+            "apps/api/src/trades/execute-once-aggregate-risk.integration.test.ts",
+            "apps/api/src/management/verified-registry-management.test.ts"
+          ],
+          "scores": [
+            0.45525238551796876,
+            0.35272893749999995,
+            0.3502523855179687,
+            0.35015903453124997,
+            0.34276596065036913,
+            0.34276596065036913,
+            0.34276249999999997,
+            0.3426511927589843,
+            0.3426511927589843,
+            0.3402523855179687
+          ],
+          "qualityNote": "GOOD: High score with symbol match"
+        },
+        {
+          "category": "Auto compact",
+          "query": "compact",
+          "selectedFiles": [
+            "apps/web/components/trace-timeline.tsx"
+          ],
+          "scores": [
+            0.37999999999999995
+          ],
+          "qualityNote": "GOOD: High score with symbol match"
+        },
+        {
+          "category": "Repo indexing",
+          "query": "index",
+          "selectedFiles": [
+            "apps/api/src/notifications/telegram-routes.integration.test.ts"
+          ],
+          "scores": [
+            0.40499999999999997
+          ],
+          "qualityNote": "GOOD: High score with symbol match"
+        },
+        {
+          "category": "MCP integration",
+          "query": "mcp",
+          "selectedFiles": [],
+          "scores": []
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

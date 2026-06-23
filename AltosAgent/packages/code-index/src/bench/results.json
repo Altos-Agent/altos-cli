@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "runAt": "2026-06-20T12:51:31.076Z",
+  "totalDurationMs": 8451,
+  "results": [
+    {
+      "name": "repo-map-bench-fixture-100",
+      "fixture": "fixture-100",
+      "metrics": {
+        "coldIndexMs": 86,
+        "incrementalIndexMs": 24,
+        "selectionMs": 2,
+        "memoryMb": 18,
+        "tokenEstimateAccuracy": 0.018691588785046728,
+        "watchEventLatencyMs": 100
+      },
+      "passed": true,
+      "timestamp": 1781959882946,
+      "details": {
+        "discovered": 50,
+        "indexed": 50,
+        "selectedCount": 8,
+        "tokenEstimate": 1155,
+        "actualTokenCount": 1177
+      }
+    },
+    {
+      "name": "repo-map-bench-fixture-1k",
+      "fixture": "fixture-1k",
+      "metrics": {
+        "coldIndexMs": 396,
+        "incrementalIndexMs": 148,
+        "selectionMs": 1,
+        "memoryMb": 78,
+        "tokenEstimateAccuracy": 0.014175257731958763,
+        "watchEventLatencyMs": 102
+      },
+      "passed": true,
+      "timestamp": 1781959884097,
+      "details": {
+        "discovered": 286,
+        "indexed": 286,
+        "selectedCount": 8,
+        "tokenEstimate": 1530,
+        "actualTokenCount": 1552
+      }
+    },
+    {
+      "name": "repo-map-bench-fixture-10k",
+      "fixture": "fixture-10k",
+      "metrics": {
+        "coldIndexMs": 1863,
+        "incrementalIndexMs": 1339,
+        "selectionMs": 1,
+        "memoryMb": 42,
+        "tokenEstimateAccuracy": 0.010779029887310143,
+        "watchEventLatencyMs": 101
+      },
+      "passed": true,
+      "timestamp": 1781959891047,
+      "details": {
+        "discovered": 2000,
+        "indexed": 2000,
+        "selectedCount": 8,
+        "tokenEstimate": 2019,
+        "actualTokenCount": 2041
+      }
+    }
+  ]
+}

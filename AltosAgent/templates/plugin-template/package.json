@@ -1,0 +1,33 @@
+{
+  "name": "@altos/plugin-{{name}}",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "{{description}}",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./plugin": "./plugin.json"
+  },
+  "altosPlugin": {
+    "entry": "dist/index.js",
+    "permissions": [],
+    "tools": [],
+    "commands": [],
+    "hooks": [],
+    "skills": []
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "dev": "tsc --build --watch",
+    "test": "vitest run",
+    "lint": "biome lint .",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "devDependencies": {
+    "@altos/plugins": "workspace:*",
+    "@altos/tools": "workspace:*",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

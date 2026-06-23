@@ -1,0 +1,26 @@
+{
+  "name": "@altos/cloud-worker",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Altos cloud worker for remote execution",
+  "license": "Apache-2.0",
+  "private": true,
+  "bin": {
+    "altos-worker": "./bin/worker.js"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "dev": "tsc --build --watch",
+    "test": "vitest run",
+    "lint": "biome lint .",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@altos/core": "workspace:*",
+    "@altos/cloud": "workspace:*"
+  }
+}

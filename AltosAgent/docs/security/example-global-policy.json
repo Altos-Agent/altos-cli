@@ -1,0 +1,93 @@
+{
+  "version": "1.0",
+  "description": "Global Altos policy for user oguz",
+  "rules": [
+    {
+      "action": "allow",
+      "riskCategories": ["read"],
+      "reason": "Read operations are allowed within workspace"
+    },
+    {
+      "action": "ask",
+      "riskCategories": ["write"],
+      "reason": "Write operations require approval"
+    },
+    {
+      "action": "ask",
+      "riskCategories": ["execute"],
+      "reason": "Execute operations require approval"
+    },
+    {
+      "action": "deny",
+      "riskCategories": ["credential"],
+      "reason": "Credential access is blocked"
+    },
+    {
+      "action": "deny",
+      "riskCategories": ["destructive"],
+      "reason": "Destructive operations are blocked"
+    },
+    {
+      "action": "ask",
+      "riskCategories": ["network"],
+      "reason": "Network access requires approval"
+    },
+    {
+      "action": "ask",
+      "riskCategories": ["remote"],
+      "reason": "Remote operations require explicit approval"
+    },
+    {
+      "action": "ask",
+      "riskCategories": ["external_write"],
+      "reason": "External writes require explicit approval"
+    },
+    {
+      "action": "deny",
+      "pathPattern": "^~\\/\\.ssh\\/.*",
+      "reason": "SSH directory is protected"
+    },
+    {
+      "action": "deny",
+      "pathPattern": "^~\\/\\.env$",
+      "reason": "Environment files are protected"
+    },
+    {
+      "action": "deny",
+      "pathPattern": "\\.env$",
+      "reason": "Environment files are protected"
+    },
+    {
+      "action": "deny",
+      "commandPattern": "rm\\s+-rf",
+      "reason": "Recursive force remove is blocked"
+    },
+    {
+      "action": "deny",
+      "commandPattern": "curl.*\\|\\s*sh",
+      "reason": "Pipe to shell is blocked"
+    },
+    {
+      "action": "deny",
+      "commandPattern": "wget.*\\|\\s*sh",
+      "reason": "Pipe to shell is blocked"
+    },
+    {
+      "action": "ask",
+      "commandPattern": "git\\s+push",
+      "reason": "Git push requires approval"
+    }
+  ],
+  "defaults": {
+    "read": "allow",
+    "write": "ask",
+    "execute": "ask",
+    "network": "ask",
+    "credential": "deny",
+    "destructive": "deny",
+    "remote": "ask",
+    "external_write": "ask"
+  },
+  "sessionTimeout": 1800000,
+  "maxSessionApprovals": 100
+}

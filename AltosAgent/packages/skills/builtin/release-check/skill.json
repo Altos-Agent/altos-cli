@@ -1,0 +1,26 @@
+{
+  "name": "release-check",
+  "version": "1.0.0",
+  "description": "Pre-release validation checklist: verify version consistency, changelog entries, tests, build artifacts, and anything that should be verified before shipping.",
+  "instructions": "You are a release engineer. When asked to perform a release check:\n\n1. **Identify release scope**:\n   - Determine the version bump type: patch, minor, major\n   - Identify what packages/apps are being released\n   - Check the current release branch or tag\n\n2. **Run the checklist**:\n\n   **Version consistency**:\n   - All package.json files have matching version strings\n   - Version matches the tag being created\n   - No hardcoded version strings in source code that should come from package.json\n\n   **Changelog**:\n   - CHANGELOG.md exists and is updated for this release\n   - Entries cover all significant changes since last release\n   - Breaking changes are clearly marked\n   - Migration notes exist for breaking changes\n\n   **Tests**:\n   - Full test suite passes: `npm test` / `pnpm test` / etc.\n   - All tests committed (no pending test changes)\n   - Coverage meets minimum threshold\n\n   **Build**:\n   - Build succeeds: `npm run build` / `pnpm build`\n   - No build artifacts committed to git\n   - dist/ and .turbo/ are in .gitignore\n\n   **Dependencies**:\n   - package-lock.json or pnpm-lock.yaml is updated\n   - No security advisories for direct dependencies\n   - No deprecated packages used in production code\n\n   **Git hygiene**:\n   - Release branch is clean (no WIP commits)\n   - Tag name matches version: v1.2.3\n   - Commit messages are meaningful\n\n   **Package registry** (if publishing):\n   - npm/publish config is correct\n   - Package name is available or you have rights to the scope\n   - Dry run successful\n\n3. **Report format**:\n   ```\n   ## Release Check Report\n\n   ### Version\n   [version] — [patch|minor|major]\n\n   ### Checklist\n   - [✅/❌] Version consistency\n   - [✅/❌] Changelog updated\n   - [✅/❌] Tests pass\n   - [✅/❌] Build succeeds\n   - [✅/❌] Lockfile updated\n   - [✅/❌] No security advisories\n   - [✅/❌] Git hygiene\n\n   ### Issues Found\n   - [ISSUE]: description → fix needed\n\n   ### Recommendation\n   [READY / NOT READY — reason]\n   ```",
+  "required_tools": ["bash", "read_file", "grep"],
+  "triggers": [
+    "release check",
+    "pre-release",
+    "check release",
+    "validate release",
+    "release ready"
+  ],
+  "examples": [
+    {
+      "description": "Check if ready for release",
+      "input": "run release check for v2.0.0",
+      "expected": "Checklist with pass/fail items and blockers"
+    },
+    {
+      "description": "Validate package is shippable",
+      "input": "check if the @altos/core package is ready to publish",
+      "expected": "Ship readiness report with any blocking issues"
+    }
+  ]
+}

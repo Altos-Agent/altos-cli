@@ -1,0 +1,34 @@
+{
+  "name": "@altos/local-api",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Altos local API server for development and local execution",
+  "license": "Apache-2.0",
+  "private": true,
+  "bin": {
+    "altos-serve": "./bin/server.js"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "dev": "tsc --build --watch",
+    "test": "vitest run",
+    "lint": "biome lint .",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo",
+    "start": "node bin/server.js"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@altos/ai": "workspace:*",
+    "@altos/cloud": "workspace:*",
+    "@altos/core": "workspace:*",
+    "@altos/plugins": "workspace:*",
+    "ws": "^8.21.0"
+  }
+}

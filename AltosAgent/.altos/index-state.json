@@ -1,0 +1,4872 @@
+{
+  "version": 1,
+  "root": "/home/oguz/Masaüstü/AltosAgent",
+  "files": {
+    "apps/cli/bin/altos.js": {
+      "mtime": 1781812456895.078,
+      "size": 152,
+      "symbolHash": "bb436ff2e356"
+    },
+    "apps/cli/src/commands/agents.ts": {
+      "mtime": 1781938665379.268,
+      "size": 5905,
+      "symbolHash": "6fce0769d804"
+    },
+    "apps/cli/src/commands/cloud.ts": {
+      "mtime": 1781938665379.268,
+      "size": 2673,
+      "symbolHash": "5dc08cda9fa1"
+    },
+    "apps/cli/src/commands/config.ts": {
+      "mtime": 1781943538112.354,
+      "size": 3170,
+      "symbolHash": "f1bc1f788a76"
+    },
+    "apps/cli/src/commands/context.ts": {
+      "mtime": 1781966762113.4216,
+      "size": 2046,
+      "symbolHash": "93ffd80241e9"
+    },
+    "apps/cli/src/commands/doctor.ts": {
+      "mtime": 1781972873818.0247,
+      "size": 4101,
+      "symbolHash": "21c86b9454f5"
+    },
+    "apps/cli/src/commands/evals.ts": {
+      "mtime": 1781938665374.2678,
+      "size": 1506,
+      "symbolHash": "f6ebf7353f2b"
+    },
+    "apps/cli/src/commands/index.ts": {
+      "mtime": 1781951451570.6099,
+      "size": 1822,
+      "symbolHash": "7381d5052bce"
+    },
+    "apps/cli/src/commands/interactive.ts": {
+      "mtime": 1781945544207.307,
+      "size": 10735,
+      "symbolHash": "65183a7c400b"
+    },
+    "apps/cli/src/commands/map.ts": {
+      "mtime": 1781972952977.407,
+      "size": 976,
+      "symbolHash": "dd59a1268ef3"
+    },
+    "apps/cli/src/commands/mcp.ts": {
+      "mtime": 1781938665380.268,
+      "size": 15386,
+      "symbolHash": "312a1c8212bf"
+    },
+    "apps/cli/src/commands/memory.ts": {
+      "mtime": 1781972905126.7712,
+      "size": 3642,
+      "symbolHash": "b641b14ec544"
+    },
+    "apps/cli/src/commands/models.ts": {
+      "mtime": 1781943527648.533,
+      "size": 1887,
+      "symbolHash": "bbb535156fe7"
+    },
+    "apps/cli/src/commands/packages.ts": {
+      "mtime": 1781938665380.268,
+      "size": 8305,
+      "symbolHash": "ab27b39603fa"
+    },
+    "apps/cli/src/commands/perf.ts": {
+      "mtime": 1781943990805.6445,
+      "size": 5318,
+      "symbolHash": "c0671b405170"
+    },
+    "apps/cli/src/commands/plugins.ts": {
+      "mtime": 1781938665388.2686,
+      "size": 13841,
+      "symbolHash": "62c633f03f16"
+    },
+    "apps/cli/src/commands/print.ts": {
+      "mtime": 1781943976853.8813,
+      "size": 2417,
+      "symbolHash": "9444e6dd235f"
+    },
+    "apps/cli/src/commands/replay.ts": {
+      "mtime": 1781903067434.561,
+      "size": 1230,
+      "symbolHash": "602881ca19c6"
+    },
+    "apps/cli/src/commands/run.ts": {
+      "mtime": 1781943983173.7742,
+      "size": 2986,
+      "symbolHash": "0026e0e9f1db"
+    },
+    "apps/cli/src/commands/sandbox.ts": {
+      "mtime": 1781938665380.268,
+      "size": 5545,
+      "symbolHash": "d2309487c56a"
+    },
+    "apps/cli/src/commands/search.ts": {
+      "mtime": 1781943550176.1477,
+      "size": 748,
+      "symbolHash": "288cb8961504"
+    },
+    "apps/cli/src/commands/serve.ts": {
+      "mtime": 1781889806132.9565,
+      "size": 1966,
+      "symbolHash": "4db12d198b82"
+    },
+    "apps/cli/src/commands/session-helpers.ts": {
+      "mtime": 1781943655669.346,
+      "size": 1721,
+      "symbolHash": "fb7670247021"
+    },
+    "apps/cli/src/commands/skills.ts": {
+      "mtime": 1781938665380.268,
+      "size": 8152,
+      "symbolHash": "d20c6b3dbbe0"
+    },
+    "apps/cli/src/commands/tools.ts": {
+      "mtime": 1781972940282.501,
+      "size": 4854,
+      "symbolHash": "7a8ac086d20e"
+    },
+    "apps/cli/src/index.test.ts": {
+      "mtime": 1781865220493.0828,
+      "size": 12099,
+      "symbolHash": "199d5e6345ed"
+    },
+    "apps/cli/src/index.ts": {
+      "mtime": 1781966816297.7817,
+      "size": 16134,
+      "symbolHash": "0933b39a6ea6"
+    },
+    "apps/cli/vitest.config.ts": {
+      "mtime": 1781812456894.4043,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "apps/cloud-worker/bin/worker.js": {
+      "mtime": 1781889617726.1462,
+      "size": 200,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "apps/cloud-worker/src/index.ts": {
+      "mtime": 1781938665388.2686,
+      "size": 9420,
+      "symbolHash": "73ad2aab9f5d"
+    },
+    "apps/cloud-worker/vitest.config.ts": {
+      "mtime": 1781970721091.8584,
+      "size": 137,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "apps/local-api/bin/server.js": {
+      "mtime": 1781889759329.4402,
+      "size": 209,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "apps/local-api/src/index.test.ts": {
+      "mtime": 1781942882657.714,
+      "size": 11845,
+      "symbolHash": "67ba28205b9e"
+    },
+    "apps/local-api/src/index.ts": {
+      "mtime": 1781938665391.2686,
+      "size": 17401,
+      "symbolHash": "771a5afb1ad2"
+    },
+    "apps/local-api/vitest.config.ts": {
+      "mtime": 1781812474439.0886,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "apps/web-dashboard/e2e/dashboard.spec.ts": {
+      "mtime": 1781938665382.2683,
+      "size": 4694,
+      "symbolHash": "d688677500b4"
+    },
+    "apps/web-dashboard/playwright.config.ts": {
+      "mtime": 1781938665381.268,
+      "size": 429,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "apps/web-dashboard/src/api.ts": {
+      "mtime": 1781938665382.2683,
+      "size": 3261,
+      "symbolHash": "a3cb02df4a7a"
+    },
+    "apps/web-dashboard/src/app.ts": {
+      "mtime": 1781938665389.2686,
+      "size": 30888,
+      "symbolHash": "94c00a4337cd"
+    },
+    "apps/web-dashboard/src/index.ts": {
+      "mtime": 1781938665381.268,
+      "size": 545,
+      "symbolHash": "c494a2e75e63"
+    },
+    "apps/web-dashboard/src/router.ts": {
+      "mtime": 1781938665382.2683,
+      "size": 1928,
+      "symbolHash": "d001ff16f185"
+    },
+    "apps/web-dashboard/src/types.ts": {
+      "mtime": 1781938665384.2683,
+      "size": 2899,
+      "symbolHash": "7a4dd899b531"
+    },
+    "apps/web-dashboard/src/ui.ts": {
+      "mtime": 1781938665389.2686,
+      "size": 12896,
+      "symbolHash": "ed155e7f875e"
+    },
+    "apps/web-dashboard/vite.config.ts": {
+      "mtime": 1781938665385.2683,
+      "size": 328,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "apps/web-dashboard/vitest.config.ts": {
+      "mtime": 1781970745948.7434,
+      "size": 137,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "examples/mcp/example-plugin-mcp.ts": {
+      "mtime": 1781938665388.2686,
+      "size": 5809,
+      "symbolHash": "c1575fdcc944"
+    },
+    "examples/plugins/bash-guard-plugin/index.js": {
+      "mtime": 1781938665387.2686,
+      "size": 3526,
+      "symbolHash": "b53fce9d6e74"
+    },
+    "examples/plugins/hello-plugin/index.js": {
+      "mtime": 1781938665388.2686,
+      "size": 1824,
+      "symbolHash": "06305ac5a7f7"
+    },
+    "packages/ai/src/fake.test.ts": {
+      "mtime": 1781938665390.2686,
+      "size": 5651,
+      "symbolHash": "e68cf922ef4a"
+    },
+    "packages/ai/src/index.ts": {
+      "mtime": 1781938665390.2686,
+      "size": 6408,
+      "symbolHash": "ba8c2c8efcb4"
+    },
+    "packages/ai/src/messages/index.ts": {
+      "mtime": 1781938665388.2686,
+      "size": 351,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/ai/src/prompt/index.ts": {
+      "mtime": 1781812962973.7183,
+      "size": 51,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/ai/src/provider/index.ts": {
+      "mtime": 1781812962969.6443,
+      "size": 101,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/ai/src/providers/anthropic.ts": {
+      "mtime": 1781938665394.2688,
+      "size": 10924,
+      "symbolHash": "0535d4f170ce"
+    },
+    "packages/ai/src/providers/base.ts": {
+      "mtime": 1781938665390.2686,
+      "size": 2243,
+      "symbolHash": "9989887838f6"
+    },
+    "packages/ai/src/providers/error.ts": {
+      "mtime": 1781938665389.2686,
+      "size": 611,
+      "symbolHash": "e08b28447fb7"
+    },
+    "packages/ai/src/providers/fake.ts": {
+      "mtime": 1781938665391.2686,
+      "size": 4953,
+      "symbolHash": "ea6042ba95bb"
+    },
+    "packages/ai/src/providers/index.ts": {
+      "mtime": 1781938665390.2686,
+      "size": 360,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/ai/src/providers/local.ts": {
+      "mtime": 1781938665396.2688,
+      "size": 6578,
+      "symbolHash": "70d6b489b9b7"
+    },
+    "packages/ai/src/providers/openai.ts": {
+      "mtime": 1781938665395.2688,
+      "size": 8879,
+      "symbolHash": "d43af19b5f3f"
+    },
+    "packages/ai/src/providers/openrouter.ts": {
+      "mtime": 1781938665394.2688,
+      "size": 9585,
+      "symbolHash": "3041c03bc333"
+    },
+    "packages/ai/src/registry.ts": {
+      "mtime": 1781938665395.2688,
+      "size": 8380,
+      "symbolHash": "d6ddfbfc8f74"
+    },
+    "packages/ai/vitest.config.ts": {
+      "mtime": 1781812292924.5566,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/cloud/src/client/index.ts": {
+      "mtime": 1781889962827.5706,
+      "size": 101,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/cloud/src/index.test.ts": {
+      "mtime": 1781938665396.2688,
+      "size": 13018,
+      "symbolHash": "c18af19560ee"
+    },
+    "packages/cloud/src/index.ts": {
+      "mtime": 1781938665399.269,
+      "size": 19295,
+      "symbolHash": "d1add5644acf"
+    },
+    "packages/cloud/src/sync/index.ts": {
+      "mtime": 1781812963049.8809,
+      "size": 41,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/cloud/src/worker/index.ts": {
+      "mtime": 1781889963426.566,
+      "size": 89,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/cloud/vitest.config.ts": {
+      "mtime": 1781812417779.06,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/code-index/fixtures/multi-package/packages/pkg-a/src/index.ts": {
+      "mtime": 1781873069141.1987,
+      "size": 60,
+      "symbolHash": "ee85a74656b2"
+    },
+    "packages/code-index/fixtures/multi-package/packages/pkg-b/src/index.ts": {
+      "mtime": 1781873071139.149,
+      "size": 103,
+      "symbolHash": "a3c1008fcf34"
+    },
+    "packages/code-index/fixtures/simple-ts/src/bar.ts": {
+      "mtime": 1781873060811.4072,
+      "size": 181,
+      "symbolHash": "9cdf597e7316"
+    },
+    "packages/code-index/fixtures/simple-ts/src/foo.ts": {
+      "mtime": 1781873060157.4236,
+      "size": 275,
+      "symbolHash": "8ed427476e2c"
+    },
+    "packages/code-index/fixtures/simple-ts/src/index.ts": {
+      "mtime": 1781873084791.8108,
+      "size": 84,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/code-index/fixtures/simple-ts/src/utils/math.ts": {
+      "mtime": 1781873062404.3672,
+      "size": 146,
+      "symbolHash": "aa2354a71e9c"
+    },
+    "packages/code-index/fixtures/simple-ts/src/utils/strings.ts": {
+      "mtime": 1781873063658.3357,
+      "size": 198,
+      "symbolHash": "2ac42136fe44"
+    },
+    "packages/code-index/fixtures/simple-ts/test/foo.test.ts": {
+      "mtime": 1781873065996.2773,
+      "size": 459,
+      "symbolHash": "938f929f9d0b"
+    },
+    "packages/code-index/fixtures/with-git/src/index.ts": {
+      "mtime": 1781873073300.0952,
+      "size": 60,
+      "symbolHash": "c53e1ff55117"
+    },
+    "packages/code-index/perf-bench.ts": {
+      "mtime": 1781953795031.3638,
+      "size": 5289,
+      "symbolHash": "e5fd326ea63a"
+    },
+    "packages/code-index/src/bench/fixtures.ts": {
+      "mtime": 1781959686885.8687,
+      "size": 11997,
+      "symbolHash": "458ce16020da"
+    },
+    "packages/code-index/src/bench/repo-map-bench.test.ts": {
+      "mtime": 1781954336771.961,
+      "size": 6042,
+      "symbolHash": "afc4302f1d1e"
+    },
+    "packages/code-index/src/bench/runner.ts": {
+      "mtime": 1781959872158.6956,
+      "size": 17379,
+      "symbolHash": "53a8e720da4e"
+    },
+    "packages/code-index/src/cli/commands/context-cmd.test.ts": {
+      "mtime": 1781958995686.895,
+      "size": 8742,
+      "symbolHash": "b4a8dc67ce56"
+    },
+    "packages/code-index/src/cli/commands/context-cmd.ts": {
+      "mtime": 1781958669374.6738,
+      "size": 11740,
+      "symbolHash": "0517d2a41877"
+    },
+    "packages/code-index/src/cli/commands/index-cmd.ts": {
+      "mtime": 1781951584375.2253,
+      "size": 9666,
+      "symbolHash": "c014e5a61666"
+    },
+    "packages/code-index/src/cli/commands/index.ts": {
+      "mtime": 1781972961070.3481,
+      "size": 822,
+      "symbolHash": "612837005ab3"
+    },
+    "packages/code-index/src/cli/commands/map-cmd.ts": {
+      "mtime": 1781973001571.0637,
+      "size": 3372,
+      "symbolHash": "ebdae8ede4ef"
+    },
+    "packages/code-index/src/cli/commands/search-cmd.ts": {
+      "mtime": 1781938665397.2688,
+      "size": 3104,
+      "symbolHash": "f1c9683322dd"
+    },
+    "packages/code-index/src/cli/index.ts": {
+      "mtime": 1781958146085.3425,
+      "size": 539,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/code-index/src/codegraph/codegraph-adapter.ts": {
+      "mtime": 1781938665396.2688,
+      "size": 673,
+      "symbolHash": "effdf8fcdba9"
+    },
+    "packages/code-index/src/codegraph/codegraph-integration.test.ts": {
+      "mtime": 1781951674891.096,
+      "size": 4411,
+      "symbolHash": "fb65ea7204c4"
+    },
+    "packages/code-index/src/codegraph/index.ts": {
+      "mtime": 1781938665399.269,
+      "size": 40,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/code-index/src/context/context-builder.test.ts": {
+      "mtime": 1781956876450.3792,
+      "size": 4444,
+      "symbolHash": "806ec70f555d"
+    },
+    "packages/code-index/src/context/context-builder.ts": {
+      "mtime": 1781956092846.546,
+      "size": 6292,
+      "symbolHash": "e6a63e3edaf2"
+    },
+    "packages/code-index/src/context/index.ts": {
+      "mtime": 1781938665397.2688,
+      "size": 38,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/code-index/src/git/git-context-provider.test.ts": {
+      "mtime": 1781870942638.5156,
+      "size": 3238,
+      "symbolHash": "a9e39405a90e"
+    },
+    "packages/code-index/src/git/git-context-provider.ts": {
+      "mtime": 1781938665400.269,
+      "size": 5226,
+      "symbolHash": "54206af24968"
+    },
+    "packages/code-index/src/git/index.ts": {
+      "mtime": 1781938665397.2688,
+      "size": 43,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/code-index/src/index.test.ts": {
+      "mtime": 1781814036454.0254,
+      "size": 1297,
+      "symbolHash": "2038e3fe39cd"
+    },
+    "packages/code-index/src/index.ts": {
+      "mtime": 1781938665400.269,
+      "size": 1972,
+      "symbolHash": "6ecdc0f9bdaa"
+    },
+    "packages/code-index/src/indexer/index-state.test.ts": {
+      "mtime": 1781953489442.123,
+      "size": 9393,
+      "symbolHash": "0211a981cc6c"
+    },
+    "packages/code-index/src/indexer/index-state.ts": {
+      "mtime": 1781952871673.6973,
+      "size": 6105,
+      "symbolHash": "e95f1a192433"
+    },
+    "packages/code-index/src/indexer/index.test.ts": {
+      "mtime": 1781953562079.6917,
+      "size": 7481,
+      "symbolHash": "0473ea4618a1"
+    },
+    "packages/code-index/src/indexer/index.ts": {
+      "mtime": 1781974498252.176,
+      "size": 8142,
+      "symbolHash": "36a8069bd590"
+    },
+    "packages/code-index/src/indexer/watch.test.ts": {
+      "mtime": 1781952738538.3042,
+      "size": 5526,
+      "symbolHash": "020ef1775e88"
+    },
+    "packages/code-index/src/indexer/watch.ts": {
+      "mtime": 1781952871673.6973,
+      "size": 5869,
+      "symbolHash": "67f1ddfbefd3"
+    },
+    "packages/code-index/src/lsp/index.ts": {
+      "mtime": 1781938665400.269,
+      "size": 34,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/code-index/src/lsp/lsp-adapter.test.ts": {
+      "mtime": 1781938665400.269,
+      "size": 1359,
+      "symbolHash": "e69df8076874"
+    },
+    "packages/code-index/src/lsp/lsp-adapter.ts": {
+      "mtime": 1781938665399.269,
+      "size": 1159,
+      "symbolHash": "0c1b67c51f98"
+    },
+    "packages/code-index/src/parsers/go-parser.ts": {
+      "mtime": 1781947068085.7913,
+      "size": 2018,
+      "symbolHash": "c29cb744b44c"
+    },
+    "packages/code-index/src/parsers/index.ts": {
+      "mtime": 1781947070265.8035,
+      "size": 346,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/code-index/src/parsers/python-parser.ts": {
+      "mtime": 1781951687702.085,
+      "size": 2203,
+      "symbolHash": "7025562b7fde"
+    },
+    "packages/code-index/src/parsers/registry.ts": {
+      "mtime": 1781947053667.7146,
+      "size": 2697,
+      "symbolHash": "3790c9292eee"
+    },
+    "packages/code-index/src/parsers/rust-parser.ts": {
+      "mtime": 1781947070154.8027,
+      "size": 2097,
+      "symbolHash": "ecbf10691847"
+    },
+    "packages/code-index/src/repo-map/index.ts": {
+      "mtime": 1781938665400.269,
+      "size": 39,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/code-index/src/repo-map/repo-map-builder.test.ts": {
+      "mtime": 1781956397036.0945,
+      "size": 19368,
+      "symbolHash": "f61fb5de882d"
+    },
+    "packages/code-index/src/repo-map/repo-map-builder.ts": {
+      "mtime": 1781956755258.829,
+      "size": 20056,
+      "symbolHash": "b24b36569511"
+    },
+    "packages/code-index/src/scanner/index.ts": {
+      "mtime": 1781938665400.269,
+      "size": 40,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/code-index/src/scanner/workspace-scanner.test.ts": {
+      "mtime": 1781938665403.2693,
+      "size": 4066,
+      "symbolHash": "5db804dd2469"
+    },
+    "packages/code-index/src/scanner/workspace-scanner.ts": {
+      "mtime": 1781938665406.2693,
+      "size": 8183,
+      "symbolHash": "845009c35e40"
+    },
+    "packages/code-index/src/search/index.ts": {
+      "mtime": 1781812963011.8809,
+      "size": 43,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/code-index/src/selection/index.ts": {
+      "mtime": 1781938665404.2693,
+      "size": 45,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/code-index/src/selection/relevant-file-selector.test.ts": {
+      "mtime": 1781957404771.7256,
+      "size": 18837,
+      "symbolHash": "8b3a271744b8"
+    },
+    "packages/code-index/src/selection/relevant-file-selector.ts": {
+      "mtime": 1781957255045.468,
+      "size": 28556,
+      "symbolHash": "11067df8bb51"
+    },
+    "packages/code-index/src/symbols/index.ts": {
+      "mtime": 1781938665401.269,
+      "size": 76,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/code-index/src/symbols/symbol-index.test.ts": {
+      "mtime": 1781951214535.0789,
+      "size": 8544,
+      "symbolHash": "53a883cc1057"
+    },
+    "packages/code-index/src/symbols/symbol-index.ts": {
+      "mtime": 1781951066644.7083,
+      "size": 7399,
+      "symbolHash": "f568b1924693"
+    },
+    "packages/code-index/src/symbols/tree-sitter-parser.ts": {
+      "mtime": 1781938665406.2693,
+      "size": 10751,
+      "symbolHash": "0c92ddc8bd28"
+    },
+    "packages/code-index/src/tree/file-tree-index.test.ts": {
+      "mtime": 1781938665403.2693,
+      "size": 3829,
+      "symbolHash": "8f8c511e1566"
+    },
+    "packages/code-index/src/tree/file-tree-index.ts": {
+      "mtime": 1781938665403.2693,
+      "size": 2622,
+      "symbolHash": "d0816a0fc117"
+    },
+    "packages/code-index/src/tree/index.ts": {
+      "mtime": 1781938665403.2693,
+      "size": 38,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/code-index/src/types/tree-sitter-typescript.d.ts": {
+      "mtime": 1781938665404.2693,
+      "size": 279,
+      "symbolHash": "e8d3e41230c8"
+    },
+    "packages/code-index/src/types.ts": {
+      "mtime": 1781956632023.1218,
+      "size": 9880,
+      "symbolHash": "207c49b63efd"
+    },
+    "packages/code-index/vitest.config.ts": {
+      "mtime": 1781812364534.8599,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/config/src/index.ts": {
+      "mtime": 1781945441688.257,
+      "size": 2455,
+      "symbolHash": "212c8b1acb65"
+    },
+    "packages/config/src/loader/index.ts": {
+      "mtime": 1781812963078.9707,
+      "size": 80,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/config/src/schema/index.ts": {
+      "mtime": 1781812963074.686,
+      "size": 81,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/config/vitest.config.ts": {
+      "mtime": 1781970692468.992,
+      "size": 137,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/core/src/adapters/fake.ts": {
+      "mtime": 1781938665408.2695,
+      "size": 4881,
+      "symbolHash": "621925bf1a3c"
+    },
+    "packages/core/src/adapters/index.ts": {
+      "mtime": 1781814980718.2747,
+      "size": 61,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/core/src/config/index.ts": {
+      "mtime": 1781812962965.3948,
+      "size": 97,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/core/src/context/auto-compactor.ts": {
+      "mtime": 1781945408787.702,
+      "size": 12865,
+      "symbolHash": "0b1be48b939d"
+    },
+    "packages/core/src/context/context-budget.test.ts": {
+      "mtime": 1781945845227.64,
+      "size": 9910,
+      "symbolHash": "fa5047630e92"
+    },
+    "packages/core/src/context/context-budget.ts": {
+      "mtime": 1781945389705.1963,
+      "size": 12763,
+      "symbolHash": "d492f0ff8638"
+    },
+    "packages/core/src/context/index.ts": {
+      "mtime": 1781945124585.4607,
+      "size": 445,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/core/src/events/events.test.ts": {
+      "mtime": 1781938665417.2698,
+      "size": 15259,
+      "symbolHash": "6d4b78dce836"
+    },
+    "packages/core/src/events/factory.ts": {
+      "mtime": 1781945178460.5505,
+      "size": 9019,
+      "symbolHash": "d79dd95db78a"
+    },
+    "packages/core/src/events/index.ts": {
+      "mtime": 1781814869688.6816,
+      "size": 90,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/core/src/events/types.ts": {
+      "mtime": 1781945157903.8977,
+      "size": 5490,
+      "symbolHash": "5598111e00fd"
+    },
+    "packages/core/src/index.test.ts": {
+      "mtime": 1781938665407.2693,
+      "size": 2276,
+      "symbolHash": "feac453e5e8a"
+    },
+    "packages/core/src/index.ts": {
+      "mtime": 1781945135787.2715,
+      "size": 3828,
+      "symbolHash": "01ba11bec787"
+    },
+    "packages/core/src/logger/index.ts": {
+      "mtime": 1781812962967.7773,
+      "size": 85,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/core/src/runtime/builtin-subagents.ts": {
+      "mtime": 1781938665408.2695,
+      "size": 10088,
+      "symbolHash": "ab8a8e18ac7c"
+    },
+    "packages/core/src/runtime/index.ts": {
+      "mtime": 1781885723080.5369,
+      "size": 142,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/core/src/runtime/runtime.test.ts": {
+      "mtime": 1781938665413.2698,
+      "size": 17975,
+      "symbolHash": "bba94bd430e2"
+    },
+    "packages/core/src/runtime/runtime.ts": {
+      "mtime": 1781945500099.7976,
+      "size": 24549,
+      "symbolHash": "9bd9acdbdfca"
+    },
+    "packages/core/src/runtime/subagent-manager.test.ts": {
+      "mtime": 1781938665411.2695,
+      "size": 13379,
+      "symbolHash": "c97da41af61a"
+    },
+    "packages/core/src/runtime/subagent-manager.ts": {
+      "mtime": 1781938665409.2695,
+      "size": 8418,
+      "symbolHash": "ba76de6fa765"
+    },
+    "packages/core/src/session/index.ts": {
+      "mtime": 1781814928522.8994,
+      "size": 63,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/core/src/session/session.ts": {
+      "mtime": 1781945275050.657,
+      "size": 4163,
+      "symbolHash": "33f0af0f408c"
+    },
+    "packages/core/src/store/index.ts": {
+      "mtime": 1781938665409.2695,
+      "size": 3333,
+      "symbolHash": "0f32a736ee5c"
+    },
+    "packages/core/src/types/index.ts": {
+      "mtime": 1781885515740.1738,
+      "size": 172,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/core/src/types/subagent.ts": {
+      "mtime": 1781938665409.2695,
+      "size": 2160,
+      "symbolHash": "7d7fd6f23dcc"
+    },
+    "packages/core/vitest.config.ts": {
+      "mtime": 1781812275467.482,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/evals/src/core/score.ts": {
+      "mtime": 1781938665410.2695,
+      "size": 4102,
+      "symbolHash": "05efb63d90ec"
+    },
+    "packages/evals/src/core/types.ts": {
+      "mtime": 1781938665412.2695,
+      "size": 3322,
+      "symbolHash": "57efa7708a8d"
+    },
+    "packages/evals/src/index.ts": {
+      "mtime": 1781938665410.2695,
+      "size": 509,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/evals/src/metrics/collector.ts": {
+      "mtime": 1781900498740.7842,
+      "size": 554,
+      "symbolHash": "80b9f1243a6c"
+    },
+    "packages/evals/src/metrics/index.ts": {
+      "mtime": 1781900498904.7832,
+      "size": 88,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/evals/src/reports/reporter.ts": {
+      "mtime": 1781938665412.2695,
+      "size": 4382,
+      "symbolHash": "fb8efcf2f727"
+    },
+    "packages/evals/src/runner/eval-runner.ts": {
+      "mtime": 1781938665415.2698,
+      "size": 5892,
+      "symbolHash": "205b21f32ef8"
+    },
+    "packages/evals/src/runner/index.ts": {
+      "mtime": 1781938665410.2695,
+      "size": 343,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/evals/src/runner/session-replay-runner.ts": {
+      "mtime": 1781938665412.2695,
+      "size": 4837,
+      "symbolHash": "00a8bd73519d"
+    },
+    "packages/evals/src/runtime/factory.ts": {
+      "mtime": 1781938665412.2695,
+      "size": 3600,
+      "symbolHash": "57788e8d1495"
+    },
+    "packages/evals/src/runtime/fake-runtime.ts": {
+      "mtime": 1781970504337.9019,
+      "size": 10621,
+      "symbolHash": "c903e737cc9f"
+    },
+    "packages/evals/src/scenarios/dangerous-command-refusal.ts": {
+      "mtime": 1781943344555.6738,
+      "size": 712,
+      "symbolHash": "4fe8947c4201"
+    },
+    "packages/evals/src/scenarios/index.ts": {
+      "mtime": 1781945711408.963,
+      "size": 1032,
+      "symbolHash": "7c9c9c3f653f"
+    },
+    "packages/evals/src/scenarios/long-session-auto-compact.ts": {
+      "mtime": 1781970396850.4526,
+      "size": 1348,
+      "symbolHash": "59b0644fd540"
+    },
+    "packages/evals/src/scenarios/memory-search.ts": {
+      "mtime": 1781902661136.6223,
+      "size": 461,
+      "symbolHash": "e1e21d172806"
+    },
+    "packages/evals/src/scenarios/permission-denial.ts": {
+      "mtime": 1781943343225.6968,
+      "size": 710,
+      "symbolHash": "4c4b790f94ad"
+    },
+    "packages/evals/src/scenarios/plugin-tool-execution.ts": {
+      "mtime": 1781902659969.6306,
+      "size": 508,
+      "symbolHash": "58d69a15fa8a"
+    },
+    "packages/evals/src/scenarios/read-only-repo.ts": {
+      "mtime": 1781943341759.722,
+      "size": 744,
+      "symbolHash": "826d04ba48a7"
+    },
+    "packages/evals/src/scenarios/repo-map-generation.ts": {
+      "mtime": 1781943350190.577,
+      "size": 736,
+      "symbolHash": "b19847d7d824"
+    },
+    "packages/evals/src/scenarios/simple-file-edit.ts": {
+      "mtime": 1781943348749.6016,
+      "size": 741,
+      "symbolHash": "80c5dba41099"
+    },
+    "packages/evals/src/scenarios/test-failure-fix.ts": {
+      "mtime": 1781943347046.6309,
+      "size": 779,
+      "symbolHash": "548866f099be"
+    },
+    "packages/evals/src/session/recorder.ts": {
+      "mtime": 1781900539401.5762,
+      "size": 2827,
+      "symbolHash": "13493adc6ec9"
+    },
+    "packages/evals/src/session/store.ts": {
+      "mtime": 1781938665415.2698,
+      "size": 2757,
+      "symbolHash": "f66de4c8a3f8"
+    },
+    "packages/evals/tests/eval-runner.test.ts": {
+      "mtime": 1781970539410.7275,
+      "size": 11492,
+      "symbolHash": "ab73ab940f49"
+    },
+    "packages/evals/tests/long-session-auto-compact.test.ts": {
+      "mtime": 1781970245677.2783,
+      "size": 5554,
+      "symbolHash": "5d24af2524b0"
+    },
+    "packages/evals/tests/session-recorder.test.ts": {
+      "mtime": 1781970207383.4988,
+      "size": 5583,
+      "symbolHash": "dd5c3d2f17f8"
+    },
+    "packages/evals/tests/session-replay-runner.test.ts": {
+      "mtime": 1781970234438.3425,
+      "size": 10350,
+      "symbolHash": "79c2ac11748d"
+    },
+    "packages/evals/tests/session-store.test.ts": {
+      "mtime": 1781970214734.456,
+      "size": 7260,
+      "symbolHash": "1625f65d9347"
+    },
+    "packages/evals/vitest.config.ts": {
+      "mtime": 1781812442851.0706,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/mcp/src/client/index.ts": {
+      "mtime": 1781938665414.2698,
+      "size": 165,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/mcp/src/client-manager.test.ts": {
+      "mtime": 1781938665417.2698,
+      "size": 8721,
+      "symbolHash": "c677456654e8"
+    },
+    "packages/mcp/src/client-manager.ts": {
+      "mtime": 1781938665419.27,
+      "size": 15129,
+      "symbolHash": "c852392ef507"
+    },
+    "packages/mcp/src/config.ts": {
+      "mtime": 1781938665416.2698,
+      "size": 7664,
+      "symbolHash": "e8ef18006a5e"
+    },
+    "packages/mcp/src/index.ts": {
+      "mtime": 1781938665415.2698,
+      "size": 1127,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/mcp/src/protocol/index.ts": {
+      "mtime": 1781883882706.3896,
+      "size": 92,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/mcp/src/server/index.ts": {
+      "mtime": 1781938665415.2698,
+      "size": 222,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/mcp/src/server/stdio-server.ts": {
+      "mtime": 1781938665419.27,
+      "size": 13772,
+      "symbolHash": "1d159a42cd14"
+    },
+    "packages/mcp/src/server.ts": {
+      "mtime": 1781938665420.27,
+      "size": 10947,
+      "symbolHash": "df9b94eaf39b"
+    },
+    "packages/mcp/src/transport.ts": {
+      "mtime": 1781938665423.27,
+      "size": 8975,
+      "symbolHash": "dd35360cf673"
+    },
+    "packages/mcp/src/types.ts": {
+      "mtime": 1781883869152.2944,
+      "size": 6755,
+      "symbolHash": "dcb1ce63d177"
+    },
+    "packages/mcp/vitest.config.ts": {
+      "mtime": 1781812384727.9446,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/memory/src/__tests__/LocalMemoryProvider.test.ts": {
+      "mtime": 1781938665423.27,
+      "size": 12741,
+      "symbolHash": "695387697c0e"
+    },
+    "packages/memory/src/__tests__/redaction.test.ts": {
+      "mtime": 1781966569739.0212,
+      "size": 7270,
+      "symbolHash": "4fa7da980dbd"
+    },
+    "packages/memory/src/compaction.ts": {
+      "mtime": 1781938665419.27,
+      "size": 7243,
+      "symbolHash": "1f0cea14bd7f"
+    },
+    "packages/memory/src/embeddings/index.ts": {
+      "mtime": 1781812963010.37,
+      "size": 65,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/memory/src/events/index.ts": {
+      "mtime": 1781815141594.6926,
+      "size": 70,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/memory/src/events/jsonl.ts": {
+      "mtime": 1781938665420.27,
+      "size": 8217,
+      "symbolHash": "7a720c964614"
+    },
+    "packages/memory/src/index.ts": {
+      "mtime": 1781938665418.27,
+      "size": 2076,
+      "symbolHash": "0583452c9e19"
+    },
+    "packages/memory/src/providers/CodeGraphMemoryProvider.ts": {
+      "mtime": 1781938665419.27,
+      "size": 2568,
+      "symbolHash": "d7a94db029ec"
+    },
+    "packages/memory/src/providers/HermesMemoryProvider.ts": {
+      "mtime": 1781938665420.27,
+      "size": 2587,
+      "symbolHash": "3531d6368643"
+    },
+    "packages/memory/src/providers/LocalMemoryProvider.ts": {
+      "mtime": 1781938665426.2703,
+      "size": 16903,
+      "symbolHash": "6418a90b0670"
+    },
+    "packages/memory/src/providers/MemoryProvider.ts": {
+      "mtime": 1781938665420.27,
+      "size": 5738,
+      "symbolHash": "d5d845b463e2"
+    },
+    "packages/memory/src/providers/MemplaceMemoryProvider.ts": {
+      "mtime": 1781938665420.27,
+      "size": 2528,
+      "symbolHash": "4f09c293e877"
+    },
+    "packages/memory/src/providers/factory.ts": {
+      "mtime": 1781938665420.27,
+      "size": 2574,
+      "symbolHash": "2748f0606398"
+    },
+    "packages/memory/src/providers/index.ts": {
+      "mtime": 1781867528393.2478,
+      "size": 585,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/memory/src/redaction.ts": {
+      "mtime": 1781967025193.9558,
+      "size": 5438,
+      "symbolHash": "32b290820665"
+    },
+    "packages/memory/src/store/index.ts": {
+      "mtime": 1781812963005.8809,
+      "size": 100,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/memory/vitest.config.ts": {
+      "mtime": 1781812364533.8599,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/packages/src/index.ts": {
+      "mtime": 1781938665423.27,
+      "size": 1421,
+      "symbolHash": "302f91b47610"
+    },
+    "packages/packages/src/loader/index.test.ts": {
+      "mtime": 1781938665422.27,
+      "size": 6618,
+      "symbolHash": "08eb025177ca"
+    },
+    "packages/packages/src/loader/index.ts": {
+      "mtime": 1781967152633.8535,
+      "size": 7666,
+      "symbolHash": "cf35a0f71cb5"
+    },
+    "packages/packages/src/manifest.ts": {
+      "mtime": 1781882289858.8816,
+      "size": 2276,
+      "symbolHash": "67b34dfc049c"
+    },
+    "packages/packages/src/publisher/index.ts": {
+      "mtime": 1781812963044.1272,
+      "size": 44,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/packages/src/registry/index.ts": {
+      "mtime": 1781812963040.002,
+      "size": 96,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/packages/vitest.config.ts": {
+      "mtime": 1781812402546.019,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/permissions/src/audit/index.ts": {
+      "mtime": 1781938665423.27,
+      "size": 7337,
+      "symbolHash": "aa5ecb464497"
+    },
+    "packages/permissions/src/index.test.ts": {
+      "mtime": 1781938665427.2703,
+      "size": 17990,
+      "symbolHash": "291d2a99dcaa"
+    },
+    "packages/permissions/src/index.ts": {
+      "mtime": 1781938665424.2703,
+      "size": 956,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/permissions/src/manager/index.ts": {
+      "mtime": 1781938665426.2703,
+      "size": 12589,
+      "symbolHash": "d463659a3dd9"
+    },
+    "packages/permissions/src/policy/constants.ts": {
+      "mtime": 1781938665424.2703,
+      "size": 7852,
+      "symbolHash": "4e0892153c82"
+    },
+    "packages/permissions/src/policy/engine.ts": {
+      "mtime": 1781938665428.2703,
+      "size": 14997,
+      "symbolHash": "1f5fe95a0489"
+    },
+    "packages/permissions/src/policy/index.ts": {
+      "mtime": 1781938665425.2703,
+      "size": 492,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/permissions/src/policy/types.ts": {
+      "mtime": 1781938665425.2703,
+      "size": 2537,
+      "symbolHash": "e98452235e13"
+    },
+    "packages/permissions/src/utils/path.ts": {
+      "mtime": 1781850014310.1543,
+      "size": 1986,
+      "symbolHash": "94d2a7ba90c9"
+    },
+    "packages/permissions/vitest.config.ts": {
+      "mtime": 1781812339673.7551,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/plugins/src/index.ts": {
+      "mtime": 1781938665428.2703,
+      "size": 11666,
+      "symbolHash": "88359e839640"
+    },
+    "packages/plugins/src/loader/index.ts": {
+      "mtime": 1781938665428.2703,
+      "size": 8465,
+      "symbolHash": "2153266a4c04"
+    },
+    "packages/plugins/src/loader/loader.test.ts": {
+      "mtime": 1781938665430.2705,
+      "size": 7865,
+      "symbolHash": "9aeac799971f"
+    },
+    "packages/plugins/src/manager/index.ts": {
+      "mtime": 1781938665434.2708,
+      "size": 14162,
+      "symbolHash": "9fc0f8b81eba"
+    },
+    "packages/plugins/src/permissions/index.ts": {
+      "mtime": 1781938665428.2703,
+      "size": 6644,
+      "symbolHash": "f2c21ba0df40"
+    },
+    "packages/plugins/src/plugins.test.ts": {
+      "mtime": 1781938665431.2705,
+      "size": 10880,
+      "symbolHash": "7c020a1839fe"
+    },
+    "packages/plugins/src/registry/index.ts": {
+      "mtime": 1781938665427.2703,
+      "size": 264,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/plugins/vitest.config.ts": {
+      "mtime": 1781812384728.9446,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/sandbox/src/docker.ts": {
+      "mtime": 1781938665433.2705,
+      "size": 15316,
+      "symbolHash": "9e21a41ea5ca"
+    },
+    "packages/sandbox/src/index.test.ts": {
+      "mtime": 1781938665441.271,
+      "size": 21541,
+      "symbolHash": "4d485db44b19"
+    },
+    "packages/sandbox/src/index.ts": {
+      "mtime": 1781938665428.2703,
+      "size": 1140,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/sandbox/src/limits/index.ts": {
+      "mtime": 1781812963004.4126,
+      "size": 72,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/sandbox/src/local.ts": {
+      "mtime": 1781938665433.2705,
+      "size": 9814,
+      "symbolHash": "dbdac99d6f97"
+    },
+    "packages/sandbox/src/policy.ts": {
+      "mtime": 1781938665430.2705,
+      "size": 8220,
+      "symbolHash": "f389e3fc136e"
+    },
+    "packages/sandbox/src/process/index.ts": {
+      "mtime": 1781812963000.3594,
+      "size": 74,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/sandbox/src/provider.ts": {
+      "mtime": 1781938665430.2705,
+      "size": 6003,
+      "symbolHash": "6faa95ce82d5"
+    },
+    "packages/sandbox/src/sandbox.ts": {
+      "mtime": 1781938665433.2705,
+      "size": 5970,
+      "symbolHash": "b95ab1dbe2b9"
+    },
+    "packages/sandbox/vitest.config.ts": {
+      "mtime": 1781812339674.7551,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/sdk/src/client/index.ts": {
+      "mtime": 1781812963054.7222,
+      "size": 60,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/sdk/src/index.ts": {
+      "mtime": 1781812963056.4548,
+      "size": 871,
+      "symbolHash": "94ec59a5f65f"
+    },
+    "packages/sdk/src/server/index.ts": {
+      "mtime": 1781812963058.0728,
+      "size": 46,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/sdk/vitest.config.ts": {
+      "mtime": 1781970690682.0002,
+      "size": 137,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/skills/src/builtin/index.test.ts": {
+      "mtime": 1781966646390.9346,
+      "size": 2081,
+      "symbolHash": "890d07f82732"
+    },
+    "packages/skills/src/builtin/index.ts": {
+      "mtime": 1781966606867.9795,
+      "size": 1396,
+      "symbolHash": "e9bac7b0f967"
+    },
+    "packages/skills/src/index.ts": {
+      "mtime": 1781938665434.2708,
+      "size": 1882,
+      "symbolHash": "f73c553b04f6"
+    },
+    "packages/skills/src/loader/index.test.ts": {
+      "mtime": 1781966619860.9648,
+      "size": 5343,
+      "symbolHash": "0740df2d0a49"
+    },
+    "packages/skills/src/loader/index.ts": {
+      "mtime": 1781966606870.9795,
+      "size": 4160,
+      "symbolHash": "d286ba80886e"
+    },
+    "packages/skills/src/manager/index.ts": {
+      "mtime": 1781938665434.2708,
+      "size": 122,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/skills/src/manifest.ts": {
+      "mtime": 1781882208280.294,
+      "size": 1534,
+      "symbolHash": "f4d1bd481e8e"
+    },
+    "packages/skills/src/runner/index.ts": {
+      "mtime": 1781812963037.959,
+      "size": 49,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/skills/vitest.config.ts": {
+      "mtime": 1781812402545.019,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/telemetry/src/index.ts": {
+      "mtime": 1781938665436.2708,
+      "size": 1323,
+      "symbolHash": "5eb99ba8f4f5"
+    },
+    "packages/telemetry/src/metrics/index.ts": {
+      "mtime": 1781938665434.2708,
+      "size": 133,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/telemetry/src/tracing/index.ts": {
+      "mtime": 1781812963066.6494,
+      "size": 83,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/telemetry/vitest.config.ts": {
+      "mtime": 1781970694055.9846,
+      "size": 137,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/tools/src/agent.ts": {
+      "mtime": 1781938665438.2708,
+      "size": 12321,
+      "symbolHash": "57a0c5eef24a"
+    },
+    "packages/tools/src/fs/index.ts": {
+      "mtime": 1781941921767.1917,
+      "size": 22381,
+      "symbolHash": "db4a1a168c05"
+    },
+    "packages/tools/src/git/index.ts": {
+      "mtime": 1781938665442.271,
+      "size": 15759,
+      "symbolHash": "786f2871554c"
+    },
+    "packages/tools/src/index.ts": {
+      "mtime": 1781938665439.271,
+      "size": 6610,
+      "symbolHash": "f64a6a32d62e"
+    },
+    "packages/tools/src/search/index.ts": {
+      "mtime": 1781942288422.6396,
+      "size": 16011,
+      "symbolHash": "a4c05c5d9971"
+    },
+    "packages/tools/src/security.ts": {
+      "mtime": 1781942775175.6238,
+      "size": 13215,
+      "symbolHash": "766c88d76c71"
+    },
+    "packages/tools/src/shell/index.ts": {
+      "mtime": 1781938665440.271,
+      "size": 5264,
+      "symbolHash": "3207505fd4cd"
+    },
+    "packages/tools/tests/native-tools.test.ts": {
+      "mtime": 1781942563319.4583,
+      "size": 30615,
+      "symbolHash": "a6832e0b6f4c"
+    },
+    "packages/tools/vitest.config.ts": {
+      "mtime": 1781812316510.6572,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "packages/tui/src/index.test.ts": {
+      "mtime": 1781938665451.2715,
+      "size": 15102,
+      "symbolHash": "e52a2d1f8133"
+    },
+    "packages/tui/src/index.ts": {
+      "mtime": 1781938665455.2717,
+      "size": 18749,
+      "symbolHash": "da906477492e"
+    },
+    "packages/tui/vitest.config.ts": {
+      "mtime": 1781812316508.9692,
+      "size": 114,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/aider/aider/website/_includes/code-in-json-benchmark.js": {
+      "mtime": 1781813787328.0564,
+      "size": 5516,
+      "symbolHash": "a6e5fc3f1b78"
+    },
+    "repository_reference/aider/aider/website/_includes/code-in-json-syntax.js": {
+      "mtime": 1781813787328.0564,
+      "size": 4546,
+      "symbolHash": "8a99254bf50f"
+    },
+    "repository_reference/aider/aider/website/_includes/leaderboard.js": {
+      "mtime": 1781813787328.0564,
+      "size": 8578,
+      "symbolHash": "10e7fc48a4f7"
+    },
+    "repository_reference/aider/aider/website/_includes/leaderboard_table.js": {
+      "mtime": 1781938665449.2712,
+      "size": 21562,
+      "symbolHash": "711a9a4b36b1"
+    },
+    "repository_reference/aider/aider/website/_includes/quant-chart.js": {
+      "mtime": 1781813787328.228,
+      "size": 2342,
+      "symbolHash": "bec036587c95"
+    },
+    "repository_reference/aider/aider/website/_includes/qwq-chart.js": {
+      "mtime": 1781813787328.228,
+      "size": 3731,
+      "symbolHash": "2971bf710617"
+    },
+    "repository_reference/aider/aider/website/_includes/recording.js": {
+      "mtime": 1781938665452.2715,
+      "size": 13711,
+      "symbolHash": "070ceee9d81e"
+    },
+    "repository_reference/aider/tests/fixtures/languages/javascript/test.js": {
+      "mtime": 1781938665450.2715,
+      "size": 417,
+      "symbolHash": "dafa3e82b00a"
+    },
+    "repository_reference/aider/tests/fixtures/languages/tsx/test.tsx": {
+      "mtime": 1781938665450.2715,
+      "size": 713,
+      "symbolHash": "d2cd9df01b32"
+    },
+    "repository_reference/aider/tests/fixtures/languages/typescript/test.ts": {
+      "mtime": 1781938665456.2717,
+      "size": 73,
+      "symbolHash": "e2b47edca21e"
+    },
+    "repository_reference/aider/tests/fixtures/sample-code-base/sample.js": {
+      "mtime": 1781938665452.2715,
+      "size": 1332,
+      "symbolHash": "e3d59715c7b4"
+    },
+    "repository_reference/aider/tests/fixtures/watch.js": {
+      "mtime": 1781938665455.2717,
+      "size": 605,
+      "symbolHash": "6a98343fd0a2"
+    },
+    "repository_reference/aider/tests/fixtures/watch_question.js": {
+      "mtime": 1781813787457.2285,
+      "size": 225,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/.pi/extensions/prompt-url-widget.ts": {
+      "mtime": 1781938665465.2722,
+      "size": 8847,
+      "symbolHash": "7c3272d1de44"
+    },
+    "repository_reference/pi/.pi/extensions/redraws.ts": {
+      "mtime": 1781938665456.2717,
+      "size": 644,
+      "symbolHash": "b7ce3679d596"
+    },
+    "repository_reference/pi/.pi/extensions/tps.ts": {
+      "mtime": 1781938665458.2717,
+      "size": 1618,
+      "symbolHash": "16512d2ffa1b"
+    },
+    "repository_reference/pi/packages/agent/src/agent-loop.ts": {
+      "mtime": 1781938665470.2722,
+      "size": 21669,
+      "symbolHash": "3bbd3276e37a"
+    },
+    "repository_reference/pi/packages/agent/src/agent.ts": {
+      "mtime": 1781938665469.2722,
+      "size": 18121,
+      "symbolHash": "2e441f4389ce"
+    },
+    "repository_reference/pi/packages/agent/src/harness/compaction/branch-summarization.ts": {
+      "mtime": 1781938665469.2722,
+      "size": 8976,
+      "symbolHash": "7923a8bcc43c"
+    },
+    "repository_reference/pi/packages/agent/src/harness/compaction/compaction.ts": {
+      "mtime": 1781938665483.273,
+      "size": 24728,
+      "symbolHash": "3a9d9c88c7ef"
+    },
+    "repository_reference/pi/packages/agent/src/harness/compaction/utils.ts": {
+      "mtime": 1781938665464.272,
+      "size": 4911,
+      "symbolHash": "6d1e4f5d41f8"
+    },
+    "repository_reference/pi/packages/agent/src/harness/env/nodejs.ts": {
+      "mtime": 1781938665476.2727,
+      "size": 16998,
+      "symbolHash": "b2d50d533338"
+    },
+    "repository_reference/pi/packages/agent/src/harness/messages.ts": {
+      "mtime": 1781938665464.272,
+      "size": 4481,
+      "symbolHash": "6500d56c8a41"
+    },
+    "repository_reference/pi/packages/agent/src/harness/prompt-templates.ts": {
+      "mtime": 1781938665471.2725,
+      "size": 9790,
+      "symbolHash": "88bbd1272fa0"
+    },
+    "repository_reference/pi/packages/agent/src/harness/session/jsonl-repo.ts": {
+      "mtime": 1781938665468.2722,
+      "size": 6206,
+      "symbolHash": "4a2de4b80b48"
+    },
+    "repository_reference/pi/packages/agent/src/harness/session/jsonl-storage.ts": {
+      "mtime": 1781938665476.2727,
+      "size": 10382,
+      "symbolHash": "d0433826b66c"
+    },
+    "repository_reference/pi/packages/agent/src/harness/session/memory-repo.ts": {
+      "mtime": 1781938665470.2722,
+      "size": 1933,
+      "symbolHash": "1eb33b7bff15"
+    },
+    "repository_reference/pi/packages/agent/src/harness/session/memory-storage.ts": {
+      "mtime": 1781938665477.2727,
+      "size": 4231,
+      "symbolHash": "6bab4440a6c0"
+    },
+    "repository_reference/pi/packages/agent/src/harness/session/repo-utils.ts": {
+      "mtime": 1781938665470.2722,
+      "size": 1682,
+      "symbolHash": "4cc772a86fc5"
+    },
+    "repository_reference/pi/packages/agent/src/harness/session/session.ts": {
+      "mtime": 1781938665480.2727,
+      "size": 8608,
+      "symbolHash": "f6055bb625eb"
+    },
+    "repository_reference/pi/packages/agent/src/harness/session/uuid.ts": {
+      "mtime": 1781938665479.2727,
+      "size": 1716,
+      "symbolHash": "14c33140765c"
+    },
+    "repository_reference/pi/packages/agent/src/harness/skills.ts": {
+      "mtime": 1781938665479.2727,
+      "size": 13815,
+      "symbolHash": "0baf35f91f42"
+    },
+    "repository_reference/pi/packages/agent/src/harness/system-prompt.ts": {
+      "mtime": 1781938665471.2725,
+      "size": 1218,
+      "symbolHash": "dc29d7ab1742"
+    },
+    "repository_reference/pi/packages/agent/src/harness/types.ts": {
+      "mtime": 1781938665494.2734,
+      "size": 26925,
+      "symbolHash": "3dc6888ce1a1"
+    },
+    "repository_reference/pi/packages/agent/src/harness/utils/shell-output.ts": {
+      "mtime": 1781938665477.2727,
+      "size": 4742,
+      "symbolHash": "051ef5fa692a"
+    },
+    "repository_reference/pi/packages/agent/src/harness/utils/truncate.ts": {
+      "mtime": 1781938665484.273,
+      "size": 10083,
+      "symbolHash": "3f0a1e72dba8"
+    },
+    "repository_reference/pi/packages/agent/src/index.ts": {
+      "mtime": 1781938665477.2727,
+      "size": 1316,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/agent/src/node.ts": {
+      "mtime": 1781813664745.0208,
+      "size": 88,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/agent/src/proxy.ts": {
+      "mtime": 1781938665483.273,
+      "size": 11261,
+      "symbolHash": "66cc7a5c5b43"
+    },
+    "repository_reference/pi/packages/agent/src/types.ts": {
+      "mtime": 1781938665487.2732,
+      "size": 16807,
+      "symbolHash": "bd168594e56b"
+    },
+    "repository_reference/pi/packages/agent/test/agent.test.ts": {
+      "mtime": 1781938665490.2732,
+      "size": 21364,
+      "symbolHash": "4e2e39320276"
+    },
+    "repository_reference/pi/packages/agent/test/e2e.test.ts": {
+      "mtime": 1781938665488.2732,
+      "size": 13406,
+      "symbolHash": "2637d6603cd0"
+    },
+    "repository_reference/pi/packages/agent/test/harness/agent-harness-stream.test.ts": {
+      "mtime": 1781938665488.2732,
+      "size": 7396,
+      "symbolHash": "65667eddd326"
+    },
+    "repository_reference/pi/packages/agent/test/harness/agent-harness.test.ts": {
+      "mtime": 1781938665497.2737,
+      "size": 23590,
+      "symbolHash": "f8f35a6c5b50"
+    },
+    "repository_reference/pi/packages/agent/test/harness/compaction.test.ts": {
+      "mtime": 1781938665504.274,
+      "size": 25782,
+      "symbolHash": "f0aa50e304e8"
+    },
+    "repository_reference/pi/packages/agent/test/harness/nodejs-env.test.ts": {
+      "mtime": 1781938665490.2732,
+      "size": 12102,
+      "symbolHash": "3e3ef57f70a7"
+    },
+    "repository_reference/pi/packages/agent/test/harness/prompt-templates.test.ts": {
+      "mtime": 1781938665491.2734,
+      "size": 3557,
+      "symbolHash": "aed8ee1e2dea"
+    },
+    "repository_reference/pi/packages/agent/test/harness/repo.test.ts": {
+      "mtime": 1781938665498.2737,
+      "size": 4145,
+      "symbolHash": "0e13d7acbe88"
+    },
+    "repository_reference/pi/packages/agent/test/harness/resource-formatting.test.ts": {
+      "mtime": 1781938665489.2732,
+      "size": 1056,
+      "symbolHash": "9d4ca0675ef7"
+    },
+    "repository_reference/pi/packages/agent/test/harness/session-test-utils.ts": {
+      "mtime": 1781938665490.2732,
+      "size": 1413,
+      "symbolHash": "d68cc08fafbe"
+    },
+    "repository_reference/pi/packages/agent/test/harness/session-uuid.test.ts": {
+      "mtime": 1781938665491.2734,
+      "size": 1788,
+      "symbolHash": "0e3fd8c9d20c"
+    },
+    "repository_reference/pi/packages/agent/test/harness/session.test.ts": {
+      "mtime": 1781938665501.2737,
+      "size": 7408,
+      "symbolHash": "0b135288d561"
+    },
+    "repository_reference/pi/packages/agent/test/harness/skills.test.ts": {
+      "mtime": 1781938665495.2734,
+      "size": 4013,
+      "symbolHash": "5dc1f0215489"
+    },
+    "repository_reference/pi/packages/agent/test/harness/storage.test.ts": {
+      "mtime": 1781938665497.2737,
+      "size": 11364,
+      "symbolHash": "f485bcd4b273"
+    },
+    "repository_reference/pi/packages/agent/test/harness/system-prompt.test.ts": {
+      "mtime": 1781938665491.2734,
+      "size": 2151,
+      "symbolHash": "eabafae96951"
+    },
+    "repository_reference/pi/packages/agent/test/harness/truncate.test.ts": {
+      "mtime": 1781938665498.2737,
+      "size": 5780,
+      "symbolHash": "07d69adb85e0"
+    },
+    "repository_reference/pi/packages/agent/test/scratch/simple.ts": {
+      "mtime": 1781938665495.2734,
+      "size": 2123,
+      "symbolHash": "ed1f8394a302"
+    },
+    "repository_reference/pi/packages/agent/test/utils/calculate.ts": {
+      "mtime": 1781938665495.2734,
+      "size": 1069,
+      "symbolHash": "7baeda307bf4"
+    },
+    "repository_reference/pi/packages/agent/test/utils/get-current-time.ts": {
+      "mtime": 1781938665497.2737,
+      "size": 1578,
+      "symbolHash": "7bf0eb2b7b78"
+    },
+    "repository_reference/pi/packages/agent/vitest.config.ts": {
+      "mtime": 1781938665497.2737,
+      "size": 192,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/agent/vitest.harness.config.ts": {
+      "mtime": 1781938665498.2737,
+      "size": 467,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/ai/bedrock-provider.d.ts": {
+      "mtime": 1781813664747.3325,
+      "size": 44,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/ai/bedrock-provider.js": {
+      "mtime": 1781813664747.3325,
+      "size": 44,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/ai/scripts/generate-image-models.ts": {
+      "mtime": 1781938665499.2737,
+      "size": 4305,
+      "symbolHash": "530d7aa1d0ac"
+    },
+    "repository_reference/pi/packages/ai/scripts/generate-test-image.ts": {
+      "mtime": 1781938665498.2737,
+      "size": 924,
+      "symbolHash": "20cb5cd02518"
+    },
+    "repository_reference/pi/packages/ai/src/api-registry.ts": {
+      "mtime": 1781938665511.2742,
+      "size": 2648,
+      "symbolHash": "b94ee23f6272"
+    },
+    "repository_reference/pi/packages/ai/src/bedrock-provider.ts": {
+      "mtime": 1781938665500.2737,
+      "size": 167,
+      "symbolHash": "192bea8f310c"
+    },
+    "repository_reference/pi/packages/ai/src/cli.ts": {
+      "mtime": 1781938665505.274,
+      "size": 4614,
+      "symbolHash": "e3f691674086"
+    },
+    "repository_reference/pi/packages/ai/src/env-api-keys.ts": {
+      "mtime": 1781938665501.2737,
+      "size": 7148,
+      "symbolHash": "5b6fd5c81a3a"
+    },
+    "repository_reference/pi/packages/ai/src/image-models.generated.ts": {
+      "mtime": 1781938665508.2742,
+      "size": 15649,
+      "symbolHash": "e966da8080cc"
+    },
+    "repository_reference/pi/packages/ai/src/image-models.ts": {
+      "mtime": 1781938665502.274,
+      "size": 1709,
+      "symbolHash": "002bd1a3bd8d"
+    },
+    "repository_reference/pi/packages/ai/src/images-api-registry.ts": {
+      "mtime": 1781938665506.274,
+      "size": 1699,
+      "symbolHash": "abe9094498c0"
+    },
+    "repository_reference/pi/packages/ai/src/images.ts": {
+      "mtime": 1781938665502.274,
+      "size": 749,
+      "symbolHash": "7e4562f6d300"
+    },
+    "repository_reference/pi/packages/ai/src/index.ts": {
+      "mtime": 1781938665508.2742,
+      "size": 1893,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/ai/src/models.ts": {
+      "mtime": 1781938665507.2742,
+      "size": 3910,
+      "symbolHash": "a2ce317b9f98"
+    },
+    "repository_reference/pi/packages/ai/src/oauth.ts": {
+      "mtime": 1781813664747.8896,
+      "size": 40,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/ai/src/providers/azure-openai-responses.ts": {
+      "mtime": 1781938665516.2744,
+      "size": 10272,
+      "symbolHash": "6179ae5edc29"
+    },
+    "repository_reference/pi/packages/ai/src/providers/cloudflare.ts": {
+      "mtime": 1781938665507.2742,
+      "size": 1677,
+      "symbolHash": "b18a334d0b42"
+    },
+    "repository_reference/pi/packages/ai/src/providers/faux.ts": {
+      "mtime": 1781938665527.275,
+      "size": 16568,
+      "symbolHash": "2b727a949876"
+    },
+    "repository_reference/pi/packages/ai/src/providers/github-copilot-headers.ts": {
+      "mtime": 1781938665511.2742,
+      "size": 1217,
+      "symbolHash": "ce9d3b85c283"
+    },
+    "repository_reference/pi/packages/ai/src/providers/google-shared.ts": {
+      "mtime": 1781938665531.2751,
+      "size": 12785,
+      "symbolHash": "951545a76abd"
+    },
+    "repository_reference/pi/packages/ai/src/providers/google-vertex.ts": {
+      "mtime": 1781938665524.275,
+      "size": 19303,
+      "symbolHash": "4ddfb2803739"
+    },
+    "repository_reference/pi/packages/ai/src/providers/google.ts": {
+      "mtime": 1781938665527.275,
+      "size": 16801,
+      "symbolHash": "c4c85029f225"
+    },
+    "repository_reference/pi/packages/ai/src/providers/images/openrouter.ts": {
+      "mtime": 1781938665516.2744,
+      "size": 6140,
+      "symbolHash": "57887dee0fb2"
+    },
+    "repository_reference/pi/packages/ai/src/providers/images/register-builtins.ts": {
+      "mtime": 1781938665515.2744,
+      "size": 1783,
+      "symbolHash": "599bbe6d319d"
+    },
+    "repository_reference/pi/packages/ai/src/providers/mistral.ts": {
+      "mtime": 1781938665535.2754,
+      "size": 21738,
+      "symbolHash": "f01f52e5b18a"
+    },
+    "repository_reference/pi/packages/ai/src/providers/openai-prompt-cache.ts": {
+      "mtime": 1781938665526.275,
+      "size": 362,
+      "symbolHash": "9775ec9d336b"
+    },
+    "repository_reference/pi/packages/ai/src/providers/openai-responses-shared.ts": {
+      "mtime": 1781938665538.2756,
+      "size": 21280,
+      "symbolHash": "2777590714ed"
+    },
+    "repository_reference/pi/packages/ai/src/providers/openai-responses.ts": {
+      "mtime": 1781938665530.2751,
+      "size": 10754,
+      "symbolHash": "feaf1a91c5a3"
+    },
+    "repository_reference/pi/packages/ai/src/providers/register-builtins.ts": {
+      "mtime": 1781938665552.2761,
+      "size": 15096,
+      "symbolHash": "fbb2ced11771"
+    },
+    "repository_reference/pi/packages/ai/src/providers/simple-options.ts": {
+      "mtime": 1781938665530.2751,
+      "size": 1950,
+      "symbolHash": "2de8b4990152"
+    },
+    "repository_reference/pi/packages/ai/src/providers/transform-messages.ts": {
+      "mtime": 1781938665535.2754,
+      "size": 7399,
+      "symbolHash": "746e068381b2"
+    },
+    "repository_reference/pi/packages/ai/src/session-resources.ts": {
+      "mtime": 1781938665534.2754,
+      "size": 695,
+      "symbolHash": "a090c5a8be61"
+    },
+    "repository_reference/pi/packages/ai/src/stream.ts": {
+      "mtime": 1781938665534.2754,
+      "size": 2091,
+      "symbolHash": "efcba6049522"
+    },
+    "repository_reference/pi/packages/ai/src/types.ts": {
+      "mtime": 1781938665540.2756,
+      "size": 24216,
+      "symbolHash": "9157f7ed9726"
+    },
+    "repository_reference/pi/packages/ai/src/utils/abort-signals.ts": {
+      "mtime": 1781938665535.2754,
+      "size": 1179,
+      "symbolHash": "99234b11c5e5"
+    },
+    "repository_reference/pi/packages/ai/src/utils/diagnostics.ts": {
+      "mtime": 1781938665542.2756,
+      "size": 1405,
+      "symbolHash": "cff1da8c5bde"
+    },
+    "repository_reference/pi/packages/ai/src/utils/event-stream.ts": {
+      "mtime": 1781938665538.2756,
+      "size": 2614,
+      "symbolHash": "59106b0cf183"
+    },
+    "repository_reference/pi/packages/ai/src/utils/hash.ts": {
+      "mtime": 1781938665537.2754,
+      "size": 553,
+      "symbolHash": "426192502818"
+    },
+    "repository_reference/pi/packages/ai/src/utils/headers.ts": {
+      "mtime": 1781938665539.2756,
+      "size": 219,
+      "symbolHash": "60f1ddc1b5c7"
+    },
+    "repository_reference/pi/packages/ai/src/utils/json-parse.ts": {
+      "mtime": 1781938665538.2756,
+      "size": 2991,
+      "symbolHash": "c1b3188f4f69"
+    },
+    "repository_reference/pi/packages/ai/src/utils/node-http-proxy.ts": {
+      "mtime": 1781938665542.2756,
+      "size": 3030,
+      "symbolHash": "e21ad0e0c8b0"
+    },
+    "repository_reference/pi/packages/ai/src/utils/oauth/anthropic.ts": {
+      "mtime": 1781938665546.276,
+      "size": 12631,
+      "symbolHash": "4ce3a6731cd4"
+    },
+    "repository_reference/pi/packages/ai/src/utils/oauth/device-code.ts": {
+      "mtime": 1781938665540.2756,
+      "size": 2909,
+      "symbolHash": "0ecc2ec05ac0"
+    },
+    "repository_reference/pi/packages/ai/src/utils/oauth/github-copilot.ts": {
+      "mtime": 1781938665547.276,
+      "size": 11696,
+      "symbolHash": "1d913cfc9b18"
+    },
+    "repository_reference/pi/packages/ai/src/utils/oauth/index.ts": {
+      "mtime": 1781938665541.2756,
+      "size": 4639,
+      "symbolHash": "9c4adddde2a1"
+    },
+    "repository_reference/pi/packages/ai/src/utils/oauth/oauth-page.ts": {
+      "mtime": 1781938665541.2756,
+      "size": 3158,
+      "symbolHash": "4c41f3516a71"
+    },
+    "repository_reference/pi/packages/ai/src/utils/oauth/openai-codex.ts": {
+      "mtime": 1781938665552.2761,
+      "size": 19312,
+      "symbolHash": "9ce9710a8164"
+    },
+    "repository_reference/pi/packages/ai/src/utils/oauth/pkce.ts": {
+      "mtime": 1781938665542.2756,
+      "size": 1013,
+      "symbolHash": "3dafa82f2a1a"
+    },
+    "repository_reference/pi/packages/ai/src/utils/oauth/types.ts": {
+      "mtime": 1781938665543.2756,
+      "size": 2175,
+      "symbolHash": "73ef2556b747"
+    },
+    "repository_reference/pi/packages/ai/src/utils/overflow.ts": {
+      "mtime": 1781938665545.276,
+      "size": 8853,
+      "symbolHash": "8af925a61161"
+    },
+    "repository_reference/pi/packages/ai/src/utils/provider-env.ts": {
+      "mtime": 1781938665553.2761,
+      "size": 1798,
+      "symbolHash": "2a541fe64753"
+    },
+    "repository_reference/pi/packages/ai/src/utils/sanitize-unicode.ts": {
+      "mtime": 1781938665546.276,
+      "size": 1183,
+      "symbolHash": "94844b5dd7d1"
+    },
+    "repository_reference/pi/packages/ai/src/utils/typebox-helpers.ts": {
+      "mtime": 1781938665549.2761,
+      "size": 801,
+      "symbolHash": "67793432b0ac"
+    },
+    "repository_reference/pi/packages/ai/src/utils/validation.ts": {
+      "mtime": 1781938665555.2764,
+      "size": 9519,
+      "symbolHash": "c155b6953b53"
+    },
+    "repository_reference/pi/packages/ai/test/abort.test.ts": {
+      "mtime": 1781938665555.2764,
+      "size": 10703,
+      "symbolHash": "543a7d7a66bf"
+    },
+    "repository_reference/pi/packages/ai/test/anthropic-adaptive-thinking-models.test.ts": {
+      "mtime": 1781938665549.2761,
+      "size": 1255,
+      "symbolHash": "62e2027f8317"
+    },
+    "repository_reference/pi/packages/ai/test/anthropic-cache-write-1h-cost.test.ts": {
+      "mtime": 1781938665553.2761,
+      "size": 3644,
+      "symbolHash": "386452f4e9ef"
+    },
+    "repository_reference/pi/packages/ai/test/anthropic-eager-tool-input-compat.test.ts": {
+      "mtime": 1781938665557.2764,
+      "size": 4313,
+      "symbolHash": "fd310d1cc1d2"
+    },
+    "repository_reference/pi/packages/ai/test/anthropic-eager-tool-input-e2e.test.ts": {
+      "mtime": 1781938665555.2764,
+      "size": 5335,
+      "symbolHash": "cc5d16874001"
+    },
+    "repository_reference/pi/packages/ai/test/anthropic-empty-thinking-signature-compat.test.ts": {
+      "mtime": 1781938665552.2761,
+      "size": 3023,
+      "symbolHash": "45dee2f9794c"
+    },
+    "repository_reference/pi/packages/ai/test/anthropic-force-adaptive-thinking.test.ts": {
+      "mtime": 1781938665556.2764,
+      "size": 3823,
+      "symbolHash": "f8fc0def79f0"
+    },
+    "repository_reference/pi/packages/ai/test/anthropic-long-cache-retention-e2e.test.ts": {
+      "mtime": 1781938665561.2766,
+      "size": 4341,
+      "symbolHash": "483654690963"
+    },
+    "repository_reference/pi/packages/ai/test/anthropic-oauth.test.ts": {
+      "mtime": 1781938665562.2766,
+      "size": 3383,
+      "symbolHash": "a5be0a660f1d"
+    },
+    "repository_reference/pi/packages/ai/test/anthropic-opus-4-8-smoke.test.ts": {
+      "mtime": 1781938665560.2766,
+      "size": 2676,
+      "symbolHash": "66a1c3e6b44e"
+    },
+    "repository_reference/pi/packages/ai/test/anthropic-sse-parsing.test.ts": {
+      "mtime": 1781938665560.2766,
+      "size": 7254,
+      "symbolHash": "4bd04fcf7f7b"
+    },
+    "repository_reference/pi/packages/ai/test/anthropic-temperature-compat.test.ts": {
+      "mtime": 1781938665561.2766,
+      "size": 3220,
+      "symbolHash": "d717351002d4"
+    },
+    "repository_reference/pi/packages/ai/test/anthropic-thinking-disable.test.ts": {
+      "mtime": 1781938665565.2769,
+      "size": 5422,
+      "symbolHash": "7353151f8e5e"
+    },
+    "repository_reference/pi/packages/ai/test/anthropic-tool-name-normalization.test.ts": {
+      "mtime": 1781938665562.2766,
+      "size": 6993,
+      "symbolHash": "ccefe78d5002"
+    },
+    "repository_reference/pi/packages/ai/test/azure-openai-base-url.test.ts": {
+      "mtime": 1781938665562.2766,
+      "size": 6478,
+      "symbolHash": "672d8ba22d01"
+    },
+    "repository_reference/pi/packages/ai/test/azure-utils.ts": {
+      "mtime": 1781938665565.2769,
+      "size": 979,
+      "symbolHash": "f09394188ae1"
+    },
+    "repository_reference/pi/packages/ai/test/bedrock-convert-messages.test.ts": {
+      "mtime": 1781938665566.2769,
+      "size": 8075,
+      "symbolHash": "3ae06d2e34f7"
+    },
+    "repository_reference/pi/packages/ai/test/bedrock-custom-headers.test.ts": {
+      "mtime": 1781938665563.2766,
+      "size": 7144,
+      "symbolHash": "2ac330942b08"
+    },
+    "repository_reference/pi/packages/ai/test/bedrock-endpoint-resolution.test.ts": {
+      "mtime": 1781938665571.277,
+      "size": 6350,
+      "symbolHash": "af048e4a76e8"
+    },
+    "repository_reference/pi/packages/ai/test/bedrock-models.test.ts": {
+      "mtime": 1781938665573.277,
+      "size": 2769,
+      "symbolHash": "f5b3c48846ea"
+    },
+    "repository_reference/pi/packages/ai/test/bedrock-thinking-payload.test.ts": {
+      "mtime": 1781938665567.2769,
+      "size": 9234,
+      "symbolHash": "98f95b95552d"
+    },
+    "repository_reference/pi/packages/ai/test/bedrock-utils.ts": {
+      "mtime": 1781938665562.2766,
+      "size": 560,
+      "symbolHash": "7280be377991"
+    },
+    "repository_reference/pi/packages/ai/test/cache-retention.test.ts": {
+      "mtime": 1781938665576.2773,
+      "size": 16246,
+      "symbolHash": "210537693a93"
+    },
+    "repository_reference/pi/packages/ai/test/cloudflare-utils.ts": {
+      "mtime": 1781938665563.2766,
+      "size": 352,
+      "symbolHash": "79b6c60db595"
+    },
+    "repository_reference/pi/packages/ai/test/codex-websocket-cached-probe.ts": {
+      "mtime": 1781938665568.2769,
+      "size": 11306,
+      "symbolHash": "46c474e91e96"
+    },
+    "repository_reference/pi/packages/ai/test/context-overflow.test.ts": {
+      "mtime": 1781938665575.2773,
+      "size": 32213,
+      "symbolHash": "68f29aff2431"
+    },
+    "repository_reference/pi/packages/ai/test/cross-provider-handoff.test.ts": {
+      "mtime": 1781938665572.277,
+      "size": 17624,
+      "symbolHash": "e77921fc2452"
+    },
+    "repository_reference/pi/packages/ai/test/empty.test.ts": {
+      "mtime": 1781938665586.2778,
+      "size": 27189,
+      "symbolHash": "cab3f277a0e1"
+    },
+    "repository_reference/pi/packages/ai/test/env-api-keys.test.ts": {
+      "mtime": 1781938665566.2769,
+      "size": 2085,
+      "symbolHash": "77c6b1f018e5"
+    },
+    "repository_reference/pi/packages/ai/test/faux-provider.test.ts": {
+      "mtime": 1781938665582.2776,
+      "size": 22242,
+      "symbolHash": "a74a13b85e3b"
+    },
+    "repository_reference/pi/packages/ai/test/fireworks-models.test.ts": {
+      "mtime": 1781938665577.2773,
+      "size": 8724,
+      "symbolHash": "9f822312bea7"
+    },
+    "repository_reference/pi/packages/ai/test/github-copilot-anthropic.test.ts": {
+      "mtime": 1781938665569.2769,
+      "size": 4219,
+      "symbolHash": "4d6676290503"
+    },
+    "repository_reference/pi/packages/ai/test/github-copilot-oauth.test.ts": {
+      "mtime": 1781938665576.2773,
+      "size": 10643,
+      "symbolHash": "3400b984db4f"
+    },
+    "repository_reference/pi/packages/ai/test/google-shared-convert-tools.test.ts": {
+      "mtime": 1781938665576.2773,
+      "size": 4890,
+      "symbolHash": "87f45480a2e0"
+    },
+    "repository_reference/pi/packages/ai/test/google-shared-gemini3-unsigned-tool-call.test.ts": {
+      "mtime": 1781938665576.2773,
+      "size": 4522,
+      "symbolHash": "e7b960371047"
+    },
+    "repository_reference/pi/packages/ai/test/google-shared-image-tool-result-routing.test.ts": {
+      "mtime": 1781938665576.2773,
+      "size": 3348,
+      "symbolHash": "92e238b32b87"
+    },
+    "repository_reference/pi/packages/ai/test/google-thinking-disable.test.ts": {
+      "mtime": 1781938665579.2773,
+      "size": 5790,
+      "symbolHash": "ca4ff5e57438"
+    },
+    "repository_reference/pi/packages/ai/test/google-thinking-signature.test.ts": {
+      "mtime": 1781938665578.2773,
+      "size": 1796,
+      "symbolHash": "ce4b67dadf19"
+    },
+    "repository_reference/pi/packages/ai/test/google-vertex-api-key-resolution.test.ts": {
+      "mtime": 1781938665582.2776,
+      "size": 6840,
+      "symbolHash": "2faf501fd987"
+    },
+    "repository_reference/pi/packages/ai/test/image-tool-result.test.ts": {
+      "mtime": 1781938665588.2778,
+      "size": 19355,
+      "symbolHash": "d1cb71b63b9f"
+    },
+    "repository_reference/pi/packages/ai/test/images.test.ts": {
+      "mtime": 1781938665579.2773,
+      "size": 3515,
+      "symbolHash": "1fa1b53a747d"
+    },
+    "repository_reference/pi/packages/ai/test/interleaved-thinking.test.ts": {
+      "mtime": 1781938665586.2778,
+      "size": 5522,
+      "symbolHash": "c09673da5ad6"
+    },
+    "repository_reference/pi/packages/ai/test/lazy-module-load.test.ts": {
+      "mtime": 1781938665582.2776,
+      "size": 2954,
+      "symbolHash": "d9380b7bb5ff"
+    },
+    "repository_reference/pi/packages/ai/test/mistral-reasoning-mode.test.ts": {
+      "mtime": 1781938665582.2776,
+      "size": 2650,
+      "symbolHash": "6b2e99291275"
+    },
+    "repository_reference/pi/packages/ai/test/mistral-tool-schema.test.ts": {
+      "mtime": 1781938665581.2776,
+      "size": 2140,
+      "symbolHash": "86ad33ed67df"
+    },
+    "repository_reference/pi/packages/ai/test/node-http-proxy.test.ts": {
+      "mtime": 1781938665582.2776,
+      "size": 2222,
+      "symbolHash": "d1ca2a44cc97"
+    },
+    "repository_reference/pi/packages/ai/test/oauth-device-code.test.ts": {
+      "mtime": 1781938665586.2778,
+      "size": 1675,
+      "symbolHash": "742b6554ea6a"
+    },
+    "repository_reference/pi/packages/ai/test/oauth.ts": {
+      "mtime": 1781938665588.2778,
+      "size": 2640,
+      "symbolHash": "2ebff71bc1fc"
+    },
+    "repository_reference/pi/packages/ai/test/openai-codex-cache-affinity-e2e.test.ts": {
+      "mtime": 1781938665586.2778,
+      "size": 1326,
+      "symbolHash": "4667ab0fe9fd"
+    },
+    "repository_reference/pi/packages/ai/test/openai-codex-oauth.test.ts": {
+      "mtime": 1781938665588.2778,
+      "size": 15237,
+      "symbolHash": "d05e5cb0035b"
+    },
+    "repository_reference/pi/packages/ai/test/openai-completions-cache-control-format.test.ts": {
+      "mtime": 1781938665588.2778,
+      "size": 5526,
+      "symbolHash": "540808f5a1ba"
+    },
+    "repository_reference/pi/packages/ai/test/openai-completions-empty-tools.test.ts": {
+      "mtime": 1781938665589.2778,
+      "size": 9808,
+      "symbolHash": "f824c7f42fa4"
+    },
+    "repository_reference/pi/packages/ai/test/openai-completions-prompt-cache.test.ts": {
+      "mtime": 1781938665591.278,
+      "size": 7118,
+      "symbolHash": "4a4f5d3fd202"
+    },
+    "repository_reference/pi/packages/ai/test/openai-completions-response-model.test.ts": {
+      "mtime": 1781938665588.2778,
+      "size": 4438,
+      "symbolHash": "f174a15f7295"
+    },
+    "repository_reference/pi/packages/ai/test/openai-completions-retry.test.ts": {
+      "mtime": 1781938665588.2778,
+      "size": 2577,
+      "symbolHash": "d7653e5878c6"
+    },
+    "repository_reference/pi/packages/ai/test/openai-completions-thinking-as-text.test.ts": {
+      "mtime": 1781938665592.278,
+      "size": 6101,
+      "symbolHash": "285912c2137f"
+    },
+    "repository_reference/pi/packages/ai/test/openai-completions-tool-result-images.test.ts": {
+      "mtime": 1781938665589.2778,
+      "size": 3076,
+      "symbolHash": "cfd2773a07eb"
+    },
+    "repository_reference/pi/packages/ai/test/openai-responses-cache-affinity-e2e.test.ts": {
+      "mtime": 1781938665592.278,
+      "size": 1282,
+      "symbolHash": "879a213be6c0"
+    },
+    "repository_reference/pi/packages/ai/test/openai-responses-copilot-provider.test.ts": {
+      "mtime": 1781938665592.278,
+      "size": 9516,
+      "symbolHash": "d012db4b39bb"
+    },
+    "repository_reference/pi/packages/ai/test/openai-responses-foreign-toolcall-id.test.ts": {
+      "mtime": 1781938665591.278,
+      "size": 2821,
+      "symbolHash": "0e92e4a4adb5"
+    },
+    "repository_reference/pi/packages/ai/test/openai-responses-message-id.test.ts": {
+      "mtime": 1781938665590.2778,
+      "size": 1765,
+      "symbolHash": "8249db12db42"
+    },
+    "repository_reference/pi/packages/ai/test/openai-responses-partial-json-cleanup.test.ts": {
+      "mtime": 1781938665590.2778,
+      "size": 3488,
+      "symbolHash": "3ab14f5faad5"
+    },
+    "repository_reference/pi/packages/ai/test/openai-responses-reasoning-replay-e2e.test.ts": {
+      "mtime": 1781938665602.2786,
+      "size": 10208,
+      "symbolHash": "26f74c7bad85"
+    },
+    "repository_reference/pi/packages/ai/test/openai-responses-tool-result-images.test.ts": {
+      "mtime": 1781938665595.278,
+      "size": 7680,
+      "symbolHash": "a3ba6e52f39b"
+    },
+    "repository_reference/pi/packages/ai/test/openrouter-cache-write-repro.test.ts": {
+      "mtime": 1781938665602.2786,
+      "size": 2978,
+      "symbolHash": "07e951753500"
+    },
+    "repository_reference/pi/packages/ai/test/openrouter-images.test.ts": {
+      "mtime": 1781938665600.2783,
+      "size": 5064,
+      "symbolHash": "1b44059a1bf8"
+    },
+    "repository_reference/pi/packages/ai/test/overflow.test.ts": {
+      "mtime": 1781938665594.278,
+      "size": 4806,
+      "symbolHash": "20a810c11bef"
+    },
+    "repository_reference/pi/packages/ai/test/responseid.test.ts": {
+      "mtime": 1781938665599.2783,
+      "size": 5000,
+      "symbolHash": "60ef2471787f"
+    },
+    "repository_reference/pi/packages/ai/test/supports-xhigh.test.ts": {
+      "mtime": 1781938665600.2783,
+      "size": 4499,
+      "symbolHash": "edfc76d4c8c8"
+    },
+    "repository_reference/pi/packages/ai/test/together-models.test.ts": {
+      "mtime": 1781938665600.2783,
+      "size": 2750,
+      "symbolHash": "ee6371546382"
+    },
+    "repository_reference/pi/packages/ai/test/tokens.test.ts": {
+      "mtime": 1781938665612.279,
+      "size": 13870,
+      "symbolHash": "36cc2df0f0fd"
+    },
+    "repository_reference/pi/packages/ai/test/tool-call-id-normalization.test.ts": {
+      "mtime": 1781938665605.2786,
+      "size": 9790,
+      "symbolHash": "1b6ed667fa50"
+    },
+    "repository_reference/pi/packages/ai/test/tool-call-without-result.test.ts": {
+      "mtime": 1781938665606.2788,
+      "size": 14062,
+      "symbolHash": "b6e869e774dd"
+    },
+    "repository_reference/pi/packages/ai/test/total-tokens.test.ts": {
+      "mtime": 1781938665611.2788,
+      "size": 29437,
+      "symbolHash": "69c75846419e"
+    },
+    "repository_reference/pi/packages/ai/test/transform-messages-copilot-openai-to-anthropic.test.ts": {
+      "mtime": 1781938665607.2788,
+      "size": 6346,
+      "symbolHash": "da04d115cf41"
+    },
+    "repository_reference/pi/packages/ai/test/unicode-surrogate.test.ts": {
+      "mtime": 1781938665613.279,
+      "size": 28777,
+      "symbolHash": "dbb8043f5221"
+    },
+    "repository_reference/pi/packages/ai/test/validation.test.ts": {
+      "mtime": 1781938665604.2786,
+      "size": 4111,
+      "symbolHash": "835b7ef013cc"
+    },
+    "repository_reference/pi/packages/ai/test/xhigh.test.ts": {
+      "mtime": 1781938665610.2788,
+      "size": 2437,
+      "symbolHash": "3ad7371a6eb7"
+    },
+    "repository_reference/pi/packages/ai/test/xiaomi-models.test.ts": {
+      "mtime": 1781938665606.2788,
+      "size": 537,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/ai/test/xiaomi-token-plan-ams-anthropic-empty-signature-smoke.test.ts": {
+      "mtime": 1781938665608.2788,
+      "size": 3888,
+      "symbolHash": "b75a2afc5f2b"
+    },
+    "repository_reference/pi/packages/ai/test/zen.test.ts": {
+      "mtime": 1781938665608.2788,
+      "size": 891,
+      "symbolHash": "817496e704bc"
+    },
+    "repository_reference/pi/packages/ai/vitest.config.ts": {
+      "mtime": 1781938665607.2788,
+      "size": 192,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/auto-commit-on-exit.ts": {
+      "mtime": 1781938665610.2788,
+      "size": 1664,
+      "symbolHash": "1fd0d24de704"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/bash-spawn-hook.ts": {
+      "mtime": 1781938665611.2788,
+      "size": 723,
+      "symbolHash": "529e4bea8f48"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/bookmark.ts": {
+      "mtime": 1781938665613.279,
+      "size": 1660,
+      "symbolHash": "f9b90f56f08f"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/border-status-editor.ts": {
+      "mtime": 1781938665613.279,
+      "size": 4705,
+      "symbolHash": "eb45244a025c"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/built-in-tool-renderer.ts": {
+      "mtime": 1781938665618.2793,
+      "size": 8829,
+      "symbolHash": "dd112edbe06b"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/claude-rules.ts": {
+      "mtime": 1781938665613.279,
+      "size": 2554,
+      "symbolHash": "b819f490be4f"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/commands.ts": {
+      "mtime": 1781938665614.279,
+      "size": 2827,
+      "symbolHash": "327ac7b0397f"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/confirm-destructive.ts": {
+      "mtime": 1781938665615.279,
+      "size": 1793,
+      "symbolHash": "485952e79488"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/custom-compaction.ts": {
+      "mtime": 1781938665623.2795,
+      "size": 4581,
+      "symbolHash": "6cb2250c3971"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/custom-footer.ts": {
+      "mtime": 1781938665615.279,
+      "size": 2381,
+      "symbolHash": "7da022ef4b54"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/custom-header.ts": {
+      "mtime": 1781938665614.279,
+      "size": 2507,
+      "symbolHash": "6444286f1472"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/custom-provider-anthropic/index.ts": {
+      "mtime": 1781938665631.2798,
+      "size": 21469,
+      "symbolHash": "853c4c08df3e"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/custom-provider-gitlab-duo/index.ts": {
+      "mtime": 1781938665619.2793,
+      "size": 12838,
+      "symbolHash": "2b6d74d67fd3"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/custom-provider-gitlab-duo/test.ts": {
+      "mtime": 1781938665615.279,
+      "size": 2781,
+      "symbolHash": "35bcec847d0e"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/dirty-repo-guard.ts": {
+      "mtime": 1781938665615.279,
+      "size": 1525,
+      "symbolHash": "3d475916084e"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/doom-overlay/doom-component.ts": {
+      "mtime": 1781938665616.279,
+      "size": 3855,
+      "symbolHash": "4d857bef17d0"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/doom-overlay/doom-engine.ts": {
+      "mtime": 1781938665623.2795,
+      "size": 5250,
+      "symbolHash": "9e78114bc4f9"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/doom-overlay/doom-keys.ts": {
+      "mtime": 1781938665616.279,
+      "size": 3597,
+      "symbolHash": "af05b4f0b056"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/doom-overlay/index.ts": {
+      "mtime": 1781938665617.2793,
+      "size": 2313,
+      "symbolHash": "76ec9e22fe53"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/doom-overlay/wad-finder.ts": {
+      "mtime": 1781938665617.2793,
+      "size": 1597,
+      "symbolHash": "fecd52dd2982"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/dynamic-resources/index.ts": {
+      "mtime": 1781938665618.2793,
+      "size": 472,
+      "symbolHash": "80175617b286"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/dynamic-tools.ts": {
+      "mtime": 1781938665625.2795,
+      "size": 2358,
+      "symbolHash": "be3ddcc32250"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/event-bus.ts": {
+      "mtime": 1781938665618.2793,
+      "size": 1392,
+      "symbolHash": "b5c6346ec9a6"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/file-trigger.ts": {
+      "mtime": 1781938665618.2793,
+      "size": 1127,
+      "symbolHash": "fe65e32f2728"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/git-checkpoint.ts": {
+      "mtime": 1781938665619.2793,
+      "size": 1534,
+      "symbolHash": "96ec584d3138"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/git-merge-and-resolve.ts": {
+      "mtime": 1781938665622.2795,
+      "size": 4334,
+      "symbolHash": "db57a2983a5b"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/github-issue-autocomplete.ts": {
+      "mtime": 1781938665621.2793,
+      "size": 5744,
+      "symbolHash": "f9a501be5a47"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/gondolin/index.ts": {
+      "mtime": 1781938665629.2798,
+      "size": 17714,
+      "symbolHash": "e02d5f719b9b"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/handoff.ts": {
+      "mtime": 1781938665624.2795,
+      "size": 6588,
+      "symbolHash": "0b3b00b8511a"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/hello.ts": {
+      "mtime": 1781938665623.2795,
+      "size": 660,
+      "symbolHash": "23567f12f8a6"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/hidden-thinking-label.ts": {
+      "mtime": 1781938665625.2795,
+      "size": 1502,
+      "symbolHash": "c68dfa2e8f8a"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/inline-bash.ts": {
+      "mtime": 1781938665634.28,
+      "size": 3146,
+      "symbolHash": "1552a3b4fd10"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/input-transform-streaming.ts": {
+      "mtime": 1781938665625.2795,
+      "size": 1250,
+      "symbolHash": "e1fcbdcd09de"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/input-transform.ts": {
+      "mtime": 1781938665628.2798,
+      "size": 1505,
+      "symbolHash": "b0e57f900962"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/interactive-shell.ts": {
+      "mtime": 1781938665629.2798,
+      "size": 5142,
+      "symbolHash": "3ce0b47a284f"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/mac-system-theme.ts": {
+      "mtime": 1781938665630.2798,
+      "size": 1251,
+      "symbolHash": "e221aef96ad2"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/message-renderer.ts": {
+      "mtime": 1781938665629.2798,
+      "size": 2002,
+      "symbolHash": "e0e2b7a42616"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/minimal-mode.ts": {
+      "mtime": 1781938665635.28,
+      "size": 14850,
+      "symbolHash": "5d618cdb7700"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/modal-editor.ts": {
+      "mtime": 1781938665631.2798,
+      "size": 2538,
+      "symbolHash": "4c8321bcbaf9"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/model-status.ts": {
+      "mtime": 1781938665634.28,
+      "size": 984,
+      "symbolHash": "164a52cd0d1f"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/notify.ts": {
+      "mtime": 1781938665638.2803,
+      "size": 1946,
+      "symbolHash": "08204876cb28"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/overlay-test.ts": {
+      "mtime": 1781938665641.2803,
+      "size": 5880,
+      "symbolHash": "a5ce62698d7b"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/permission-gate.ts": {
+      "mtime": 1781938665636.28,
+      "size": 1086,
+      "symbolHash": "5c4691f6904c"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/pirate.ts": {
+      "mtime": 1781938665641.2803,
+      "size": 1506,
+      "symbolHash": "93aae3fb1f5d"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/plan-mode/index.ts": {
+      "mtime": 1781938665641.2803,
+      "size": 11550,
+      "symbolHash": "6ed72543aee0"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/plan-mode/utils.ts": {
+      "mtime": 1781938665641.2803,
+      "size": 4328,
+      "symbolHash": "e6dc12130dbd"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/preset.ts": {
+      "mtime": 1781938665649.2808,
+      "size": 15367,
+      "symbolHash": "27ba5525bf94"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/project-trust.ts": {
+      "mtime": 1781938665637.28,
+      "size": 2233,
+      "symbolHash": "ffb29531035e"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/prompt-customizer.ts": {
+      "mtime": 1781938665638.2803,
+      "size": 3157,
+      "symbolHash": "45a4b2547b03"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/protected-paths.ts": {
+      "mtime": 1781938665641.2803,
+      "size": 841,
+      "symbolHash": "d76e0d0ad90a"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/provider-payload.ts": {
+      "mtime": 1781938665642.2803,
+      "size": 780,
+      "symbolHash": "b4bf4fe228d9"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/qna.ts": {
+      "mtime": 1781938665644.2805,
+      "size": 4131,
+      "symbolHash": "d8116fe75065"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/question.ts": {
+      "mtime": 1781938665654.281,
+      "size": 9545,
+      "symbolHash": "5eee396701d5"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/questionnaire.ts": {
+      "mtime": 1781938665656.281,
+      "size": 15403,
+      "symbolHash": "b0b23a2007f1"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/rainbow-editor.ts": {
+      "mtime": 1781938665652.2808,
+      "size": 2523,
+      "symbolHash": "22a7c039a1e8"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/reload-runtime.ts": {
+      "mtime": 1781938665643.2805,
+      "size": 1204,
+      "symbolHash": "72b2492d9122"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/rpc-demo.ts": {
+      "mtime": 1781938665649.2808,
+      "size": 3790,
+      "symbolHash": "af72b4bb4cd7"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/sandbox/index.ts": {
+      "mtime": 1781938665654.281,
+      "size": 9672,
+      "symbolHash": "6fa0542e0d6e"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/send-user-message.ts": {
+      "mtime": 1781938665651.2808,
+      "size": 3032,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/session-name.ts": {
+      "mtime": 1781938665651.2808,
+      "size": 821,
+      "symbolHash": "7c02c8e071d8"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/shutdown-command.ts": {
+      "mtime": 1781938665655.281,
+      "size": 2196,
+      "symbolHash": "968b98ef0601"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/snake.ts": {
+      "mtime": 1781938665657.281,
+      "size": 10111,
+      "symbolHash": "811a76cae492"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/space-invaders.ts": {
+      "mtime": 1781938665668.2815,
+      "size": 16521,
+      "symbolHash": "65f219bba0b5"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/ssh.ts": {
+      "mtime": 1781938665660.2812,
+      "size": 7825,
+      "symbolHash": "9dd803dd2896"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/status-line.ts": {
+      "mtime": 1781938665655.281,
+      "size": 966,
+      "symbolHash": "099c2dee3442"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/structured-output.ts": {
+      "mtime": 1781938665657.281,
+      "size": 2273,
+      "symbolHash": "4f379c2c1fc1"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/subagent/agents.ts": {
+      "mtime": 1781938665661.2812,
+      "size": 3511,
+      "symbolHash": "6afc0370cd28"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/summarize.ts": {
+      "mtime": 1781938665664.2815,
+      "size": 5599,
+      "symbolHash": "56db9ed7e671"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/system-prompt-header.ts": {
+      "mtime": 1781938665660.2812,
+      "size": 538,
+      "symbolHash": "2c3f3b9388cd"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/timed-confirm.ts": {
+      "mtime": 1781938665660.2812,
+      "size": 2388,
+      "symbolHash": "d08537aee6a5"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/titlebar-spinner.ts": {
+      "mtime": 1781938665662.2812,
+      "size": 1678,
+      "symbolHash": "ec836817e934"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/todo.ts": {
+      "mtime": 1781938665667.2815,
+      "size": 9928,
+      "symbolHash": "072b5ac59879"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/tool-override.ts": {
+      "mtime": 1781938665666.2815,
+      "size": 5119,
+      "symbolHash": "37d82879ad0d"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/tools.ts": {
+      "mtime": 1781938665663.2812,
+      "size": 4249,
+      "symbolHash": "45ccbae39147"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/trigger-compact.ts": {
+      "mtime": 1781938665666.2815,
+      "size": 1460,
+      "symbolHash": "ff008c2473e7"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/truncated-tool.ts": {
+      "mtime": 1781938665669.2817,
+      "size": 6952,
+      "symbolHash": "38eabdefb488"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/widget-placement.ts": {
+      "mtime": 1781938665667.2815,
+      "size": 375,
+      "symbolHash": "0d295d506b23"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/with-deps/index.ts": {
+      "mtime": 1781938665670.2817,
+      "size": 1065,
+      "symbolHash": "a8d3ccf91992"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/working-indicator.ts": {
+      "mtime": 1781938665668.2815,
+      "size": 3658,
+      "symbolHash": "90a14252c076"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/extensions/working-message-test.ts": {
+      "mtime": 1781938665670.2817,
+      "size": 910,
+      "symbolHash": "97e68fa8d52d"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/rpc-extension-ui.ts": {
+      "mtime": 1781938665679.2822,
+      "size": 17918,
+      "symbolHash": "28fd929e75dd"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/sdk/01-minimal.ts": {
+      "mtime": 1781938665674.282,
+      "size": 705,
+      "symbolHash": "3cf0c5ab8cc6"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/sdk/02-custom-model.ts": {
+      "mtime": 1781938665670.2817,
+      "size": 1571,
+      "symbolHash": "389304bd7693"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/sdk/03-custom-prompt.ts": {
+      "mtime": 1781938665671.2817,
+      "size": 1970,
+      "symbolHash": "8bbca9412799"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/sdk/04-skills.ts": {
+      "mtime": 1781938665673.2817,
+      "size": 1498,
+      "symbolHash": "9df518b56aa5"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/sdk/05-tools.ts": {
+      "mtime": 1781938665671.2817,
+      "size": 1621,
+      "symbolHash": "7b5d4f1c688d"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/sdk/06-extensions.ts": {
+      "mtime": 1781938665672.2817,
+      "size": 2695,
+      "symbolHash": "b566bb73f7fb"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/sdk/07-context-files.ts": {
+      "mtime": 1781938665675.282,
+      "size": 1207,
+      "symbolHash": "f14ec1005339"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/sdk/08-prompt-templates.ts": {
+      "mtime": 1781938665676.282,
+      "size": 1396,
+      "symbolHash": "0292b021c138"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/sdk/09-api-keys-and-oauth.ts": {
+      "mtime": 1781938665672.2817,
+      "size": 1869,
+      "symbolHash": "15432b92afb7"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/sdk/10-settings.ts": {
+      "mtime": 1781938665675.282,
+      "size": 1731,
+      "symbolHash": "cde74a63e866"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/sdk/11-sessions.ts": {
+      "mtime": 1781938665673.2817,
+      "size": 1835,
+      "symbolHash": "99464f3c0ba0"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/sdk/12-full-control.ts": {
+      "mtime": 1781938665676.282,
+      "size": 2129,
+      "symbolHash": "d5ee4b981c2f"
+    },
+    "repository_reference/pi/packages/coding-agent/examples/sdk/13-session-runtime.ts": {
+      "mtime": 1781938665674.282,
+      "size": 1941,
+      "symbolHash": "02d69942a9c0"
+    },
+    "repository_reference/pi/packages/coding-agent/src/bun/cli.ts": {
+      "mtime": 1781813664763.9094,
+      "size": 304,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/coding-agent/src/bun/register-bedrock.ts": {
+      "mtime": 1781813664763.9302,
+      "size": 196,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/coding-agent/src/bun/restore-sandbox-env.ts": {
+      "mtime": 1781938665675.282,
+      "size": 1175,
+      "symbolHash": "668bc9d7d25c"
+    },
+    "repository_reference/pi/packages/coding-agent/src/cli/args.ts": {
+      "mtime": 1781938665686.2825,
+      "size": 17813,
+      "symbolHash": "e0e64dedbbc5"
+    },
+    "repository_reference/pi/packages/coding-agent/src/cli/config-selector.ts": {
+      "mtime": 1781938665675.282,
+      "size": 1488,
+      "symbolHash": "0886c858bcf2"
+    },
+    "repository_reference/pi/packages/coding-agent/src/cli/file-processor.ts": {
+      "mtime": 1781938665680.2822,
+      "size": 3161,
+      "symbolHash": "94a511c8f652"
+    },
+    "repository_reference/pi/packages/coding-agent/src/cli/initial-message.ts": {
+      "mtime": 1781938665680.2822,
+      "size": 1027,
+      "symbolHash": "4d4ea7c6497e"
+    },
+    "repository_reference/pi/packages/coding-agent/src/cli/list-models.ts": {
+      "mtime": 1781938665682.2822,
+      "size": 3546,
+      "symbolHash": "71e3781ead41"
+    },
+    "repository_reference/pi/packages/coding-agent/src/cli/project-trust.ts": {
+      "mtime": 1781938665683.2822,
+      "size": 1966,
+      "symbolHash": "6512bf452ee6"
+    },
+    "repository_reference/pi/packages/coding-agent/src/cli/session-picker.ts": {
+      "mtime": 1781938665679.2822,
+      "size": 1510,
+      "symbolHash": "a2eade56617f"
+    },
+    "repository_reference/pi/packages/coding-agent/src/cli/startup-ui.ts": {
+      "mtime": 1781938665684.2822,
+      "size": 5440,
+      "symbolHash": "64be3a53fb1b"
+    },
+    "repository_reference/pi/packages/coding-agent/src/cli.ts": {
+      "mtime": 1781813664763.9302,
+      "size": 682,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/coding-agent/src/config.ts": {
+      "mtime": 1781938665689.2825,
+      "size": 19295,
+      "symbolHash": "37bc57cfa259"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/agent-session-runtime.ts": {
+      "mtime": 1781938665693.2827,
+      "size": 15262,
+      "symbolHash": "5400582128f6"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/agent-session-services.ts": {
+      "mtime": 1781938665684.2822,
+      "size": 7235,
+      "symbolHash": "792a5b34d9cc"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/auth-guidance.ts": {
+      "mtime": 1781938665680.2822,
+      "size": 881,
+      "symbolHash": "1b048ac96262"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/auth-storage.ts": {
+      "mtime": 1781938665703.2832,
+      "size": 15645,
+      "symbolHash": "7386ecdbc80b"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/bash-executor.ts": {
+      "mtime": 1781938665685.2825,
+      "size": 4721,
+      "symbolHash": "6becbf56da57"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/compaction/branch-summarization.ts": {
+      "mtime": 1781938665694.2827,
+      "size": 12442,
+      "symbolHash": "af6bfb873186"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/compaction/compaction.ts": {
+      "mtime": 1781938665700.2832,
+      "size": 28343,
+      "symbolHash": "3fbec7972b7e"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/compaction/index.ts": {
+      "mtime": 1781813664764.5256,
+      "size": 156,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/compaction/utils.ts": {
+      "mtime": 1781938665692.2827,
+      "size": 6022,
+      "symbolHash": "0e9a9781eb44"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/defaults.ts": {
+      "mtime": 1781813664764.5256,
+      "size": 132,
+      "symbolHash": "4a72363b3f3f"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/diagnostics.ts": {
+      "mtime": 1781938665688.2825,
+      "size": 462,
+      "symbolHash": "353cb9cf6c2b"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/event-bus.ts": {
+      "mtime": 1781938665689.2825,
+      "size": 853,
+      "symbolHash": "04df239533f3"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/exec.ts": {
+      "mtime": 1781938665694.2827,
+      "size": 2615,
+      "symbolHash": "f0ce7e5cc2de"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/experimental.ts": {
+      "mtime": 1781938665689.2825,
+      "size": 108,
+      "symbolHash": "6b40a20210b0"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/export-html/ansi-to-html.ts": {
+      "mtime": 1781938665698.283,
+      "size": 7113,
+      "symbolHash": "3afb2140b239"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/export-html/index.ts": {
+      "mtime": 1781938665697.283,
+      "size": 11390,
+      "symbolHash": "09b41a967dee"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/export-html/tool-renderer.ts": {
+      "mtime": 1781938665699.283,
+      "size": 6089,
+      "symbolHash": "3586693fc7b5"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/extensions/index.ts": {
+      "mtime": 1781938665695.283,
+      "size": 4014,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/extensions/loader.ts": {
+      "mtime": 1781938665706.2834,
+      "size": 19695,
+      "symbolHash": "b83e2591234a"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/extensions/wrapper.ts": {
+      "mtime": 1781938665699.283,
+      "size": 1259,
+      "symbolHash": "fa88ad1951ab"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/footer-data-provider.ts": {
+      "mtime": 1781938665706.2834,
+      "size": 12518,
+      "symbolHash": "c2f98a0bc2e1"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/http-dispatcher.ts": {
+      "mtime": 1781938665706.2834,
+      "size": 2450,
+      "symbolHash": "87da583f9e87"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/index.ts": {
+      "mtime": 1781938665705.2834,
+      "size": 2278,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/keybindings.ts": {
+      "mtime": 1781938665705.2834,
+      "size": 11763,
+      "symbolHash": "822cdc9eee9d"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/messages.ts": {
+      "mtime": 1781938665707.2834,
+      "size": 5668,
+      "symbolHash": "661fed9743ad"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/model-resolver.ts": {
+      "mtime": 1781938665729.2844,
+      "size": 24283,
+      "symbolHash": "d962d28422e7"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/output-guard.ts": {
+      "mtime": 1781938665711.2837,
+      "size": 3244,
+      "symbolHash": "4d7e9a2f012f"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/project-trust.ts": {
+      "mtime": 1781938665709.2834,
+      "size": 3046,
+      "symbolHash": "eea17d619db1"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/prompt-templates.ts": {
+      "mtime": 1781938665713.2837,
+      "size": 8391,
+      "symbolHash": "faf5fc36708e"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/provider-attribution.ts": {
+      "mtime": 1781938665712.2837,
+      "size": 3069,
+      "symbolHash": "4da9f7c89f59"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/provider-display-names.ts": {
+      "mtime": 1781938665710.2834,
+      "size": 1189,
+      "symbolHash": "bedcb4b57d3a"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/resolve-config-value.ts": {
+      "mtime": 1781938665717.284,
+      "size": 9609,
+      "symbolHash": "fac77a98ff84"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/sdk.ts": {
+      "mtime": 1781938665721.2842,
+      "size": 14798,
+      "symbolHash": "b8c979d48587"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/session-cwd.ts": {
+      "mtime": 1781938665715.2837,
+      "size": 1677,
+      "symbolHash": "315a562440da"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/skills.ts": {
+      "mtime": 1781938665737.285,
+      "size": 14844,
+      "symbolHash": "60e247557c06"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/slash-commands.ts": {
+      "mtime": 1781938665723.2842,
+      "size": 2084,
+      "symbolHash": "b63ef5ea326c"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/source-info.ts": {
+      "mtime": 1781938665726.2844,
+      "size": 892,
+      "symbolHash": "885f95a18545"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/system-prompt.ts": {
+      "mtime": 1781938665730.2844,
+      "size": 6418,
+      "symbolHash": "e4efd31eda51"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/telemetry.ts": {
+      "mtime": 1781938665727.2844,
+      "size": 528,
+      "symbolHash": "befbb1c1a903"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/timings.ts": {
+      "mtime": 1781938665729.2844,
+      "size": 856,
+      "symbolHash": "1d39dde2c1be"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/bash.ts": {
+      "mtime": 1781938665738.285,
+      "size": 16694,
+      "symbolHash": "306b41222e2c"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/edit-diff.ts": {
+      "mtime": 1781938665739.285,
+      "size": 15282,
+      "symbolHash": "3b9d9d5d944d"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/edit.ts": {
+      "mtime": 1781938665743.2852,
+      "size": 16145,
+      "symbolHash": "001168a8a0b3"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/file-mutation-queue.ts": {
+      "mtime": 1781938665735.2847,
+      "size": 1765,
+      "symbolHash": "c638b1c23e8d"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/find.ts": {
+      "mtime": 1781938665746.2852,
+      "size": 14582,
+      "symbolHash": "ae195abe3a3e"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/grep.ts": {
+      "mtime": 1781938665749.2854,
+      "size": 15940,
+      "symbolHash": "9a321f268d3c"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/index.ts": {
+      "mtime": 1781938665743.2852,
+      "size": 6242,
+      "symbolHash": "f980d89f9680"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/ls.ts": {
+      "mtime": 1781938665747.2854,
+      "size": 8721,
+      "symbolHash": "ec7a586c7cea"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/output-accumulator.ts": {
+      "mtime": 1781938665745.2852,
+      "size": 6423,
+      "symbolHash": "16964375b937"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/path-utils.ts": {
+      "mtime": 1781938665741.285,
+      "size": 3712,
+      "symbolHash": "416e48576c8f"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/read.ts": {
+      "mtime": 1781938665750.2854,
+      "size": 16604,
+      "symbolHash": "e4e7041081bb"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/render-utils.ts": {
+      "mtime": 1781938665745.2852,
+      "size": 2924,
+      "symbolHash": "057a98e24970"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/tool-definition-wrapper.ts": {
+      "mtime": 1781938665745.2852,
+      "size": 1784,
+      "symbolHash": "211c617ab81b"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/truncate.ts": {
+      "mtime": 1781938665751.2854,
+      "size": 8029,
+      "symbolHash": "5efe919b1ad2"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/tools/write.ts": {
+      "mtime": 1781938665752.2856,
+      "size": 10261,
+      "symbolHash": "5403850d57f5"
+    },
+    "repository_reference/pi/packages/coding-agent/src/core/trust-manager.ts": {
+      "mtime": 1781938665748.2854,
+      "size": 7372,
+      "symbolHash": "42328f9e5d85"
+    },
+    "repository_reference/pi/packages/coding-agent/src/index.ts": {
+      "mtime": 1781938665749.2854,
+      "size": 9630,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/coding-agent/src/main.ts": {
+      "mtime": 1781938665764.2861,
+      "size": 30774,
+      "symbolHash": "58df77f56ebd"
+    },
+    "repository_reference/pi/packages/coding-agent/src/migrations.ts": {
+      "mtime": 1781938665751.2854,
+      "size": 9765,
+      "symbolHash": "b8c223835379"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/index.ts": {
+      "mtime": 1781938665748.2854,
+      "size": 523,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/armin.ts": {
+      "mtime": 1781938665770.2864,
+      "size": 11845,
+      "symbolHash": "d634ddf848b0"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/assistant-message.ts": {
+      "mtime": 1781938665762.286,
+      "size": 5217,
+      "symbolHash": "51e9aa8c9c94"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/bash-execution.ts": {
+      "mtime": 1781938665754.2856,
+      "size": 7332,
+      "symbolHash": "c8977d014696"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/bordered-loader.ts": {
+      "mtime": 1781938665750.2854,
+      "size": 2161,
+      "symbolHash": "b5aea25d3820"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/branch-summary-message.ts": {
+      "mtime": 1781938665755.2856,
+      "size": 1806,
+      "symbolHash": "09e0f7b6eaee"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/compaction-summary-message.ts": {
+      "mtime": 1781938665753.2856,
+      "size": 1938,
+      "symbolHash": "a1a4d6f46c7d"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/config-selector.ts": {
+      "mtime": 1781938665768.2864,
+      "size": 20324,
+      "symbolHash": "5569c1ed1257"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/countdown-timer.ts": {
+      "mtime": 1781938665757.2856,
+      "size": 1060,
+      "symbolHash": "c59124c77fa7"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/custom-editor.ts": {
+      "mtime": 1781938665754.2856,
+      "size": 2659,
+      "symbolHash": "6ffcefed5ff7"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/custom-message.ts": {
+      "mtime": 1781938665763.2861,
+      "size": 3010,
+      "symbolHash": "2ab8c2db491f"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/daxnuts.ts": {
+      "mtime": 1781938665763.2861,
+      "size": 10516,
+      "symbolHash": "a13db60612d8"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/diff.ts": {
+      "mtime": 1781938665766.2861,
+      "size": 4932,
+      "symbolHash": "711cfd3bae2c"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/dynamic-border.ts": {
+      "mtime": 1781938665758.286,
+      "size": 799,
+      "symbolHash": "9f8c9a8928b9"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/earendil-announcement.ts": {
+      "mtime": 1781938665763.2861,
+      "size": 1706,
+      "symbolHash": "7f59b5a1f786"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/extension-editor.ts": {
+      "mtime": 1781938665762.286,
+      "size": 4564,
+      "symbolHash": "c3f5d722bbd7"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/extension-input.ts": {
+      "mtime": 1781938665763.2861,
+      "size": 2563,
+      "symbolHash": "4cda14b70024"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/extension-selector.ts": {
+      "mtime": 1781938665764.2861,
+      "size": 3565,
+      "symbolHash": "761fe6cad999"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/first-time-setup.ts": {
+      "mtime": 1781938665765.2861,
+      "size": 5264,
+      "symbolHash": "ff38c56dbe2b"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/footer.ts": {
+      "mtime": 1781938665769.2864,
+      "size": 9941,
+      "symbolHash": "e6541fef2dfa"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/index.ts": {
+      "mtime": 1781938665764.2861,
+      "size": 2357,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/keybinding-hints.ts": {
+      "mtime": 1781938665764.2861,
+      "size": 1586,
+      "symbolHash": "751df93dd08c"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/login-dialog.ts": {
+      "mtime": 1781938665771.2864,
+      "size": 7506,
+      "symbolHash": "f88d2a88915e"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/model-selector.ts": {
+      "mtime": 1781938665770.2864,
+      "size": 11824,
+      "symbolHash": "bba0648e23c8"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/oauth-selector.ts": {
+      "mtime": 1781938665770.2864,
+      "size": 7120,
+      "symbolHash": "194043e2dcac"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/scoped-models-selector.ts": {
+      "mtime": 1781938665771.2864,
+      "size": 12720,
+      "symbolHash": "54667e69e517"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/session-selector-search.ts": {
+      "mtime": 1781938665776.2866,
+      "size": 5366,
+      "symbolHash": "b2701052dfbf"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/settings-selector.ts": {
+      "mtime": 1781938665781.2869,
+      "size": 27933,
+      "symbolHash": "f7ee6cef75cf"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/show-images-selector.ts": {
+      "mtime": 1781938665776.2866,
+      "size": 1482,
+      "symbolHash": "48f0ef8fb42c"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/skill-invocation-message.ts": {
+      "mtime": 1781938665775.2866,
+      "size": 1989,
+      "symbolHash": "e0ce001dba2b"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/theme-selector.ts": {
+      "mtime": 1781938665771.2864,
+      "size": 1849,
+      "symbolHash": "b562afd45b2c"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/thinking-selector.ts": {
+      "mtime": 1781938665776.2866,
+      "size": 2035,
+      "symbolHash": "8bfff7ae1770"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/tool-execution.ts": {
+      "mtime": 1781938665779.2869,
+      "size": 12175,
+      "symbolHash": "f55e2368535d"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/trust-selector.ts": {
+      "mtime": 1781938665776.2866,
+      "size": 4643,
+      "symbolHash": "740066465cd1"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/user-message-selector.ts": {
+      "mtime": 1781938665777.2866,
+      "size": 5311,
+      "symbolHash": "48de5ab05e48"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/user-message.ts": {
+      "mtime": 1781938665776.2866,
+      "size": 1211,
+      "symbolHash": "97992c1d156a"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/components/visual-truncate.ts": {
+      "mtime": 1781938665777.2866,
+      "size": 1740,
+      "symbolHash": "885d45aee0c0"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/model-search.ts": {
+      "mtime": 1781938665778.2869,
+      "size": 314,
+      "symbolHash": "70d2715331c0"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/interactive/theme/theme-controller.ts": {
+      "mtime": 1781938665780.2869,
+      "size": 4681,
+      "symbolHash": "1b740a506535"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/print-mode.ts": {
+      "mtime": 1781938665781.2869,
+      "size": 5013,
+      "symbolHash": "2898161b2f62"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/rpc/jsonl.ts": {
+      "mtime": 1781938665781.2869,
+      "size": 1566,
+      "symbolHash": "9bb21b065461"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/rpc/rpc-client.ts": {
+      "mtime": 1781938665789.2874,
+      "size": 17648,
+      "symbolHash": "70a2f666dccd"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/rpc/rpc-mode.ts": {
+      "mtime": 1781938665790.2874,
+      "size": 24733,
+      "symbolHash": "fc43e60f86e6"
+    },
+    "repository_reference/pi/packages/coding-agent/src/modes/rpc/rpc-types.ts": {
+      "mtime": 1781938665785.287,
+      "size": 9999,
+      "symbolHash": "233316064e7f"
+    },
+    "repository_reference/pi/packages/coding-agent/src/package-manager-cli.ts": {
+      "mtime": 1781938665790.2874,
+      "size": 24918,
+      "symbolHash": "4c35ba03afc4"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/ansi.ts": {
+      "mtime": 1781938665782.2869,
+      "size": 2560,
+      "symbolHash": "58d18c0ca037"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/changelog.ts": {
+      "mtime": 1781938665784.287,
+      "size": 6371,
+      "symbolHash": "8a3c60744237"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/child-process.ts": {
+      "mtime": 1781938665790.2874,
+      "size": 4371,
+      "symbolHash": "48e5f3a52455"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/clipboard-image.ts": {
+      "mtime": 1781938665788.287,
+      "size": 8232,
+      "symbolHash": "66ba3dbce5a7"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/clipboard-native.ts": {
+      "mtime": 1781938665790.2874,
+      "size": 1082,
+      "symbolHash": "3d3cae554c01"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/clipboard.ts": {
+      "mtime": 1781938665790.2874,
+      "size": 4010,
+      "symbolHash": "b378ea031f79"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/deprecation.ts": {
+      "mtime": 1781938665790.2874,
+      "size": 465,
+      "symbolHash": "80c279930986"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/exif-orientation.ts": {
+      "mtime": 1781938665797.2876,
+      "size": 5493,
+      "symbolHash": "9b2825029649"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/frontmatter.ts": {
+      "mtime": 1781938665791.2874,
+      "size": 1183,
+      "symbolHash": "c519eff2d40b"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/fs-watch.ts": {
+      "mtime": 1781938665791.2874,
+      "size": 600,
+      "symbolHash": "31cf3ee828e1"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/git.ts": {
+      "mtime": 1781938665795.2876,
+      "size": 6617,
+      "symbolHash": "44ff9f04a944"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/highlight-js-lib-index.d.ts": {
+      "mtime": 1781938665791.2874,
+      "size": 460,
+      "symbolHash": "26c2bb7417d8"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/html.ts": {
+      "mtime": 1781938665791.2874,
+      "size": 1278,
+      "symbolHash": "0efcbe9e5955"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/image-convert.ts": {
+      "mtime": 1781938665791.2874,
+      "size": 1117,
+      "symbolHash": "bdec112aaaca"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/image-resize-core.ts": {
+      "mtime": 1781938665795.2876,
+      "size": 5116,
+      "symbolHash": "fa01a8012f23"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/image-resize-worker.ts": {
+      "mtime": 1781938665792.2874,
+      "size": 1404,
+      "symbolHash": "d0aacf42eeaf"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/image-resize.ts": {
+      "mtime": 1781938665795.2876,
+      "size": 4144,
+      "symbolHash": "a7b5e51d00d4"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/json.ts": {
+      "mtime": 1781938665792.2874,
+      "size": 346,
+      "symbolHash": "a6e30e15803a"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/mime.ts": {
+      "mtime": 1781938665793.2874,
+      "size": 2535,
+      "symbolHash": "503d34aeac4c"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/open-browser.ts": {
+      "mtime": 1781938665792.2874,
+      "size": 958,
+      "symbolHash": "c2e1c474b518"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/paths.ts": {
+      "mtime": 1781938665797.2876,
+      "size": 4207,
+      "symbolHash": "255a953adca6"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/photon.ts": {
+      "mtime": 1781938665795.2876,
+      "size": 3854,
+      "symbolHash": "f1399fb5d0b9"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/pi-user-agent.ts": {
+      "mtime": 1781938665793.2874,
+      "size": 237,
+      "symbolHash": "c4b2c37df29e"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/shell.ts": {
+      "mtime": 1781938665795.2876,
+      "size": 6507,
+      "symbolHash": "2db68aba0a98"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/sleep.ts": {
+      "mtime": 1781938665796.2876,
+      "size": 426,
+      "symbolHash": "963084ca881a"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/syntax-highlight.ts": {
+      "mtime": 1781938665799.2878,
+      "size": 3894,
+      "symbolHash": "bb0eebddf9d4"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/tools-manager.ts": {
+      "mtime": 1781938665801.2878,
+      "size": 12283,
+      "symbolHash": "00d57e460c53"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/version-check.ts": {
+      "mtime": 1781938665796.2876,
+      "size": 2562,
+      "symbolHash": "7e7144414e73"
+    },
+    "repository_reference/pi/packages/coding-agent/src/utils/windows-self-update.ts": {
+      "mtime": 1781938665797.2876,
+      "size": 2696,
+      "symbolHash": "990de1f4e4a0"
+    },
+    "repository_reference/pi/packages/coding-agent/test/agent-session-auto-compaction-queue.test.ts": {
+      "mtime": 1781938665803.2878,
+      "size": 15571,
+      "symbolHash": "34e2a93ed866"
+    },
+    "repository_reference/pi/packages/coding-agent/test/agent-session-branching.test.ts": {
+      "mtime": 1781938665800.2878,
+      "size": 5007,
+      "symbolHash": "9dba6282ad0f"
+    },
+    "repository_reference/pi/packages/coding-agent/test/agent-session-compaction.test.ts": {
+      "mtime": 1781938665801.2878,
+      "size": 7079,
+      "symbolHash": "90774358a25a"
+    },
+    "repository_reference/pi/packages/coding-agent/test/agent-session-concurrent.test.ts": {
+      "mtime": 1781938665810.2883,
+      "size": 21682,
+      "symbolHash": "b2a3aed0646c"
+    },
+    "repository_reference/pi/packages/coding-agent/test/agent-session-dynamic-provider.test.ts": {
+      "mtime": 1781938665800.2878,
+      "size": 3904,
+      "symbolHash": "cf2990ce146b"
+    },
+    "repository_reference/pi/packages/coding-agent/test/agent-session-dynamic-tools.test.ts": {
+      "mtime": 1781938665807.288,
+      "size": 6200,
+      "symbolHash": "6e84bcd189fd"
+    },
+    "repository_reference/pi/packages/coding-agent/test/agent-session-retry.test.ts": {
+      "mtime": 1781938665806.288,
+      "size": 11866,
+      "symbolHash": "2ee7e05b218a"
+    },
+    "repository_reference/pi/packages/coding-agent/test/agent-session-runtime-events.test.ts": {
+      "mtime": 1781938665808.288,
+      "size": 9042,
+      "symbolHash": "bf3a434ee929"
+    },
+    "repository_reference/pi/packages/coding-agent/test/agent-session-stats.test.ts": {
+      "mtime": 1781938665809.288,
+      "size": 5085,
+      "symbolHash": "30adee194f09"
+    },
+    "repository_reference/pi/packages/coding-agent/test/agent-session-tree-navigation.test.ts": {
+      "mtime": 1781938665809.288,
+      "size": 11726,
+      "symbolHash": "c6eab608586a"
+    },
+    "repository_reference/pi/packages/coding-agent/test/ansi-utils.test.ts": {
+      "mtime": 1781938665810.2883,
+      "size": 2931,
+      "symbolHash": "890ce3a06114"
+    },
+    "repository_reference/pi/packages/coding-agent/test/args.test.ts": {
+      "mtime": 1781938665809.288,
+      "size": 14476,
+      "symbolHash": "f0cfb09aab66"
+    },
+    "repository_reference/pi/packages/coding-agent/test/assistant-message.test.ts": {
+      "mtime": 1781938665808.288,
+      "size": 2004,
+      "symbolHash": "e90de3ac321c"
+    },
+    "repository_reference/pi/packages/coding-agent/test/auth-storage.test.ts": {
+      "mtime": 1781938665812.2883,
+      "size": 22456,
+      "symbolHash": "1ad7ab6910da"
+    },
+    "repository_reference/pi/packages/coding-agent/test/bash-close-hang-windows.test.ts": {
+      "mtime": 1781938665810.2883,
+      "size": 4011,
+      "symbolHash": "741f20c8ce76"
+    },
+    "repository_reference/pi/packages/coding-agent/test/bash-execution-width.test.ts": {
+      "mtime": 1781938665810.2883,
+      "size": 2799,
+      "symbolHash": "48ddb47bc2da"
+    },
+    "repository_reference/pi/packages/coding-agent/test/block-images.test.ts": {
+      "mtime": 1781938665811.2883,
+      "size": 4203,
+      "symbolHash": "73aeec372aea"
+    },
+    "repository_reference/pi/packages/coding-agent/test/changelog.test.ts": {
+      "mtime": 1781938665811.2883,
+      "size": 2068,
+      "symbolHash": "467dcb03d3d2"
+    },
+    "repository_reference/pi/packages/coding-agent/test/clipboard-image-bmp-conversion.test.ts": {
+      "mtime": 1781938665811.2883,
+      "size": 3099,
+      "symbolHash": "714294e50e69"
+    },
+    "repository_reference/pi/packages/coding-agent/test/clipboard-image.test.ts": {
+      "mtime": 1781938665813.2883,
+      "size": 6106,
+      "symbolHash": "48212bb026fc"
+    },
+    "repository_reference/pi/packages/coding-agent/test/clipboard-native.test.ts": {
+      "mtime": 1781938665810.2883,
+      "size": 1060,
+      "symbolHash": "0b6322af4f04"
+    },
+    "repository_reference/pi/packages/coding-agent/test/clipboard.test.ts": {
+      "mtime": 1781938665823.2888,
+      "size": 4348,
+      "symbolHash": "58ff6ea3d3bf"
+    },
+    "repository_reference/pi/packages/coding-agent/test/compaction-extensions-example.test.ts": {
+      "mtime": 1781938665811.2883,
+      "size": 2710,
+      "symbolHash": "cd8382b70f36"
+    },
+    "repository_reference/pi/packages/coding-agent/test/compaction-extensions.test.ts": {
+      "mtime": 1781938665822.2888,
+      "size": 13795,
+      "symbolHash": "a47a4d5f0c47"
+    },
+    "repository_reference/pi/packages/coding-agent/test/compaction-serialization.test.ts": {
+      "mtime": 1781938665812.2883,
+      "size": 2273,
+      "symbolHash": "fd8df0b30f37"
+    },
+    "repository_reference/pi/packages/coding-agent/test/compaction-summary-reasoning.test.ts": {
+      "mtime": 1781938665812.2883,
+      "size": 3956,
+      "symbolHash": "85cec0b5668d"
+    },
+    "repository_reference/pi/packages/coding-agent/test/compaction.test.ts": {
+      "mtime": 1781938665822.2888,
+      "size": 22079,
+      "symbolHash": "e2d603a7a99f"
+    },
+    "repository_reference/pi/packages/coding-agent/test/config-value-migration.test.ts": {
+      "mtime": 1781938665814.2883,
+      "size": 6288,
+      "symbolHash": "cc3dd2833985"
+    },
+    "repository_reference/pi/packages/coding-agent/test/config.test.ts": {
+      "mtime": 1781938665818.2886,
+      "size": 16493,
+      "symbolHash": "535ca8e1bdfe"
+    },
+    "repository_reference/pi/packages/coding-agent/test/edit-tool-legacy-input.test.ts": {
+      "mtime": 1781938665813.2883,
+      "size": 3997,
+      "symbolHash": "a7450dbe1977"
+    },
+    "repository_reference/pi/packages/coding-agent/test/edit-tool-no-full-redraw.test.ts": {
+      "mtime": 1781938665821.2888,
+      "size": 7408,
+      "symbolHash": "29b6ecf3de8e"
+    },
+    "repository_reference/pi/packages/coding-agent/test/experimental.test.ts": {
+      "mtime": 1781938665813.2883,
+      "size": 1297,
+      "symbolHash": "022f129f0bae"
+    },
+    "repository_reference/pi/packages/coding-agent/test/export-html-skill-block.test.ts": {
+      "mtime": 1781938665813.2883,
+      "size": 2013,
+      "symbolHash": "a65ea3e761d5"
+    },
+    "repository_reference/pi/packages/coding-agent/test/export-html-whitespace.test.ts": {
+      "mtime": 1781938665815.2886,
+      "size": 2022,
+      "symbolHash": "4b0ef31c547f"
+    },
+    "repository_reference/pi/packages/coding-agent/test/export-html-xss.test.ts": {
+      "mtime": 1781938665815.2886,
+      "size": 3451,
+      "symbolHash": "a65ea3e761d5"
+    },
+    "repository_reference/pi/packages/coding-agent/test/extensions-discovery.test.ts": {
+      "mtime": 1781938665832.2893,
+      "size": 17854,
+      "symbolHash": "91dcdffd70eb"
+    },
+    "repository_reference/pi/packages/coding-agent/test/extensions-input-event.test.ts": {
+      "mtime": 1781938665817.2886,
+      "size": 5921,
+      "symbolHash": "60c979d23203"
+    },
+    "repository_reference/pi/packages/coding-agent/test/file-mutation-queue.test.ts": {
+      "mtime": 1781938665825.289,
+      "size": 9015,
+      "symbolHash": "22b4a57fdc84"
+    },
+    "repository_reference/pi/packages/coding-agent/test/first-time-setup-fork.test.ts": {
+      "mtime": 1781938665818.2886,
+      "size": 1199,
+      "symbolHash": "03509a3ab127"
+    },
+    "repository_reference/pi/packages/coding-agent/test/first-time-setup.test.ts": {
+      "mtime": 1781938665824.2888,
+      "size": 3067,
+      "symbolHash": "7f6c091ae2f8"
+    },
+    "repository_reference/pi/packages/coding-agent/test/footer-data-provider.test.ts": {
+      "mtime": 1781938665828.289,
+      "size": 8872,
+      "symbolHash": "5927724504a7"
+    },
+    "repository_reference/pi/packages/coding-agent/test/footer-width.test.ts": {
+      "mtime": 1781938665825.289,
+      "size": 4094,
+      "symbolHash": "d186e6014b30"
+    },
+    "repository_reference/pi/packages/coding-agent/test/format-resume-command.test.ts": {
+      "mtime": 1781938665827.289,
+      "size": 4580,
+      "symbolHash": "8fd425a9895c"
+    },
+    "repository_reference/pi/packages/coding-agent/test/frontmatter.test.ts": {
+      "mtime": 1781938665825.289,
+      "size": 2585,
+      "symbolHash": "ca1d3ed5cba8"
+    },
+    "repository_reference/pi/packages/coding-agent/test/git-merge-and-resolve-extension.test.ts": {
+      "mtime": 1781938665828.289,
+      "size": 7531,
+      "symbolHash": "326a84d905d5"
+    },
+    "repository_reference/pi/packages/coding-agent/test/git-ssh-url.test.ts": {
+      "mtime": 1781938665828.289,
+      "size": 2911,
+      "symbolHash": "1686127df1fb"
+    },
+    "repository_reference/pi/packages/coding-agent/test/git-update.test.ts": {
+      "mtime": 1781938665835.2893,
+      "size": 20063,
+      "symbolHash": "1c58eaf2e02a"
+    },
+    "repository_reference/pi/packages/coding-agent/test/http-dispatcher.test.ts": {
+      "mtime": 1781938665828.289,
+      "size": 1637,
+      "symbolHash": "856f9a417012"
+    },
+    "repository_reference/pi/packages/coding-agent/test/image-processing.test.ts": {
+      "mtime": 1781938665832.2893,
+      "size": 8173,
+      "symbolHash": "bc6d296ec05c"
+    },
+    "repository_reference/pi/packages/coding-agent/test/image-resize-callers.test.ts": {
+      "mtime": 1781938665832.2893,
+      "size": 1961,
+      "symbolHash": "49ea0169b75d"
+    },
+    "repository_reference/pi/packages/coding-agent/test/initial-message.test.ts": {
+      "mtime": 1781938665829.289,
+      "size": 1481,
+      "symbolHash": "052671f44b77"
+    },
+    "repository_reference/pi/packages/coding-agent/test/input-transform-streaming-example.test.ts": {
+      "mtime": 1781938665832.2893,
+      "size": 3051,
+      "symbolHash": "f795c60b9813"
+    },
+    "repository_reference/pi/packages/coding-agent/test/interactive-mode-anthropic-warning.test.ts": {
+      "mtime": 1781938665834.2893,
+      "size": 3672,
+      "symbolHash": "cc6304f1d3d5"
+    },
+    "repository_reference/pi/packages/coding-agent/test/interactive-mode-clone-command.test.ts": {
+      "mtime": 1781938665835.2893,
+      "size": 2510,
+      "symbolHash": "f3931083343a"
+    },
+    "repository_reference/pi/packages/coding-agent/test/interactive-mode-compaction.test.ts": {
+      "mtime": 1781938665833.2893,
+      "size": 2060,
+      "symbolHash": "9f2eac16381b"
+    },
+    "repository_reference/pi/packages/coding-agent/test/interactive-mode-import-command.test.ts": {
+      "mtime": 1781938665835.2893,
+      "size": 6240,
+      "symbolHash": "52b3828b0ea0"
+    },
+    "repository_reference/pi/packages/coding-agent/test/interactive-mode-startup-input.test.ts": {
+      "mtime": 1781938665834.2893,
+      "size": 2257,
+      "symbolHash": "76d14c6b8da1"
+    },
+    "repository_reference/pi/packages/coding-agent/test/interactive-mode-suspend.test.ts": {
+      "mtime": 1781938665836.2896,
+      "size": 5891,
+      "symbolHash": "81c47e25573b"
+    },
+    "repository_reference/pi/packages/coding-agent/test/keybindings-migration.test.ts": {
+      "mtime": 1781938665836.2896,
+      "size": 2846,
+      "symbolHash": "9be87054d248"
+    },
+    "repository_reference/pi/packages/coding-agent/test/model-resolver.test.ts": {
+      "mtime": 1781938665854.2903,
+      "size": 22084,
+      "symbolHash": "dc1ca757ec7e"
+    },
+    "repository_reference/pi/packages/coding-agent/test/oauth-selector.test.ts": {
+      "mtime": 1781938665845.2898,
+      "size": 5057,
+      "symbolHash": "7c8c4efe5720"
+    },
+    "repository_reference/pi/packages/coding-agent/test/package-command-paths.test.ts": {
+      "mtime": 1781938665847.29,
+      "size": 25728,
+      "symbolHash": "ce80c7abfdcd"
+    },
+    "repository_reference/pi/packages/coding-agent/test/package-manager-ssh.test.ts": {
+      "mtime": 1781938665844.2898,
+      "size": 3737,
+      "symbolHash": "773491226f1c"
+    },
+    "repository_reference/pi/packages/coding-agent/test/path-utils.test.ts": {
+      "mtime": 1781938665840.2896,
+      "size": 7130,
+      "symbolHash": "1a6696ae32e9"
+    },
+    "repository_reference/pi/packages/coding-agent/test/paths.test.ts": {
+      "mtime": 1781938665844.2898,
+      "size": 5201,
+      "symbolHash": "2cef4001361f"
+    },
+    "repository_reference/pi/packages/coding-agent/test/pi-user-agent.test.ts": {
+      "mtime": 1781938665839.2896,
+      "size": 550,
+      "symbolHash": "6cbe11bec618"
+    },
+    "repository_reference/pi/packages/coding-agent/test/plan-mode-utils.test.ts": {
+      "mtime": 1781938665847.29,
+      "size": 8552,
+      "symbolHash": "b793167df1e8"
+    },
+    "repository_reference/pi/packages/coding-agent/test/print-mode.test.ts": {
+      "mtime": 1781938665843.2898,
+      "size": 5009,
+      "symbolHash": "3febea8b1ca2"
+    },
+    "repository_reference/pi/packages/coding-agent/test/prompt-templates.test.ts": {
+      "mtime": 1781938665856.2903,
+      "size": 22957,
+      "symbolHash": "813dc291d7bf"
+    },
+    "repository_reference/pi/packages/coding-agent/test/resource-loader.test.ts": {
+      "mtime": 1781938665872.2913,
+      "size": 26293,
+      "symbolHash": "1c238300f197"
+    },
+    "repository_reference/pi/packages/coding-agent/test/restore-sandbox-env.test.ts": {
+      "mtime": 1781938665847.29,
+      "size": 2262,
+      "symbolHash": "b8c4399eeccf"
+    },
+    "repository_reference/pi/packages/coding-agent/test/rpc-client-clone.test.ts": {
+      "mtime": 1781938665849.29,
+      "size": 879,
+      "symbolHash": "45a86dad6750"
+    },
+    "repository_reference/pi/packages/coding-agent/test/rpc-client-process-exit.test.ts": {
+      "mtime": 1781938665850.29,
+      "size": 1088,
+      "symbolHash": "52d1a5a082c3"
+    },
+    "repository_reference/pi/packages/coding-agent/test/rpc-example.ts": {
+      "mtime": 1781938665849.29,
+      "size": 2183,
+      "symbolHash": "3ff2e4d43117"
+    },
+    "repository_reference/pi/packages/coding-agent/test/rpc-jsonl.test.ts": {
+      "mtime": 1781938665850.29,
+      "size": 1843,
+      "symbolHash": "117e87041b47"
+    },
+    "repository_reference/pi/packages/coding-agent/test/rpc-prompt-response-semantics.test.ts": {
+      "mtime": 1781938665855.2903,
+      "size": 8847,
+      "symbolHash": "8d3acf4497c3"
+    },
+    "repository_reference/pi/packages/coding-agent/test/rpc.test.ts": {
+      "mtime": 1781938665857.2905,
+      "size": 11248,
+      "symbolHash": "b6eb26861957"
+    },
+    "repository_reference/pi/packages/coding-agent/test/sdk-codex-cache-probe-tool-loop.ts": {
+      "mtime": 1781938665857.2905,
+      "size": 19921,
+      "symbolHash": "46b63a44f3e4"
+    },
+    "repository_reference/pi/packages/coding-agent/test/sdk-openrouter-attribution.test.ts": {
+      "mtime": 1781938665862.2908,
+      "size": 10191,
+      "symbolHash": "196536d727ff"
+    },
+    "repository_reference/pi/packages/coding-agent/test/sdk-session-manager.test.ts": {
+      "mtime": 1781938665857.2905,
+      "size": 3250,
+      "symbolHash": "5b1c4b796869"
+    },
+    "repository_reference/pi/packages/coding-agent/test/sdk-skills.test.ts": {
+      "mtime": 1781938665858.2905,
+      "size": 3891,
+      "symbolHash": "3eb39087511e"
+    },
+    "repository_reference/pi/packages/coding-agent/test/sdk-stream-options.test.ts": {
+      "mtime": 1781938665867.291,
+      "size": 4789,
+      "symbolHash": "f32c071c4811"
+    },
+    "repository_reference/pi/packages/coding-agent/test/session-cwd.test.ts": {
+      "mtime": 1781938665860.2905,
+      "size": 3486,
+      "symbolHash": "2371663d3a88"
+    },
+    "repository_reference/pi/packages/coding-agent/test/session-id-readonly.test.ts": {
+      "mtime": 1781938665861.2905,
+      "size": 4638,
+      "symbolHash": "9e774a017a9d"
+    },
+    "repository_reference/pi/packages/coding-agent/test/session-info-modified-timestamp.test.ts": {
+      "mtime": 1781938665860.2905,
+      "size": 2654,
+      "symbolHash": "9e9c9d51edfa"
+    },
+    "repository_reference/pi/packages/coding-agent/test/session-manager/build-context.test.ts": {
+      "mtime": 1781938665865.2908,
+      "size": 10506,
+      "symbolHash": "5cd3b106dcc3"
+    },
+    "repository_reference/pi/packages/coding-agent/test/session-manager/custom-session-id.test.ts": {
+      "mtime": 1781938665866.2908,
+      "size": 5980,
+      "symbolHash": "770eb3d0e215"
+    },
+    "repository_reference/pi/packages/coding-agent/test/session-manager/file-operations.test.ts": {
+      "mtime": 1781938665871.291,
+      "size": 11695,
+      "symbolHash": "2a6000223688"
+    },
+    "repository_reference/pi/packages/coding-agent/test/session-manager/labels.test.ts": {
+      "mtime": 1781938665873.2913,
+      "size": 7811,
+      "symbolHash": "2e1267be731d"
+    },
+    "repository_reference/pi/packages/coding-agent/test/session-manager/migration.test.ts": {
+      "mtime": 1781938665866.2908,
+      "size": 2560,
+      "symbolHash": "6a7107410a1e"
+    },
+    "repository_reference/pi/packages/coding-agent/test/session-manager/save-entry.test.ts": {
+      "mtime": 1781938665870.291,
+      "size": 1873,
+      "symbolHash": "992fb6764474"
+    },
+    "repository_reference/pi/packages/coding-agent/test/session-manager/tree-traversal.test.ts": {
+      "mtime": 1781938665873.2913,
+      "size": 19471,
+      "symbolHash": "d5738368674b"
+    },
+    "repository_reference/pi/packages/coding-agent/test/session-selector-path-delete.test.ts": {
+      "mtime": 1781938665872.2913,
+      "size": 9698,
+      "symbolHash": "23dddc55bcaf"
+    },
+    "repository_reference/pi/packages/coding-agent/test/session-selector-rename.test.ts": {
+      "mtime": 1781938665872.2913,
+      "size": 3510,
+      "symbolHash": "1667537bc4e1"
+    },
+    "repository_reference/pi/packages/coding-agent/test/session-selector-search.test.ts": {
+      "mtime": 1781938665873.2913,
+      "size": 6227,
+      "symbolHash": "a200dfb54782"
+    },
+    "repository_reference/pi/packages/coding-agent/test/settings-manager-bug.test.ts": {
+      "mtime": 1781938665877.2913,
+      "size": 5605,
+      "symbolHash": "907b7f745685"
+    },
+    "repository_reference/pi/packages/coding-agent/test/settings-manager.test.ts": {
+      "mtime": 1781938665883.2917,
+      "size": 16439,
+      "symbolHash": "2e43981533b3"
+    },
+    "repository_reference/pi/packages/coding-agent/test/skills.test.ts": {
+      "mtime": 1781938665884.2917,
+      "size": 15061,
+      "symbolHash": "24f3325873e2"
+    },
+    "repository_reference/pi/packages/coding-agent/test/startup-session-name.test.ts": {
+      "mtime": 1781938665884.2917,
+      "size": 4061,
+      "symbolHash": "7a21fe55d0be"
+    },
+    "repository_reference/pi/packages/coding-agent/test/stdout-cleanliness.test.ts": {
+      "mtime": 1781938665879.2915,
+      "size": 4059,
+      "symbolHash": "5915cddd3340"
+    },
+    "repository_reference/pi/packages/coding-agent/test/streaming-render-debug.ts": {
+      "mtime": 1781938665883.2917,
+      "size": 2913,
+      "symbolHash": "a0b402cdccb5"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/agent-session-bash-persistence.test.ts": {
+      "mtime": 1781938665892.292,
+      "size": 8180,
+      "symbolHash": "6701a2a8f2b6"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/agent-session-compaction.test.ts": {
+      "mtime": 1781938665884.2917,
+      "size": 16244,
+      "symbolHash": "e5589c95ca2a"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/agent-session-model-extension.test.ts": {
+      "mtime": 1781938665891.292,
+      "size": 12899,
+      "symbolHash": "1435e88f211c"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/agent-session-prompt.test.ts": {
+      "mtime": 1781938665888.292,
+      "size": 13376,
+      "symbolHash": "55ec09528b5e"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/agent-session-queue.test.ts": {
+      "mtime": 1781938665888.292,
+      "size": 15510,
+      "symbolHash": "4a69d03b7cb5"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/agent-session-retry-events.test.ts": {
+      "mtime": 1781938665890.292,
+      "size": 13715,
+      "symbolHash": "e3568e14fc12"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/agent-session-runtime.test.ts": {
+      "mtime": 1781938665898.2922,
+      "size": 22073,
+      "symbolHash": "586eba024850"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/harness.ts": {
+      "mtime": 1781938665893.2922,
+      "size": 7504,
+      "symbolHash": "ef767b4448e7"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/1717-2113-agent-session-event-settlement.test.ts": {
+      "mtime": 1781938665889.292,
+      "size": 3267,
+      "symbolHash": "8b22656de530"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/2023-queued-slash-command-followup.test.ts": {
+      "mtime": 1781938665893.2922,
+      "size": 2711,
+      "symbolHash": "dae97f2db5e7"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/2753-reload-stale-resource-settings.test.ts": {
+      "mtime": 1781938665897.2922,
+      "size": 3654,
+      "symbolHash": "f9c568d35688"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/2781-skill-collision-precedence.test.ts": {
+      "mtime": 1781938665894.2922,
+      "size": 5303,
+      "symbolHash": "d004cfb6f15b"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/2791-fswatch-error-crash.test.ts": {
+      "mtime": 1781938665891.292,
+      "size": 3916,
+      "symbolHash": "316e88fa7926"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/2835-tools-allowlist-filters-extension-tools.test.ts": {
+      "mtime": 1781938665898.2922,
+      "size": 3337,
+      "symbolHash": "81f1c175945a"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/2860-replaced-session-context.test.ts": {
+      "mtime": 1781938665897.2922,
+      "size": 9675,
+      "symbolHash": "5975dfddc4d3"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/3217-scoped-model-order.test.ts": {
+      "mtime": 1781938665897.2922,
+      "size": 3393,
+      "symbolHash": "c2aeb8b7dac5"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/3302-find-path-glob.test.ts": {
+      "mtime": 1781938665901.2925,
+      "size": 3211,
+      "symbolHash": "abb1efb2efb3"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/3303-find-nested-gitignore.test.ts": {
+      "mtime": 1781938665898.2922,
+      "size": 3784,
+      "symbolHash": "88c25453fae2"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/3317-network-connection-lost-retry.test.ts": {
+      "mtime": 1781938665898.2922,
+      "size": 1245,
+      "symbolHash": "b3d22e19d3bb"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/3592-no-builtin-tools-keeps-extension-tools.test.ts": {
+      "mtime": 1781938665898.2922,
+      "size": 4196,
+      "symbolHash": "c5fe3fd19b1f"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/3616-settings-inmemory-reload.test.ts": {
+      "mtime": 1781938665897.2922,
+      "size": 2938,
+      "symbolHash": "b82f2dd8d855"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/3686-session-name-event.test.ts": {
+      "mtime": 1781938665899.2925,
+      "size": 1362,
+      "symbolHash": "d4a9e8c77c34"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/3688-tree-cancel-compacting.test.ts": {
+      "mtime": 1781938665898.2922,
+      "size": 1255,
+      "symbolHash": "58a28bb9160f"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/3982-message-end-cost-override.test.ts": {
+      "mtime": 1781938665899.2925,
+      "size": 1870,
+      "symbolHash": "005a4113f8e1"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/4167-thinking-toggle-pending-tool-render.test.ts": {
+      "mtime": 1781938665900.2925,
+      "size": 5289,
+      "symbolHash": "6e48064af529"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/5080-signal-shutdown-extension-cleanup.test.ts": {
+      "mtime": 1781938665900.2925,
+      "size": 6385,
+      "symbolHash": "0591ce8521f2"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/5109-exclude-tools.test.ts": {
+      "mtime": 1781938665901.2925,
+      "size": 2982,
+      "symbolHash": "8b159618a7f3"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/5208-late-bash-output.test.ts": {
+      "mtime": 1781938665899.2925,
+      "size": 1069,
+      "symbolHash": "20a31a5f71d0"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/5303-bash-output-truncation.test.ts": {
+      "mtime": 1781938665899.2925,
+      "size": 3338,
+      "symbolHash": "332fc756524f"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/5433-extension-oauth-prompt-input.test.ts": {
+      "mtime": 1781938665900.2925,
+      "size": 3332,
+      "symbolHash": "8add1160badd"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/5596-missing-theme-export.test.ts": {
+      "mtime": 1781938665903.2925,
+      "size": 3275,
+      "symbolHash": "27427792345c"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/5661-uppercase-header-values.test.ts": {
+      "mtime": 1781938665900.2925,
+      "size": 3012,
+      "symbolHash": "4fa1b6cfad4e"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/5724-sigterm-signal-exit.test.ts": {
+      "mtime": 1781938665902.2925,
+      "size": 2942,
+      "symbolHash": "6530f8f78111"
+    },
+    "repository_reference/pi/packages/coding-agent/test/suite/regressions/5868-rpc-unknown-command-id.test.ts": {
+      "mtime": 1781938665903.2925,
+      "size": 3698,
+      "symbolHash": "f2039973ed28"
+    },
+    "repository_reference/pi/packages/coding-agent/test/syntax-highlight.test.ts": {
+      "mtime": 1781938665903.2925,
+      "size": 3038,
+      "symbolHash": "03b5158cef9f"
+    },
+    "repository_reference/pi/packages/coding-agent/test/system-prompt.test.ts": {
+      "mtime": 1781938665903.2925,
+      "size": 3566,
+      "symbolHash": "8f226ed485b0"
+    },
+    "repository_reference/pi/packages/coding-agent/test/test-harness.test.ts": {
+      "mtime": 1781938665911.293,
+      "size": 11123,
+      "symbolHash": "39fc63bc1a2d"
+    },
+    "repository_reference/pi/packages/coding-agent/test/test-harness.ts": {
+      "mtime": 1781938665909.293,
+      "size": 15076,
+      "symbolHash": "df41d26bcd3f"
+    },
+    "repository_reference/pi/packages/coding-agent/test/test-theme-colors.ts": {
+      "mtime": 1781938665913.293,
+      "size": 8214,
+      "symbolHash": "78a884e8c6ea"
+    },
+    "repository_reference/pi/packages/coding-agent/test/theme-detection.test.ts": {
+      "mtime": 1781938665919.2935,
+      "size": 4505,
+      "symbolHash": "368721c97af2"
+    },
+    "repository_reference/pi/packages/coding-agent/test/theme-export.test.ts": {
+      "mtime": 1781938665903.2925,
+      "size": 3037,
+      "symbolHash": "908e6900e6ce"
+    },
+    "repository_reference/pi/packages/coding-agent/test/theme-picker.test.ts": {
+      "mtime": 1781938665903.2925,
+      "size": 1722,
+      "symbolHash": "c16817e495df"
+    },
+    "repository_reference/pi/packages/coding-agent/test/tool-execution-component.test.ts": {
+      "mtime": 1781938665914.2932,
+      "size": 17601,
+      "symbolHash": "34783f76bb62"
+    },
+    "repository_reference/pi/packages/coding-agent/test/tree-selector.test.ts": {
+      "mtime": 1781938665914.2932,
+      "size": 22915,
+      "symbolHash": "1200399b8943"
+    },
+    "repository_reference/pi/packages/coding-agent/test/trigger-compact-extension.test.ts": {
+      "mtime": 1781938665906.2927,
+      "size": 2113,
+      "symbolHash": "1513c1efeae9"
+    },
+    "repository_reference/pi/packages/coding-agent/test/truncate-to-width.test.ts": {
+      "mtime": 1781938665905.2927,
+      "size": 3016,
+      "symbolHash": "a091ec494223"
+    },
+    "repository_reference/pi/packages/coding-agent/test/trust-manager.test.ts": {
+      "mtime": 1781938665905.2927,
+      "size": 2508,
+      "symbolHash": "f5b288d38eb1"
+    },
+    "repository_reference/pi/packages/coding-agent/test/trust-selector.test.ts": {
+      "mtime": 1781938665905.2927,
+      "size": 2753,
+      "symbolHash": "e4724e56b890"
+    },
+    "repository_reference/pi/packages/coding-agent/test/user-message.test.ts": {
+      "mtime": 1781938665906.2927,
+      "size": 1006,
+      "symbolHash": "769921a59018"
+    },
+    "repository_reference/pi/packages/coding-agent/test/utilities.ts": {
+      "mtime": 1781938665913.293,
+      "size": 9469,
+      "symbolHash": "c8217f76b768"
+    },
+    "repository_reference/pi/packages/coding-agent/test/version-check.test.ts": {
+      "mtime": 1781938665907.2927,
+      "size": 3205,
+      "symbolHash": "57d8270f6cb1"
+    },
+    "repository_reference/pi/packages/coding-agent/vitest.config.ts": {
+      "mtime": 1781938665930.294,
+      "size": 1260,
+      "symbolHash": "ea65d0018dfd"
+    },
+    "repository_reference/pi/packages/tui/src/autocomplete.ts": {
+      "mtime": 1781938665922.2935,
+      "size": 25088,
+      "symbolHash": "ce36092a9383"
+    },
+    "repository_reference/pi/packages/tui/src/components/box.ts": {
+      "mtime": 1781938665911.293,
+      "size": 3394,
+      "symbolHash": "67261e3b494d"
+    },
+    "repository_reference/pi/packages/tui/src/components/cancellable-loader.ts": {
+      "mtime": 1781938665912.293,
+      "size": 1031,
+      "symbolHash": "6e0dc67d638f"
+    },
+    "repository_reference/pi/packages/tui/src/components/image.ts": {
+      "mtime": 1781938665916.2932,
+      "size": 3854,
+      "symbolHash": "8d90ba444688"
+    },
+    "repository_reference/pi/packages/tui/src/components/input.ts": {
+      "mtime": 1781938665925.2937,
+      "size": 14156,
+      "symbolHash": "e472aa956ba6"
+    },
+    "repository_reference/pi/packages/tui/src/components/loader.ts": {
+      "mtime": 1781938665917.2932,
+      "size": 2761,
+      "symbolHash": "d4c4544165ae"
+    },
+    "repository_reference/pi/packages/tui/src/components/markdown.ts": {
+      "mtime": 1781938665929.2937,
+      "size": 28925,
+      "symbolHash": "2e851f09319f"
+    },
+    "repository_reference/pi/packages/tui/src/components/select-list.ts": {
+      "mtime": 1781938665920.2935,
+      "size": 8168,
+      "symbolHash": "67b45bbb8fd6"
+    },
+    "repository_reference/pi/packages/tui/src/components/settings-list.ts": {
+      "mtime": 1781938665924.2935,
+      "size": 8462,
+      "symbolHash": "4bb68bb4a1be"
+    },
+    "repository_reference/pi/packages/tui/src/components/spacer.ts": {
+      "mtime": 1781938665927.2937,
+      "size": 536,
+      "symbolHash": "85d4dcf8ac8e"
+    },
+    "repository_reference/pi/packages/tui/src/components/text.ts": {
+      "mtime": 1781938665926.2937,
+      "size": 3452,
+      "symbolHash": "9296fdbeab9e"
+    },
+    "repository_reference/pi/packages/tui/src/components/truncated-text.ts": {
+      "mtime": 1781938665929.2937,
+      "size": 1905,
+      "symbolHash": "c537b6ed023b"
+    },
+    "repository_reference/pi/packages/tui/src/editor-component.ts": {
+      "mtime": 1781938665928.2937,
+      "size": 2643,
+      "symbolHash": "c4a05b2d9dcb"
+    },
+    "repository_reference/pi/packages/tui/src/fuzzy.ts": {
+      "mtime": 1781938665930.294,
+      "size": 3508,
+      "symbolHash": "2c6a9090f1df"
+    },
+    "repository_reference/pi/packages/tui/src/index.ts": {
+      "mtime": 1781938665929.2937,
+      "size": 3298,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/packages/tui/src/keybindings.ts": {
+      "mtime": 1781938665934.294,
+      "size": 7962,
+      "symbolHash": "f799d5ca738f"
+    },
+    "repository_reference/pi/packages/tui/src/kill-ring.ts": {
+      "mtime": 1781938665929.2937,
+      "size": 1345,
+      "symbolHash": "449e93053167"
+    },
+    "repository_reference/pi/packages/tui/src/native-modifiers.ts": {
+      "mtime": 1781938665930.294,
+      "size": 1946,
+      "symbolHash": "73d05a8e4b8a"
+    },
+    "repository_reference/pi/packages/tui/src/stdin-buffer.ts": {
+      "mtime": 1781938665934.294,
+      "size": 12395,
+      "symbolHash": "cb33f819fce4"
+    },
+    "repository_reference/pi/packages/tui/src/terminal-colors.ts": {
+      "mtime": 1781938665931.294,
+      "size": 2307,
+      "symbolHash": "b3adec8205e3"
+    },
+    "repository_reference/pi/packages/tui/src/terminal-image.ts": {
+      "mtime": 1781938665939.2942,
+      "size": 14889,
+      "symbolHash": "02892dd6a463"
+    },
+    "repository_reference/pi/packages/tui/src/terminal.ts": {
+      "mtime": 1781938665946.2947,
+      "size": 18527,
+      "symbolHash": "57dafa2dd12f"
+    },
+    "repository_reference/pi/packages/tui/src/undo-stack.ts": {
+      "mtime": 1781938665930.294,
+      "size": 663,
+      "symbolHash": "f831a4d79ac1"
+    },
+    "repository_reference/pi/packages/tui/src/word-navigation.ts": {
+      "mtime": 1781938665932.294,
+      "size": 4145,
+      "symbolHash": "46f4bc0ac0f6"
+    },
+    "repository_reference/pi/packages/tui/test/autocomplete.test.ts": {
+      "mtime": 1781938665939.2942,
+      "size": 19615,
+      "symbolHash": "2bca76e56a61"
+    },
+    "repository_reference/pi/packages/tui/test/bug-regression-isimageline-startswith-bug.test.ts": {
+      "mtime": 1781938665935.2942,
+      "size": 9758,
+      "symbolHash": "d6ed8e30ebf9"
+    },
+    "repository_reference/pi/packages/tui/test/chat-simple.ts": {
+      "mtime": 1781938665935.2942,
+      "size": 3619,
+      "symbolHash": "605ed730c657"
+    },
+    "repository_reference/pi/packages/tui/test/fuzzy.test.ts": {
+      "mtime": 1781938665905.2927,
+      "size": 3906,
+      "symbolHash": "0cb803350051"
+    },
+    "repository_reference/pi/packages/tui/test/image-test.ts": {
+      "mtime": 1781938665898.2922,
+      "size": 1641,
+      "symbolHash": "3bf6287b4785"
+    },
+    "repository_reference/pi/packages/tui/test/input.test.ts": {
+      "mtime": 1781938665894.2922,
+      "size": 22614,
+      "symbolHash": "3921dade6052"
+    },
+    "repository_reference/pi/packages/tui/test/key-tester.ts": {
+      "mtime": 1781938665880.2915,
+      "size": 3486,
+      "symbolHash": "627fd805aa54"
+    },
+    "repository_reference/pi/packages/tui/test/keybindings.test.ts": {
+      "mtime": 1781938665872.2913,
+      "size": 1462,
+      "symbolHash": "bea829a2d2cd"
+    },
+    "repository_reference/pi/packages/tui/test/keys.test.ts": {
+      "mtime": 1781938665867.291,
+      "size": 27000,
+      "symbolHash": "0da0076efae2"
+    },
+    "repository_reference/pi/packages/tui/test/overlay-options.test.ts": {
+      "mtime": 1781938665804.2878,
+      "size": 20274,
+      "symbolHash": "6693ae817de8"
+    },
+    "repository_reference/pi/packages/tui/test/overlay-short-content.test.ts": {
+      "mtime": 1781938665778.2869,
+      "size": 1709,
+      "symbolHash": "e456d2ebc22e"
+    },
+    "repository_reference/pi/packages/tui/test/regression-overlay-cjk-boundary.test.ts": {
+      "mtime": 1781938665776.2866,
+      "size": 2521,
+      "symbolHash": "3249fa883c5d"
+    },
+    "repository_reference/pi/packages/tui/test/regression-regional-indicator-width.test.ts": {
+      "mtime": 1781938665770.2864,
+      "size": 2139,
+      "symbolHash": "e086629cfb83"
+    },
+    "repository_reference/pi/packages/tui/test/select-list.test.ts": {
+      "mtime": 1781938665768.2864,
+      "size": 3666,
+      "symbolHash": "1f625df3d783"
+    },
+    "repository_reference/pi/packages/tui/test/stdin-buffer.test.ts": {
+      "mtime": 1781938665763.2861,
+      "size": 15077,
+      "symbolHash": "d537ae472a3d"
+    },
+    "repository_reference/pi/packages/tui/test/tab-width.test.ts": {
+      "mtime": 1781938665745.2852,
+      "size": 1164,
+      "symbolHash": "3aeb04cb7f4c"
+    },
+    "repository_reference/pi/packages/tui/test/terminal-colors.test.ts": {
+      "mtime": 1781938665741.285,
+      "size": 7028,
+      "symbolHash": "2ea97535ff37"
+    },
+    "repository_reference/pi/packages/tui/test/terminal-image.test.ts": {
+      "mtime": 1781938665728.2844,
+      "size": 18632,
+      "symbolHash": "2d4ba1300c62"
+    },
+    "repository_reference/pi/packages/tui/test/terminal.test.ts": {
+      "mtime": 1781938665712.2837,
+      "size": 7493,
+      "symbolHash": "c4bcb39eb3c4"
+    },
+    "repository_reference/pi/packages/tui/test/test-themes.ts": {
+      "mtime": 1781938665700.2832,
+      "size": 1406,
+      "symbolHash": "937e10e7ea63"
+    },
+    "repository_reference/pi/packages/tui/test/truncate-to-width.test.ts": {
+      "mtime": 1781938665697.283,
+      "size": 3221,
+      "symbolHash": "ed5dd576f742"
+    },
+    "repository_reference/pi/packages/tui/test/truncated-text.test.ts": {
+      "mtime": 1781938665692.2827,
+      "size": 4554,
+      "symbolHash": "291db22d9490"
+    },
+    "repository_reference/pi/packages/tui/test/tui-cell-size-input.test.ts": {
+      "mtime": 1781938665685.2825,
+      "size": 2437,
+      "symbolHash": "1350de7ed37d"
+    },
+    "repository_reference/pi/packages/tui/test/tui-overlay-style-leak.test.ts": {
+      "mtime": 1781938665680.2822,
+      "size": 2402,
+      "symbolHash": "09fd7f29de0a"
+    },
+    "repository_reference/pi/packages/tui/test/tui-render.test.ts": {
+      "mtime": 1781938665675.282,
+      "size": 26936,
+      "symbolHash": "7c7dbf18dfb1"
+    },
+    "repository_reference/pi/packages/tui/test/tui-shrink.test.ts": {
+      "mtime": 1781938665658.2812,
+      "size": 1416,
+      "symbolHash": "31589971d6a9"
+    },
+    "repository_reference/pi/packages/tui/test/viewport-overwrite-repro.ts": {
+      "mtime": 1781938665655.281,
+      "size": 3253,
+      "symbolHash": "f2c55af3f57b"
+    },
+    "repository_reference/pi/packages/tui/test/virtual-terminal.ts": {
+      "mtime": 1781938665641.2803,
+      "size": 5131,
+      "symbolHash": "a0cdc0a60b83"
+    },
+    "repository_reference/pi/packages/tui/test/word-navigation.test.ts": {
+      "mtime": 1781938665637.28,
+      "size": 6569,
+      "symbolHash": "c6af7e92e1e7"
+    },
+    "repository_reference/pi/packages/tui/test/wrap-ansi.test.ts": {
+      "mtime": 1781938665630.2798,
+      "size": 10070,
+      "symbolHash": "547a96101e7f"
+    },
+    "repository_reference/pi/packages/tui/vitest.config.ts": {
+      "mtime": 1781938665613.279,
+      "size": 137,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "repository_reference/pi/scripts/browser-smoke-entry.ts": {
+      "mtime": 1781938665608.2788,
+      "size": 2060,
+      "symbolHash": "9ae5f8aadf87"
+    },
+    "repository_reference/pi/scripts/check-browser-smoke.mjs": {
+      "mtime": 1781938665607.2788,
+      "size": 1199,
+      "symbolHash": "9d96e8a9e242"
+    },
+    "repository_reference/pi/scripts/check-lockfile-commit.mjs": {
+      "mtime": 1781938665606.2788,
+      "size": 4079,
+      "symbolHash": "1cb93e846161"
+    },
+    "repository_reference/pi/scripts/check-pinned-deps.mjs": {
+      "mtime": 1781938665604.2786,
+      "size": 2206,
+      "symbolHash": "200589961205"
+    },
+    "repository_reference/pi/scripts/check-ts-relative-imports.mjs": {
+      "mtime": 1781938665603.2786,
+      "size": 2492,
+      "symbolHash": "8e0d8ccdc1cb"
+    },
+    "repository_reference/pi/scripts/cost.ts": {
+      "mtime": 1781938665599.2783,
+      "size": 5692,
+      "symbolHash": "5f71720e861a"
+    },
+    "repository_reference/pi/scripts/generate-coding-agent-shrinkwrap.mjs": {
+      "mtime": 1781938665561.2766,
+      "size": 11584,
+      "symbolHash": "769ba8700db3"
+    },
+    "repository_reference/pi/scripts/local-release.mjs": {
+      "mtime": 1781938665552.2761,
+      "size": 10101,
+      "symbolHash": "fc42afd57bdd"
+    },
+    "repository_reference/pi/scripts/profile-coding-agent-node.mjs": {
+      "mtime": 1781938665539.2756,
+      "size": 20033,
+      "symbolHash": "ceddf983946e"
+    },
+    "repository_reference/pi/scripts/publish.mjs": {
+      "mtime": 1781938665522.2747,
+      "size": 4084,
+      "symbolHash": "f01495e51b41"
+    },
+    "repository_reference/pi/scripts/read-tool-stats.mjs": {
+      "mtime": 1781938665519.2747,
+      "size": 22931,
+      "symbolHash": "c5d65ce0be72"
+    },
+    "repository_reference/pi/scripts/release-notes.mjs": {
+      "mtime": 1781938665499.2737,
+      "size": 11979,
+      "symbolHash": "666e87a3d9d2"
+    },
+    "repository_reference/pi/scripts/release.mjs": {
+      "mtime": 1781938665489.2732,
+      "size": 5826,
+      "symbolHash": "14b4570a3af5"
+    },
+    "repository_reference/pi/scripts/session-context-stats.mjs": {
+      "mtime": 1781938665483.273,
+      "size": 20248,
+      "symbolHash": "2a981fd30ef3"
+    },
+    "repository_reference/pi/scripts/session-transcripts.ts": {
+      "mtime": 1781938665463.272,
+      "size": 14401,
+      "symbolHash": "75e74a3a591c"
+    },
+    "repository_reference/pi/scripts/stats.ts": {
+      "mtime": 1781938665450.2715,
+      "size": 6785,
+      "symbolHash": "9f5433aa82bf"
+    },
+    "repository_reference/pi/scripts/sync-versions.js": {
+      "mtime": 1781938665442.271,
+      "size": 3040,
+      "symbolHash": "6fa5e527bf11"
+    },
+    "repository_reference/pi/scripts/tool-stats.ts": {
+      "mtime": 1781938665438.2708,
+      "size": 12938,
+      "symbolHash": "1ebc02f5a89f"
+    },
+    "scripts/__tests__/import-reference-repo.test.ts": {
+      "mtime": 1781938665431.2705,
+      "size": 6179,
+      "symbolHash": "506d537fd06c"
+    },
+    "scripts/__tests__/vitest.config.ts": {
+      "mtime": 1781813609150.6729,
+      "size": 162,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "scripts/analyze-reference-repo.ts": {
+      "mtime": 1781938665423.27,
+      "size": 15843,
+      "symbolHash": "0c41956500e0"
+    },
+    "scripts/bench-cli-startup.ts": {
+      "mtime": 1781944220651.747,
+      "size": 1852,
+      "symbolHash": "73871230cb20"
+    },
+    "scripts/bench-indexing.ts": {
+      "mtime": 1781944242649.3743,
+      "size": 1038,
+      "symbolHash": "16597f50c3f4"
+    },
+    "scripts/bench-real-repos.ts": {
+      "mtime": 1781975136633.7227,
+      "size": 18157,
+      "symbolHash": "b15462c37fa8"
+    },
+    "scripts/bench-tool-execution.ts": {
+      "mtime": 1781943724938.165,
+      "size": 2510,
+      "symbolHash": "13bbc46b2877"
+    },
+    "scripts/create-package.ts": {
+      "mtime": 1781938665411.2695,
+      "size": 2571,
+      "symbolHash": "eda5cf94dd31"
+    },
+    "scripts/create-plugin.ts": {
+      "mtime": 1781938665407.2693,
+      "size": 2720,
+      "symbolHash": "97c10ffdff70"
+    },
+    "scripts/create-skill.ts": {
+      "mtime": 1781938665403.2693,
+      "size": 2612,
+      "symbolHash": "97c10ffdff70"
+    },
+    "scripts/import-reference-repo.ts": {
+      "mtime": 1781938665400.269,
+      "size": 5513,
+      "symbolHash": "068e4d3f8d7a"
+    },
+    "scripts/license-check.ts": {
+      "mtime": 1781938665395.2688,
+      "size": 14071,
+      "symbolHash": "774636f1b501"
+    },
+    "templates/mcp-server-template/src/index.ts": {
+      "mtime": 1781938665388.2686,
+      "size": 1275,
+      "symbolHash": "3fd7b6b96551"
+    },
+    "templates/package-template/src/index.ts": {
+      "mtime": 1781812563820.1675,
+      "size": 279,
+      "symbolHash": "bab9cc869bd8"
+    },
+    "templates/plugin-template/index.js": {
+      "mtime": 1781880667859.6497,
+      "size": 2550,
+      "symbolHash": "1ca83cc8e47a"
+    },
+    "templates/plugin-template/src/index.ts": {
+      "mtime": 1781880721600.6028,
+      "size": 2524,
+      "symbolHash": "874e3f33d75b"
+    },
+    "templates/skill-template/src/index.ts": {
+      "mtime": 1781812563819.7354,
+      "size": 534,
+      "symbolHash": "71b971a38f33"
+    },
+    "tests/cli-e2e/cli-e2e.test.ts": {
+      "mtime": 1781973224709.7654,
+      "size": 8522,
+      "symbolHash": "98300dc8e74b"
+    },
+    "tests/fixtures/ts-multi/src/lib/helpers.ts": {
+      "mtime": 1781902582166.0486,
+      "size": 158,
+      "symbolHash": "1c9ba831f604"
+    },
+    "tests/fixtures/ts-multi/src/main.ts": {
+      "mtime": 1781902581105.0374,
+      "size": 218,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "tests/fixtures/ts-multi/src/utils/format.ts": {
+      "mtime": 1781902583175.0593,
+      "size": 261,
+      "symbolHash": "255ea2901446"
+    },
+    "tests/fixtures/ts-simple/src/calculator.test.ts": {
+      "mtime": 1781902577733.0017,
+      "size": 725,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "tests/fixtures/ts-simple/src/index.ts": {
+      "mtime": 1781902574771.9702,
+      "size": 354,
+      "symbolHash": "69c6baf6fda2"
+    },
+    "vitest.workspace.ts": {
+      "mtime": 1781938665373.2678,
+      "size": 357,
+      "symbolHash": "d41d8cd98f00"
+    }
+  },
+  "indexedAt": 1781975148066
+}

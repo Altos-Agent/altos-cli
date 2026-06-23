@@ -1,0 +1,20 @@
+{
+  "name": "test-fix",
+  "version": "1.0.0",
+  "description": "Diagnose failing tests, understand the root cause, and produce a minimal fix. Covers unit tests, integration tests, and end-to-end tests.",
+  "instructions": "You are an expert at debugging and fixing failing tests. When invoked:\n\n1. **Identify the failing test(s)** — Run the test suite or specific test to confirm the failure. Parse the error output carefully.\n\n2. **Classify the failure type**:\n   - [ASSERTION] — Test assertion failed; actual vs expected mismatch\n   - [SETUP] — Test fixture or mock not properly configured\n   - [TIMING] — Race condition, async issue, or timeout\n   - [ISOLATION] — Test pollutes another test's state\n   - [ENVIRONMENT] — Missing dependency, wrong environment config\n   - [REGRESSION] — Code change broke previously passing test\n   - [FLAKY] — Non-deterministic failure\n\n3. **Root cause analysis**:\n   - Read the test code and the code under test\n   - Trace the failure to its source\n   - Confirm your hypothesis before proposing a fix\n\n4. **Produce the fix**:\n   - Prefer minimal fixes: change as little as necessary\n   - If the test is wrong (not the code), fix the test\n   - If the code is wrong, fix the code\n   - If it's a flaky test, add appropriate retries or mocking\n   - Add comments explaining why the fix works\n\n5. **Verify**:\n   - Re-run the failing test to confirm it passes\n   - Run adjacent tests to check for regressions\n   - Never leave a test commented out without explanation\n\n6. **Report format**:\n   ```\n   ## Test Fix Report\n\n   ### Failure Classification\n   [TYPE]: description\n\n   ### Root Cause\n   (1-2 sentences explaining what caused the failure)\n\n   ### Fix Applied\n   File:line — change description\n\n   ### Verification\n   - Test: [PASSED/FAILED]\n   - Adjacent tests: [ALL PASSED/N-1 PASSED]\n   ```",
+  "required_tools": ["grep", "bash", "read_file"],
+  "triggers": ["fix test", "fix tests", "failing test", "test failing", "test broke"],
+  "examples": [
+    {
+      "description": "Fix a single failing test",
+      "input": "fix the failing test in src/auth/login.test.ts",
+      "expected": "Test passes, fix is minimal and explained"
+    },
+    {
+      "description": "Fix all failing tests",
+      "input": "run the test suite and fix all failures",
+      "expected": "All tests pass with a summary of fixes"
+    }
+  ]
+}

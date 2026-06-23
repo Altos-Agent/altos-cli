@@ -1,0 +1,101 @@
+{
+  "$schema": "https://docs.altos.dev/mcp-config-schema",
+  "servers": [
+    {
+      "id": "github",
+      "name": "GitHub",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "enabled": true,
+      "dangerous": false,
+      "env": {
+        "GITHUB_TOKEN": "$GITHUB_TOKEN"
+      },
+      "autoGrant": [
+        { "tool": "list_issues", "permission": "read", "reason": "Read-only issue listing" },
+        { "tool": "get_issue", "permission": "read", "reason": "Read-only issue access" },
+        { "tool": "search_code", "permission": "read", "reason": "Read-only code search" },
+        {
+          "tool": "list_repositories",
+          "permission": "read",
+          "reason": "Read-only repository listing"
+        },
+        { "tool": "get_file", "permission": "read", "reason": "Read-only file access" }
+      ]
+    },
+    {
+      "id": "filesystem",
+      "name": "Filesystem",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/user/projects"],
+      "enabled": true,
+      "dangerous": false,
+      "autoGrant": [
+        { "tool": "read_file", "permission": "read", "reason": "Read project files" },
+        { "tool": "list_directory", "permission": "read", "reason": "List project directory" },
+        { "tool": "glob", "permission": "read", "reason": "Find project files by pattern" }
+      ]
+    },
+    {
+      "id": "postgres",
+      "name": "PostgreSQL",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://localhost/mydb"],
+      "enabled": false,
+      "dangerous": false,
+      "env": {
+        "DATABASE_URL": "$DATABASE_URL"
+      },
+      "autoGrant": [
+        { "tool": "query", "permission": "read", "reason": "Read-only database queries" }
+      ]
+    },
+    {
+      "id": "brave-search",
+      "name": "Brave Search",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "enabled": true,
+      "dangerous": false,
+      "env": {
+        "BRAVE_API_KEY": "$BRAVE_API_KEY"
+      },
+      "autoGrant": [
+        { "tool": "web_search", "permission": "network", "reason": "Web search capability" },
+        { "tool": "images_search", "permission": "network", "reason": "Image search capability" }
+      ]
+    },
+    {
+      "id": "slack",
+      "name": "Slack",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "enabled": false,
+      "dangerous": false,
+      "env": {
+        "SLACK_BOT_TOKEN": "$SLACK_BOT_TOKEN",
+        "SLACK_TEAM_ID": "$SLACK_TEAM_ID"
+      },
+      "autoGrant": [
+        { "tool": "channels_list", "permission": "read", "reason": "List Slack channels" },
+        { "tool": "channels_history", "permission": "read", "reason": "Read channel history" }
+      ]
+    },
+    {
+      "id": "sentry",
+      "name": "Sentry",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sentry"],
+      "enabled": false,
+      "dangerous": false,
+      "env": {
+        "SENTRY_AUTH_TOKEN": "$SENTRY_AUTH_TOKEN",
+        "SENTRY_ORGANIZATION": "$SENTRY_ORGANIZATION"
+      },
+      "autoGrant": [
+        { "tool": "list_issues", "permission": "read", "reason": "Read-only issue listing" },
+        { "tool": "get_issue", "permission": "read", "reason": "Read-only issue access" }
+      ]
+    }
+  ]
+}

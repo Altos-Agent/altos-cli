@@ -1,0 +1,19 @@
+{
+  "name": "@altos/pkg-example",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Example Altos package",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "test": "vitest run",
+    "lint": "biome lint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}

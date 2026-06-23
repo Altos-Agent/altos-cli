@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "root": "/home/oguz/Masaüstü/AltosAgent/templates",
+  "files": {
+    "mcp-server-template/src/index.ts": {
+      "mtime": 1781938665388.2686,
+      "size": 1275,
+      "symbolHash": "3fd7b6b96551"
+    },
+    "package-template/src/index.ts": {
+      "mtime": 1781812563820.1675,
+      "size": 279,
+      "symbolHash": "bab9cc869bd8"
+    },
+    "plugin-template/index.js": {
+      "mtime": 1781880667859.6497,
+      "size": 2550,
+      "symbolHash": "1ca83cc8e47a"
+    },
+    "plugin-template/src/index.ts": {
+      "mtime": 1781880721600.6028,
+      "size": 2524,
+      "symbolHash": "874e3f33d75b"
+    },
+    "skill-template/src/index.ts": {
+      "mtime": 1781812563819.7354,
+      "size": 534,
+      "symbolHash": "71b971a38f33"
+    }
+  },
+  "indexedAt": 1781949265172
+}

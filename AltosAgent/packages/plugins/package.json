@@ -1,0 +1,30 @@
+{
+  "name": "@altos/plugins",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Altos plugin system - discovery, loading, lifecycle management",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./manager": "./dist/manager/index.js",
+    "./registry": "./dist/registry/index.js",
+    "./loader": "./dist/loader/index.js"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "dev": "tsc --build --watch",
+    "test": "vitest run",
+    "lint": "biome lint .",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@altos/core": "workspace:*",
+    "@altos/tools": "workspace:*",
+    "@altos/memory": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}

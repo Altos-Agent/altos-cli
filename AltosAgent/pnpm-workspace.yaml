@@ -1,0 +1,5 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  # Templates are not workspace packages - they are scaffolds to be copied
+  # - "templates/*"

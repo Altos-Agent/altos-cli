@@ -1,0 +1,36 @@
+{
+  "name": "altos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Altos - Modular, extensible, plugin-first CLI agent platform",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
+    "typecheck": "turbo run typecheck",
+    "format": "biome format --write .",
+    "format:check": "biome format --check .",
+    "create:plugin": "tsx scripts/create-plugin.ts",
+    "create:skill": "tsx scripts/create-skill.ts",
+    "create:package": "tsx scripts/create-package.ts",
+    "reference:import": "tsx scripts/import-reference-repo.ts",
+    "reference:license": "tsx scripts/license-check.ts",
+    "reference:analyze": "tsx scripts/analyze-reference-repo.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "turbo": "^2.3.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

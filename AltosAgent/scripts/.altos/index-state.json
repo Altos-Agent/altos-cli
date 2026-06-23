@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "root": "/home/oguz/Masaüstü/AltosAgent/scripts",
+  "files": {
+    "__tests__/import-reference-repo.test.ts": {
+      "mtime": 1781938665431.2705,
+      "size": 6179,
+      "symbolHash": "506d537fd06c"
+    },
+    "__tests__/vitest.config.ts": {
+      "mtime": 1781813609150.6729,
+      "size": 162,
+      "symbolHash": "d41d8cd98f00"
+    },
+    "analyze-reference-repo.ts": {
+      "mtime": 1781938665423.27,
+      "size": 15843,
+      "symbolHash": "0c41956500e0"
+    },
+    "bench-cli-startup.ts": {
+      "mtime": 1781944220651.747,
+      "size": 1852,
+      "symbolHash": "73871230cb20"
+    },
+    "bench-indexing.ts": {
+      "mtime": 1781944242649.3743,
+      "size": 1038,
+      "symbolHash": "16597f50c3f4"
+    },
+    "bench-tool-execution.ts": {
+      "mtime": 1781943724938.165,
+      "size": 2510,
+      "symbolHash": "13bbc46b2877"
+    },
+    "create-package.ts": {
+      "mtime": 1781938665411.2695,
+      "size": 2571,
+      "symbolHash": "eda5cf94dd31"
+    },
+    "create-plugin.ts": {
+      "mtime": 1781938665407.2693,
+      "size": 2720,
+      "symbolHash": "97c10ffdff70"
+    },
+    "create-skill.ts": {
+      "mtime": 1781938665403.2693,
+      "size": 2612,
+      "symbolHash": "97c10ffdff70"
+    },
+    "import-reference-repo.ts": {
+      "mtime": 1781938665400.269,
+      "size": 5513,
+      "symbolHash": "068e4d3f8d7a"
+    },
+    "license-check.ts": {
+      "mtime": 1781938665395.2688,
+      "size": 14071,
+      "symbolHash": "774636f1b501"
+    }
+  },
+  "indexedAt": 1781949249276
+}
